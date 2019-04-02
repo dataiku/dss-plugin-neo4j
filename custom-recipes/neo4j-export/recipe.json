@@ -79,7 +79,7 @@
             "type": "STRING",
             "description":"SSH Username",
             "mandatory" : true,
-            "defaultValue" : ""
+            "defaultValue" : "import"
         }
     ],
 
