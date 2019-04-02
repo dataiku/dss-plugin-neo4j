@@ -26,6 +26,11 @@ SSH_HOST              = get_recipe_config().get('ssh-host', None)
 SSH_USER              = get_recipe_config().get('ssh-user', None)
 SSH_IMPORT_DIRECTORY  = get_recipe_config().get('ssh-import-directory', None)
 
+
+
+
+
+
 # Set logging config
 logging.basicConfig(
     filename
