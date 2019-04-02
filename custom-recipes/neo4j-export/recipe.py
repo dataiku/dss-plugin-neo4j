@@ -39,3 +39,17 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s:%(message)s', 
     level=logging.INFO
 )
+
+
+#==============================================================================
+# EXPORTING TO CSV
+#==============================================================================
+
+# Getting input data (nodes)
+ds = dataiku.Dataset(INPUT_DATASET_NAME)
+df = ds.get_dataframe()
+
+# Build CSV
+logging.info("[+] Exporting input dataframe to CSV...")
+df.to_csv(path_or_buf=os.path.join(out_folder, 'export.csv'), sep="|",header=False, index=False)
+logging.info("[+] Exported to CSV")
