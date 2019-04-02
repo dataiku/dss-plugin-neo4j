@@ -93,3 +93,5 @@ schema = schema + '\n' + '}'
 
 logging.info("[+] Built Neo4j output schema for nodes with label {}".format(GRAPH_NODES_LABEL))
 logging.info("[+] {}".format(schema))
+
+# 
