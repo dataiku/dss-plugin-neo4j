@@ -94,5 +94,7 @@ schema = schema + '\n' + '}'
 logging.info("[+] Built Neo4j output schema for nodes with label {}".format(GRAPH_NODES_LABEL))
 logging.info("[+] {}".format(schema))
 
-# Actually load CSV data into Neo4j
+# Connect to Neo4j
+uri = NEO4J_URI
+graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
 
