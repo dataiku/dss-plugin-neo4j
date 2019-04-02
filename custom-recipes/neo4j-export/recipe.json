@@ -3,7 +3,7 @@
     "meta" : {
         "label" : "Export Nodes",
         "description" : "Create Neo4j nodes from a Dataiku Dataset",
-        "icon" : "icon-puzzle-piece"
+        "icon" : "icon-upload"
     },
     
     "kind" : "PYTHON",
