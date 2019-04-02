@@ -29,23 +29,14 @@ SSH_IMPORT_DIRECTORY  = get_recipe_config().get('ssh-import-directory', None)
 
 
 
+#==============================================================================
+# LOGGING SETTINGS
+#==============================================================================
+out_folder = dataiku.Folder(OUTPUT_FOLDER_NAME)
+print out_folder
 
-
-
-# Set logging config
 logging.basicConfig(
-    filename
+    filename=os.path.join(out_folder, 'export.log'),
     format='%(asctime)s %(levelname)s:%(message)s', 
     level=logging.INFO
 )
-
-
-
-# To  retrieve the datasets of an input role named 'input_A' as an array of dataset names:
-input_A_names = get_input_names_for_role('input_A_role')
-# The dataset objects themselves can then be created like this:
-input_A_datasets = [dataiku.Dataset(name) for name in input_A_names]
-
-# For outputs, the process is the same:
-output_A_names = get_output_names_for_role('main_output')
-output_A_datasets = [dataiku.Dataset(name) for name in output_A_names]
