@@ -112,5 +112,18 @@ if GRAPH_NODES_DELETE:
         logging.error("[-] Failed to delete existing nodes")
         logging.error(str(e))
         
-# 
+# Actually load the data
+q = """
+  LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '|' 
+  CREATE (%s)
+""" % ('export.csv', schema)
+
+logging.info("[+] Loading CSV file into Neo4j...")
+try:
+    r = graph.run(q)
+    logging.info("[+] Loading complete")
+    logging.info(r.stats())
+except Exception, e:
+    logging.error("[-] Issue while loading CSV")
+    logging.error("[-] {}".format(str(e)))
 
