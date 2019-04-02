@@ -47,7 +47,7 @@
         },
         {
             "name": "graph-nodes-delete",
-            "label": "Delete Nodes"
+            "label": "Delete Nodes",
             "type": "BOOLEAN",
             "description":"Should existing nodes with this label be deleted first?",
             "mandatory" : true,
