@@ -48,11 +48,11 @@ logger.addHandler(file_handler)
 logging.info("[+] Reading dataset as dataframe...")
 ds = dataiku.Dataset(INPUT_DATASET_NAME)
 df = ds.get_dataframe()
-logger.info("[+] Read dataset with {} rows and {} columns".format(df.shape[0], df.shape[1]))
+logger.info("[+] Read dataset with {} rows and {} columns\n".format(df.shape[0], df.shape[1]))
 
 logger.info("[+] Exporting input dataframe to CSV...")
 df.to_csv(path_or_buf=os.path.join(out_folder, 'export.csv'), sep="|",header=False, index=False)
-logger.info("[+] Exported to CSV")
+logger.info("[+] Exported to CSV\n")
 
 
 #==============================================================================
