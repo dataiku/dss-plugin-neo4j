@@ -70,7 +70,14 @@
             "name": "neo4j-user",
             "label" : "Neo4j User",
             "type": "STRING",
-            "description":"IP or name of the neo4j server",
+            "description":"Neo4j Username",
+            "mandatory" : true
+        },        
+        {
+            "name": "neo4j-password",
+            "label" : "Neo4j Password",
+            "type": "STRING",
+            "description":"Neo4j Password",
             "mandatory" : true
         },
         
