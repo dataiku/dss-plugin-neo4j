@@ -7,7 +7,7 @@
     "kind" : "PYTHON",
     "inputRoles" : [
         {
-            "name": "input_dataset",
+            "name": "input-dataset",
             "label": "Input Dataset",
             "description": "Dataiku Dataset holding the nodes",
             "arity": "UNARY",
@@ -17,7 +17,7 @@
     ],
     "outputRoles" : [
         {
-            "name": "outpour_folder",
+            "name": "output-folder",
             "label": "Results Folder",
             "description": "Dataiku Folder storing the export log and results",
             "arity": "UNARY",
