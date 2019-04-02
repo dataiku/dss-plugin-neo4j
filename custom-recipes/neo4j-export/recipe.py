@@ -72,10 +72,10 @@ p = Popen(
 out, err = p.communicate()
 
 if err == '':
-    logger.info("[+] Copied file to Neo4j server")
+    logger.info("[+] Copied file to Neo4j server\n")
 else:
     logger.error("[-] Issue while copying CSV file to Neo4j server")
-    logger.error("[-] {}".format(err))
+    logger.error("[-] {}\n".format(err))
     
     
 
