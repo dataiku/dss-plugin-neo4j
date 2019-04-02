@@ -34,14 +34,19 @@
     // STRING, INT, DOUBLE, BOOLEAN, PASSWORD, SELECT, MAP, COLUMN, COLUMNS, TEXTAREA
     "params": [
         {
-            "name": "parameter1",
-            "label" : "User-readable label",
+            "label":"Graph settings",
+            "type": "SEPARATOR"
+        },        
+        {
+            "name": "graph-nodes-label",
+            "label" : "Nodes Label",
             "type": "STRING",
-            "description":"Some documentation for parameter1",
+            "description":"Labels for the nodes that will be created",
             "mandatory" : true
         },
         {
-            "name": "parameter2",
+            "name": "graph-nodes-delete",
+            "label": "Delete nodes?"
             "type": "INT",
             "defaultValue" : 42
             /* Note that standard json parsing will return it as a double in Python (instead of an int), so you need to write
