@@ -103,10 +103,11 @@ if GRAPH_NODES_DELETE:
     q = """
       MATCH (n:%s)
       DETACH DELETE n
-    """ % (GRAPH_LABELS)
+    """ % (GRAPH_NODES_LABEL)
     try:
         r = graph.run(q)
-        print r.data()
+        logging.info("[+] Deleted existing nodes"
+        logging.info( r.stats() )
     except Exception, e:
         print str(e)
 
