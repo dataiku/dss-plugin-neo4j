@@ -94,7 +94,7 @@ logger.info("[+]\n{}\n".format(schema))
 
 # Connect to Neo4j
 uri = NEO4J_URI
-graph = Graph(ur, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
+graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
 
 # Clean data if needed
 if GRAPH_NODES_DELETE:
