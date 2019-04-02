@@ -7,7 +7,7 @@ import pandas as pd
 from py2neo import Graph
 from subprocess import Popen, PIPE
 from dataiku.customrecipe import *
-
+from logging.handlers import FileHandler
 
 #==============================================================================
 # PLUGIN SETTINGS
