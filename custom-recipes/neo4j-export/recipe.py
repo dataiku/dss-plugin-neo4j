@@ -17,11 +17,11 @@ INPUT_DATASET_NAME = get_input_names_for_role('input-dataset')[0]
 OUTPUT_FOLDER_NAME = get_output_names_for_role('output-folder')[0]
 
 # Recipe settings
-API_KEY         = get_recipe_config().get('api-key', None)
-AZURE_LOCATION  = get_recipe_config().get('azure-location', None)
-TEXT_COLUMN     = get_recipe_config().get('text-column', None)
-LANGUAGE_COLUMN = get_recipe_config().get('language-column', '')
-OUTPUT_COLUMN   = get_recipe_config().get('output-column', 'entities')
+API_KEY         = get_recipe_config().get('graph-nodes-label', None)
+AZURE_LOCATION  = get_recipe_config().get('graph-nodes-delete', False)
+TEXT_COLUMN     = get_recipe_config().get('neo4j-uri', None)
+LANGUAGE_COLUMN = get_recipe_config().get('neo4j-user', None)
+OUTPUT_COLUMN   = get_recipe_config().get('neo4j-password', None)
 BATCH_SIZE      = get_recipe_config().get('batch-size', None)
 READING_LIMIT   = get_recipe_config().get('reading-limit', None)
 
