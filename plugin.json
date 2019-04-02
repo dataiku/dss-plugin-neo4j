@@ -3,11 +3,11 @@
     "version" : "0.0.1",
     "meta" : {
         "label" : "Neo4j",
-        "description" : "A longer string explaining what the plugin does",
-        "author" : "admin",
+        "description" : "Interacting with Neo4j graph database",
+        "author" : "Dataiku (Thomas)",
         "icon" : "icon-puzzle-piece",
         "licenseInfo" : "Apache Software License",
         "url" : "https://www.dataiku.com",
-        "tags" : ["nicedataset", "dev"]
+        "tags" : ["graph", "connectivity"]
     }
 }
