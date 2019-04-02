@@ -33,8 +33,9 @@
     // The available parameter types are:
     // STRING, INT, DOUBLE, BOOLEAN, PASSWORD, SELECT, MAP, COLUMN, COLUMNS, TEXTAREA
     "params": [
+        
         {
-            "label":"Graph settings",
+            "label":"Graph Settings",
             "type": "SEPARATOR"
         },        
         {
@@ -46,39 +47,40 @@
         },
         {
             "name": "graph-nodes-delete",
-            "label": "Delete nodes"
+            "label": "Delete Nodes"
             "type": "BOOLEAN",
             "description":"Should existing nodes with this label be deleted first?",
-            "defaultValue" : false,
+            "mandatory" : true,
+            "defaultValue" : false
+        },
+        
+        {
+            "label": "Neo4j Server SSH Settings",
+            "type": "SEPARATOR"
+        },        
+        {
+            "name": "ssh-host",
+            "label" : "SSH Host",
+            "type": "STRING",
+            "description":"IP or name of the server",
             "mandatory" : true
-        },
-
-        // A "SELECT" parameter is a multi-choice selector. Choices are specified using the selectChoice field
+        },        
         {
-            "name": "parameter3",
-            "type": "SELECT",
-            "selectChoices": [
-                {
-                    "value": "val_x",
-                    "label": "display name for val_x"
-                },
-                {
-                    "value": "val_y",
-                    "label": "display name for val_y"
-                },
-            ]
-        },
-
-        // A 'COLUMN' parameter is a string, whose value is a column name from an input schema.
-        // To specify the input schema whose column names are used, use the "columnRole" field like below.
-        // The column names will come from the schema of the first dataset associated to that role.
+            "name": "ssh-user",
+            "label" : "SSH User",
+            "type": "STRING",
+            "description":"SSH Username",
+            "mandatory" : true,
+            
+        },        
         {
-            "name": "parameter4",
-            "type": "COLUMN",
-            "columnRole":"input_B_role"
+            "name": "ssh-import-dir",
+            "label" : "SSH Import Directory",
+            "type": "STRING",
+            "description":"SSH Username",
+            "mandatory" : true,
+            "defaultValue" : ""
         }
-
-        // The 'COLUMNS' type works in the same way, except that it is a list of strings.
     ],
 
     // The field "resourceKeys" holds a list of keys that allows to limit the number
