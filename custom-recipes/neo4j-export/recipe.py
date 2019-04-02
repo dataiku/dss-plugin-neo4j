@@ -64,7 +64,7 @@ p = Popen(
     [
         "scp", 
         os.path.join(out_folder, 'export.csv'), 
-        "{}@{}:{}".format(SSH_USER, SSH_HOST, SSH_IMPORT_DIR)
+        "{}@{}:{}".format(SSH_USER, SSH_HOST, SSH_IMPORT_DIRECTORY)
     ], stdin=PIPE, stdout=PIPE, stderr=PIPE
 )
 out, err = p.communicate()
