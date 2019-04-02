@@ -106,8 +106,9 @@ if GRAPH_NODES_DELETE:
     """ % (GRAPH_NODES_LABEL)
     try:
         r = graph.run(q)
-        logging.info("[+] Deleted existing nodes"
+        logging.info("[+] Deleted existing nodes")
         logging.info( r.stats() )
     except Exception, e:
+        logging.info("[+] Deleted existing nodes"
         print str(e)
 
