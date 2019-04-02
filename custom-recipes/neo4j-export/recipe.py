@@ -76,3 +76,9 @@ if err == '':
 else:
     logging.error("[-] Issue while copying CSV file to Neo4j server")
     logging.error("[-] {}".format(err))
+    
+    
+
+#==============================================================================
+# LOADING DATA INTTO NEO4J
+#==============================================================================
