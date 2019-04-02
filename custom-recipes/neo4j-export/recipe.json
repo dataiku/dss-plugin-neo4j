@@ -46,12 +46,11 @@
         },
         {
             "name": "graph-nodes-delete",
-            "label": "Delete nodes?"
-            "type": "INT",
-            "defaultValue" : 42
-            /* Note that standard json parsing will return it as a double in Python (instead of an int), so you need to write
-               int(get_recipe_config()['parameter2'])
-            */
+            "label": "Delete nodes"
+            "type": "BOOLEAN",
+            "description":"Should existing nodes with this label be deleted first?",
+            "defaultValue" : false,
+            "mandatory" : true
         },
 
         // A "SELECT" parameter is a multi-choice selector. Choices are specified using the selectChoice field
