@@ -108,14 +108,5 @@
             "mandatory" : true,
             "defaultValue" : "import"
         }
-    ],
-
-    // The field "resourceKeys" holds a list of keys that allows to limit the number
-    // of concurrent executions and activities triggered by this recipe.
-    //
-    // Administrators can configure the limit per resource key in the Administration > Settings > Flow build
-    // screen.
-
-    "resourceKeys" : []
-
+    ]
 }
