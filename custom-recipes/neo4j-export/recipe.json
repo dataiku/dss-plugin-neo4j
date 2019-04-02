@@ -7,19 +7,11 @@
     "kind" : "PYTHON",
     "inputRoles" : [
         {
-            "name": "input_A_role",
-            "label": "input A displayed name",
-            "description": "what input A means",
+            "name": "input_dataset",
+            "label": "Input Dataset",
+            "description": "Dataiku Dataset holding the nodes",
             "arity": "UNARY",
             "required": true,
-            "acceptsDataset": true
-        },
-        {
-            "name": "input_B_role",
-            "label": "input B displayed name",
-            "description": "what input B means",
-            "arity": "NARY",
-            "required": false,
             "acceptsDataset": true
         }
     ],
