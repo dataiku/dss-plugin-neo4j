@@ -99,7 +99,7 @@ uri = NEO4J_URI
 graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
 
 # Clean data if needed
-if GRAPH_CLEANUP:
+if GRAPH_NODES_DELETE:
     q = """
       MATCH (n:%s)
       DETACH DELETE n
