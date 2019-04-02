@@ -123,6 +123,7 @@ try:
     r = graph.run(q)
     logger.info("[+] Loading complete")
     logger.info(r.stats())
+    logger.info("\n")
 except Exception, e:
     logger.error("[-] Issue while loading CSV")
     logger.error("[-] {}\n".format(str(e)))
