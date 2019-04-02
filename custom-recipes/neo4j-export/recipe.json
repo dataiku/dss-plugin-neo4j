@@ -55,6 +55,26 @@
         },
         
         {
+            "label": "Neo4j Settings",
+            "type": "SEPARATOR"
+        },        
+        {
+            "name": "neo4j-uri",
+            "label" : "Neo4j URI",
+            "type": "STRING",
+            "description":"Connection URI for Neo4j",
+            "mandatory" : true,
+            "defaultValue": ""
+        },        
+        {
+            "name": "neo4j-port",
+            "label" : "Neo4j Host",
+            "type": "STRING",
+            "description":"IP or name of the neo4j server",
+            "mandatory" : true
+        },
+        
+        {
             "label": "Neo4j Server SSH Settings",
             "type": "SEPARATOR"
         },        
