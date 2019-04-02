@@ -5,8 +5,8 @@ import dataiku
 import tempfile
 import pandas as pd
 from py2neo import Graph
-from dataiku.customrecipe import *
 from subprocess import Popen, PIPE
+from dataiku.customrecipe import *
 
 # Set logging config
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.INFO)
