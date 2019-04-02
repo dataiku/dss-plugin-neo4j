@@ -17,12 +17,13 @@
     ],
     "outputRoles" : [
         {
-            "name": "main_output",
-            "label": "main output displayed name",
-            "description": "what main output means",
+            "name": "outpour_folder",
+            "label": "Results Folder",
+            "description": "Dataiku Folder storing the export log and results",
             "arity": "UNARY",
-            "required": false,
-            "acceptsDataset": true
+            "required": true,
+            "acceptsManagedFolder": true,
+            "acceptsDataset": false
         }
     ],
     // The available parameter types are:
