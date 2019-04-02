@@ -1,7 +1,7 @@
 {
     "meta" : {
-        "label" : "Custom recipe from recipe neo4j-export",
-        "description" : "Custom recipe",
+        "label" : "Export Nodes",
+        "description" : "Create Neo4j nodes from a Dataiku Dataset",
         "icon" : "icon-puzzle-piece"
     },
     "kind" : "PYTHON",
