@@ -1,10 +1,13 @@
 {
+    
     "meta" : {
         "label" : "Export Nodes",
         "description" : "Create Neo4j nodes from a Dataiku Dataset",
         "icon" : "icon-puzzle-piece"
     },
+    
     "kind" : "PYTHON",
+    
     "inputRoles" : [
         {
             "name": "input-dataset",
@@ -26,6 +29,7 @@
             "acceptsDataset": false
         }
     ],
+    
     // The available parameter types are:
     // STRING, INT, DOUBLE, BOOLEAN, PASSWORD, SELECT, MAP, COLUMN, COLUMNS, TEXTAREA
     "params": [
