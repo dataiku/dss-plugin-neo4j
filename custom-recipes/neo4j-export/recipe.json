@@ -76,7 +76,7 @@
         {
             "name": "neo4j-password",
             "label" : "Neo4j Password",
-            "type": "STRING",
+            "type": "PASSWORD",
             "description":"Neo4j Password",
             "mandatory" : true
         },
