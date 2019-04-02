@@ -8,10 +8,23 @@ from py2neo import Graph
 from subprocess import Popen, PIPE
 from dataiku.customrecipe import *
 
-# Set logging config
-logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.INFO)
+#==============================================================================
+# PLUGIN SETTINGS
+#==============================================================================
 
-# Get I/O settings
+# I/O settings
+INPUT_DS_NAME    = get_input_names_for_role('input-dataset')[0]
+OUTPUT_FOL_NAME  = get_output_names_for_role('output-dataset')[0]
+
+
+# Set logging config
+logging.basicConfig(
+    filename
+    format='%(asctime)s %(levelname)s:%(message)s', 
+    level=logging.INFO
+)
+
+
 
 # To  retrieve the datasets of an input role named 'input_A' as an array of dataset names:
 input_A_names = get_input_names_for_role('input_A_role')
