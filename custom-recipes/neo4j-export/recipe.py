@@ -33,7 +33,7 @@ SSH_IMPORT_DIRECTORY  = get_recipe_config().get('ssh-import-directory', None)
 # LOGGING SETTINGS
 #==============================================================================
 out_folder = dataiku.Folder(OUTPUT_FOLDER_NAME)
-print out_folder
+print out_folder.get_path()
 
 logging.basicConfig(
     filename=os.path.join(out_folder, 'export.log'),
