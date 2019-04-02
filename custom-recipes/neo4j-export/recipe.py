@@ -45,11 +45,31 @@ logging.basicConfig(
 # EXPORTING TO CSV
 #==============================================================================
 
-# Getting input data (nodes)
+logging.info("[+] Reading dataset as dataframe...")
 ds = dataiku.Dataset(INPUT_DATASET_NAME)
 df = ds.get_dataframe()
+logging.info("[+] Read dataset with {} rows and {} columns".format(df.shape[0], df.shape[1]))
 
-# Build CSV
 logging.info("[+] Exporting input dataframe to CSV...")
 df.to_csv(path_or_buf=os.path.join(out_folder, 'export.csv'), sep="|",header=False, index=False)
 logging.info("[+] Exported to CSV")
+
+
+#==============================================================================
+# COPYING TO NEO4J SERVER
+#==============================================================================
+
+logging.info("[+] Copying file to Neo4j server...")
+p = Popen(
+    [
+        "scp", 
+        os.path.join(out_folder, 'export.csv'), 
+        "{}@{}:{}".format(SSH_USER, SSH_HOST, SSH_IMPORT_DIR)
+    ], stdin=PIPE, stdout=PIPE, stderr=PIPE
+)
+out, err = p.communicate()
+if err == '':
+        logging.info("[+] Copied file {} to Neo4j server".format(tmpfilename))
+else:
+    logging.error("[-] Issue while copying CSV file to Neo4j server")
+    logging.error("[-] {}".format(err))
