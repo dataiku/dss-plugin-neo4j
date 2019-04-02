@@ -128,8 +128,9 @@ except Exception, e:
     logging.error("[-] {}".format(str(e)))
     
 # Perform clean up
-p = Popen(["ssh", "{}@{}".format(SSH_USER, SSH_HOST), "rm -rf", "{}/export.csv"
-    ], stdin=PIPE, stdout=PIPE, stderr=PIPE
+p = Popen(
+    ["ssh", "{}@{}".format(SSH_USER, SSH_HOST), "rm -rf", "{}/export.csv"], 
+    stdin=PIPE, stdout=PIPE, stderr=PIPE
 )
 
 out, err = p.communicate()
