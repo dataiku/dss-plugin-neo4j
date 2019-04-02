@@ -13,8 +13,11 @@ from dataiku.customrecipe import *
 #==============================================================================
 
 # I/O settings
-INPUT_DS_NAME    = get_input_names_for_role('input-dataset')[0]
-OUTPUT_FOL_NAME  = get_output_names_for_role('output-dataset')[0]
+INPUT_DATASET_NAME = get_input_names_for_role('input-dataset')[0]
+OUTPUT_FOLDER_NAME = get_output_names_for_role('output-folder')[0]
+
+# Recipe settings
+
 
 
 # Set logging config
