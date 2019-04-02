@@ -3,7 +3,7 @@
     "version" : "0.0.1",
     "meta" : {
         "label" : "Neo4j",
-        "description" : "Interacting with Neo4j graph database",
+        "description" : "Interacting with the Neo4j graph database",
         "author" : "Dataiku (Thomas)",
         "icon" : "icon-puzzle-piece",
         "licenseInfo" : "Apache Software License",
