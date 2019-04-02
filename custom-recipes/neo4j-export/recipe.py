@@ -34,11 +34,11 @@ SSH_IMPORT_DIRECTORY  = get_recipe_config().get('ssh-import-directory', None)
 #==============================================================================
 out_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
 
-logging.basicConfig(
-    filename=,
-    format='%(asctime)s %(levelname)s:%(message)s', 
-    level=logging.INFO
-)
+#logging.basicConfig(
+#    filename=,
+#    format='%(asctime)s %(levelname)s:%(message)s', 
+#    level=logging.INFO
+#)
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -54,18 +54,18 @@ logger.addHandler(file_handler)
 logging.info("[+] Reading dataset as dataframe...")
 ds = dataiku.Dataset(INPUT_DATASET_NAME)
 df = ds.get_dataframe()
-logging.info("[+] Read dataset with {} rows and {} columns".format(df.shape[0], df.shape[1]))
+logger.info("[+] Read dataset with {} rows and {} columns".format(df.shape[0], df.shape[1]))
 
-logging.info("[+] Exporting input dataframe to CSV...")
+logger.info("[+] Exporting input dataframe to CSV...")
 df.to_csv(path_or_buf=os.path.join(out_folder, 'export.csv'), sep="|",header=False, index=False)
-logging.info("[+] Exported to CSV")
+logger.info("[+] Exported to CSV")
 
 
 #==============================================================================
 # COPYING TO NEO4J SERVER
 #==============================================================================
 
-logging.info("[+] Copying file to Neo4j server...")
+logger.info("[+] Copying file to Neo4j server...")
 
 p = Popen(
     [
@@ -78,10 +78,10 @@ p = Popen(
 out, err = p.communicate()
 
 if err == '':
-    logging.info("[+] Copied file to Neo4j server")
+    logger.info("[+] Copied file to Neo4j server")
 else:
-    logging.error("[-] Issue while copying CSV file to Neo4j server")
-    logging.error("[-] {}".format(err))
+    logger.error("[-] Issue while copying CSV file to Neo4j server")
+    logger.error("[-] {}".format(err))
     
     
 
