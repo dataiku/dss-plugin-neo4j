@@ -109,6 +109,6 @@ if GRAPH_NODES_DELETE:
         logging.info("[+] Deleted existing nodes")
         logging.info( r.stats() )
     except Exception, e:
-        logging.info("[+] Deleted existing nodes"
-        print str(e)
+        logging.error("[-] Failed to delete existing nodes")
+        logging.error(str(e))
 
