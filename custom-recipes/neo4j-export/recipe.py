@@ -90,4 +90,6 @@ schema = schema + ' {' + '\n'
 c = ',\n'.join( ['  {}: line[{}]'.format(column, i) for i, column in enumerate(df.columns)] )
 schema = schema + c
 schema = schema + '\n' + '}'
+
 logging.info("[+] Built Neo4j output schema for nodes with label {}".format(GRAPH_NODES_LABEL))
+logging.info("[+] {}".format(schema))
