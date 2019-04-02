@@ -121,11 +121,11 @@ q = """
 logger.info("[+] Loading CSV file into Neo4j...")
 try:
     r = graph.run(q)
-    logger.info("[+] Loading complete")
+    logger.info("[+] Loading complete\n")
     logger.info(r.stats())
 except Exception, e:
     logger.error("[-] Issue while loading CSV")
-    logger.error("[-] {}".format(str(e)))
+    logger.error("[-] {}\n".format(str(e)))
     
 # Perform clean up
 p = Popen(
