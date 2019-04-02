@@ -2,7 +2,6 @@ import os
 import sys
 import logging
 import dataiku
-import tempfile
 import pandas as pd
 from py2neo import Graph
 from subprocess import Popen, PIPE
