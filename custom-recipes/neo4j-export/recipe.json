@@ -32,8 +32,6 @@
         }
     ],
     
-    // The available parameter types are:
-    // STRING, INT, DOUBLE, BOOLEAN, PASSWORD, SELECT, MAP, COLUMN, COLUMNS, TEXTAREA
     "params": [
         
         {
