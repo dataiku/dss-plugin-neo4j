@@ -98,3 +98,15 @@ logging.info("[+] {}".format(schema))
 uri = NEO4J_URI
 graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
 
+# Clean data if needed
+if GRAPH_CLEANUP:
+    q = """
+      MATCH (n:%s)
+      DETACH DELETE n
+    """ % (GRAPH_LABELS)
+    try:
+        r = graph.run(q)
+        print r.data()
+    except Exception, e:
+        print str(e)
+
