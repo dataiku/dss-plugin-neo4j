@@ -101,7 +101,7 @@
             
         },        
         {
-            "name": "ssh-import-dir",
+            "name": "ssh-import-directory",
             "label" : "SSH Import Directory",
             "type": "STRING",
             "description":"Path of the Neo4J import directory",
