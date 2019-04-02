@@ -92,7 +92,7 @@ schema = schema + c
 schema = schema + '\n' + '}'
 
 logger.info("[+] Built Neo4j output schema for nodes with label {}".format(GRAPH_NODES_LABEL))
-logger.info("[+]\n {}\n".format(schema))
+logger.info("[+]\n{}\n".format(schema))
 
 # Connect to Neo4j
 uri = NEO4J_URI
