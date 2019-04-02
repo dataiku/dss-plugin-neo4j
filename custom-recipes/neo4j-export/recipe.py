@@ -28,29 +28,3 @@ my_variable = get_recipe_config().get('parameter_name', None)
 # The configuration of the recipe is passed through a JSON object
 # As such, INT parameters of the recipe are received in the get_recipe_config() dict as a Python float.
 # If you absolutely require a Python int, use int(get_recipe_config()["my_int_param"])
-
-
-#############################
-# Your original recipe
-#############################
-
-# -*- coding: utf-8 -*-
-import dataiku
-import pandas as pd, numpy as np
-from dataiku import pandasutils as pdu
-
-# Read recipe inputs
-households_nodes = dataiku.Dataset("households_nodes")
-households_nodes_df = households_nodes.get_dataframe()
-
-
-# Compute recipe outputs from inputs
-# TODO: Replace this part by your actual code that computes the output, as a Pandas dataframe
-# NB: DSS also supports other kinds of APIs for reading and writing data. Please see doc.
-
-exp_df = households_nodes_df # For this sample code, simply copy input to output
-
-
-# Write recipe outputs
-exp = dataiku.Dataset("exp")
-exp.write_with_schema(exp_df)
