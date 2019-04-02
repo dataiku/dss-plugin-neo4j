@@ -126,4 +126,7 @@ try:
 except Exception, e:
     logging.error("[-] Issue while loading CSV")
     logging.error("[-] {}".format(str(e)))
+    
+# Perform clean up
+
 
