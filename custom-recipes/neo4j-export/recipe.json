@@ -1,22 +1,10 @@
-// This file is the descriptor for the Custom code recipe neo4j-export
 {
-    // Meta data for display purposes
     "meta" : {
         "label" : "Custom recipe from recipe neo4j-export",
         "description" : "Custom recipe",
         "icon" : "icon-puzzle-piece"
     },
-
     "kind" : "PYTHON",
-    
-
-    // Inputs and outputs are defined by roles. In the recipe's I/O tab, the user can associate one
-    // or more dataset to each input and output role.
-
-    // The "arity" field indicates whether the user can associate several datasets to the role ('NARY')
-    // or at most one ('UNARY'). The "required" field indicates whether the user is allowed to
-    // associate no dataset with the role.
-
     "inputRoles" : [
         {
             "name": "input_A_role",
@@ -33,12 +21,8 @@
             "arity": "NARY",
             "required": false,
             "acceptsDataset": true
-            // ,'mustBeSQL': true
-            // ,'mustBeStrictlyType':'HDFS'
         }
-        // ...
     ],
-
     "outputRoles" : [
         {
             "name": "main_output",
@@ -56,15 +40,9 @@
             "required": false,
             "acceptsDataset": true
         }
-        // ...
     ],
-
-    // The field "params" holds a list of all the params
-    // for wich the user will be prompted for values in the Settings tab of the recipe.
-
     // The available parameter types are:
     // STRING, INT, DOUBLE, BOOLEAN, PASSWORD, SELECT, MAP, COLUMN, COLUMNS, TEXTAREA
-
     "params": [
         {
             "name": "parameter1",
