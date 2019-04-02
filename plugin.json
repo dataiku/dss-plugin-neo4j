@@ -5,7 +5,7 @@
         "label" : "Neo4j",
         "description" : "Interacting with the Neo4j graph database",
         "author" : "Dataiku (Thomas)",
-        "icon" : "icon-puzzle-piece",
+        "icon" : "icon-upload",
         "licenseInfo" : "Apache Software License",
         "url" : "https://www.dataiku.com",
         "tags" : ["graph", "connectivity"]
