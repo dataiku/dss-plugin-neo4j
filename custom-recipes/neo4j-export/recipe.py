@@ -35,7 +35,7 @@ SSH_IMPORT_DIRECTORY  = get_recipe_config().get('ssh-import-directory', None)
 out_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
 
 logging.basicConfig(
-    filename=os.path.join(out_folder, 'export.log'),
+    filename=,
     format='%(asctime)s %(levelname)s:%(message)s', 
     level=logging.INFO
 )
@@ -43,7 +43,7 @@ logging.basicConfig(
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
-file_handler = logging.handlers.FileHandler('activity.log', 'a')
+file_handler = logging.handlers.FileHandler(os.path.join(out_folder, 'export.log'), 'a')
 
 #==============================================================================
 # EXPORTING TO CSV
