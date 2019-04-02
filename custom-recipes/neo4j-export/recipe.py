@@ -60,6 +60,7 @@ logging.info("[+] Exported to CSV")
 #==============================================================================
 
 logging.info("[+] Copying file to Neo4j server...")
+
 p = Popen(
     [
         "scp", 
@@ -67,9 +68,11 @@ p = Popen(
         "{}@{}:{}".format(SSH_USER, SSH_HOST, SSH_IMPORT_DIRECTORY)
     ], stdin=PIPE, stdout=PIPE, stderr=PIPE
 )
+
 out, err = p.communicate()
+
 if err == '':
-        logging.info("[+] Copied file {} to Neo4j server".format(tmpfilename))
+    logging.info("[+] Copied file to Neo4j server")
 else:
     logging.error("[-] Issue while copying CSV file to Neo4j server")
     logging.error("[-] {}".format(err))
