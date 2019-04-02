@@ -140,4 +140,4 @@ p = Popen(
 out, err = p.communicate()
 
 # Local file
-
+os.remove( os.path.join(out_folder, 'export.csv') )
