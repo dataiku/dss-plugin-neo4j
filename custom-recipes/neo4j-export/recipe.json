@@ -77,7 +77,7 @@
             "name": "ssh-import-dir",
             "label" : "SSH Import Directory",
             "type": "STRING",
-            "description":"SSH Username",
+            "description":"Path of the Neo4J import directory",
             "mandatory" : true,
             "defaultValue" : "import"
         }
