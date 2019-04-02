@@ -127,10 +127,17 @@ except Exception, e:
     logger.error("[-] Issue while loading CSV")
     logger.error("[-] {}\n".format(str(e)))
     
-# Perform clean up
+    
+#==============================================================================
+# FINAL CLEANUP
+#==============================================================================
+
+# Remote file
 p = Popen(
     ["ssh", "{}@{}".format(SSH_USER, SSH_HOST), "rm -rf", "{}/export.csv".format(SSH_IMPORT_DIRECTORY)], 
     stdin=PIPE, stdout=PIPE, stderr=PIPE
 )
 out, err = p.communicate()
+
+# Local file
 
