@@ -34,12 +34,6 @@ SSH_IMPORT_DIRECTORY  = get_recipe_config().get('ssh-import-directory', None)
 #==============================================================================
 out_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
 
-#logging.basicConfig(
-#    filename=,
-#    format='%(asctime)s %(levelname)s:%(message)s', 
-#    level=logging.INFO
-#)
-
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
