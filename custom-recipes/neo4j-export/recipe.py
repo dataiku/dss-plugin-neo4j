@@ -97,8 +97,8 @@ c = ',\n'.join( ['  {}: line[{}]'.format(column, i) for i, column in enumerate(d
 schema = schema + c
 schema = schema + '\n' + '}'
 
-logging.info("[+] Built Neo4j output schema for nodes with label {}".format(GRAPH_NODES_LABEL))
-logging.info("[+] {}".format(schema))
+logger.info("[+] Built Neo4j output schema for nodes with label {}".format(GRAPH_NODES_LABEL))
+logger.info("[+] {}".format(schema))
 
 # Connect to Neo4j
 uri = NEO4J_URI
@@ -112,11 +112,11 @@ if GRAPH_NODES_DELETE:
     """ % (GRAPH_NODES_LABEL)
     try:
         r = graph.run(q)
-        logging.info("[+] Deleted existing nodes")
-        logging.info( r.stats() )
+        logger.info("[+] Deleted existing nodes")
+        logger.info( r.stats() )
     except Exception, e:
-        logging.error("[-] Failed to delete existing nodes")
-        logging.error(str(e))
+        logger.error("[-] Failed to delete existing nodes")
+        logger.error(str(e))
         
 # Actually load the data
 q = """
@@ -124,14 +124,14 @@ q = """
   CREATE (%s)
 """ % ('export.csv', schema)
 
-logging.info("[+] Loading CSV file into Neo4j...")
+logger.info("[+] Loading CSV file into Neo4j...")
 try:
     r = graph.run(q)
-    logging.info("[+] Loading complete")
-    logging.info(r.stats())
+    logger.info("[+] Loading complete")
+    logger.info(r.stats())
 except Exception, e:
-    logging.error("[-] Issue while loading CSV")
-    logging.error("[-] {}".format(str(e)))
+    logger.error("[-] Issue while loading CSV")
+    logger.error("[-] {}".format(str(e)))
     
 # Perform clean up
 p = Popen(
