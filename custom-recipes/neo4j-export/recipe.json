@@ -23,14 +23,6 @@
             "arity": "UNARY",
             "required": false,
             "acceptsDataset": true
-        },
-        {
-            "name": "errors_output",
-            "label": "errors output displayed name",
-            "description": "what errors output means",
-            "arity": "UNARY",
-            "required": false,
-            "acceptsDataset": true
         }
     ],
     // The available parameter types are:
