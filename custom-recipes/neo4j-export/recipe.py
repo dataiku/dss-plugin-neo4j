@@ -129,9 +129,8 @@ except Exception, e:
     
 # Perform clean up
 p = Popen(
-    ["ssh", "{}@{}".format(SSH_USER, SSH_HOST), "rm -rf", "{}/export.csv"], 
+    ["ssh", "{}@{}".format(SSH_USER, SSH_HOST), "rm -rf", "{}/export.csv".format(SSH_IMPORT_DIRECTORY)], 
     stdin=PIPE, stdout=PIPE, stderr=PIPE
 )
-
 out, err = p.communicate()
 
