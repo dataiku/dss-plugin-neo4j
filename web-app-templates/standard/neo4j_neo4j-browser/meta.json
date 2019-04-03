@@ -3,5 +3,5 @@
     "libraries" : [],
     "label" : "Short description of neo4j_neo4j-browser",
     "backendEnabled" : true,
-    "autoStartBackend" : false
+    "autoStartBackend" : true
 }
