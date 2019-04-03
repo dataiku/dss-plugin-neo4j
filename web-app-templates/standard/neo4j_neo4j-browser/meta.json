@@ -1,7 +1,7 @@
 // This file is the descriptor for the Standard Web App Template neo4j_neo4j-browser
 {
-    "libraries" : [],
-    "label" : "Short description of neo4j_neo4j-browser",
+    "libraries" : ["jquery", "dataiku", "bootstrap"],
+    "label" : "A simple console to interact with Neo4j",
     "backendEnabled" : true,
     "autoStartBackend" : true
 }
