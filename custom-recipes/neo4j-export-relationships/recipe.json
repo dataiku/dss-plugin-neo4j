@@ -42,11 +42,11 @@
             "name": "graph-nodes-from-label",
             "label" : "\"From\" Label",
             "type": "STRING",
-            "description":"Labels for the nodes that will be created",
+            "description":"Left-hand side (a) of the relationship (a)-[rel:REL]->(b)
             "mandatory" : true
         },
         {
-            "name": "graph-nodes-delete",
+            "name": "graph-nodes-from-label",
             "label": "Delete Nodes",
             "type": "BOOLEAN",
             "description":"Should existing nodes with this label be deleted first?",
