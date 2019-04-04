@@ -39,16 +39,18 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
 logger.info("[++] Logger id in recipe: {}".format(id(logger)))
-#file_handler = FileHandler(os.path.join(out_folder, 'export.log'), 'w')
-#file_handler.setFormatter(formatter)
-#logger.addHandler(file_handler)
+
+export_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
+export_log = os.path.join(export_folder, EXPORT_FILE_NAME)
+file_handler = FileHandler(os.path.join(out_folder, 'export.log'), 'w')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 
 #==============================================================================
 # EXPORTING TO CSV
 #==============================================================================
 
-export_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
 export_file = os.path.join(export_folder, EXPORT_FILE_NAME)
 export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 
