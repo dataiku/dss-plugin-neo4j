@@ -63,11 +63,7 @@ out, err = scp_nopassword_to_server(
 if err == '':
     msg = "[-] Issue while copying CSV file to Neo4j server\n"
     msg = msg + "[-] {}".format(err)
-    raise Exception(msg)
-else:
-    logger.error("[-] Issue while copying CSV file to Neo4j server")
-    logger.error("[-] {}\n".format(err))
-    
+    raise Exception(msg)    
     
 
 #==============================================================================
