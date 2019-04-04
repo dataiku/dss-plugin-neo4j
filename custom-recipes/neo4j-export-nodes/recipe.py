@@ -30,7 +30,7 @@ SSH_IMPORT_DIRECTORY  = get_recipe_config().get('ssh-import-directory', None)
 #==============================================================================
 # LOGGING SETTINGS
 #==============================================================================
-out_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -42,14 +42,17 @@ logger.addHandler(file_handler)
 #==============================================================================
 # EXPORTING TO CSV
 #==============================================================================
+out_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
+output_file = os.path.join(out_folder, 'export.csv')
+export_dataset(dataset=INPUT_DATASET_NAME, output_file=output_file)
 
 logging.info("[+] Reading dataset as dataframe...")
-ds = dataiku.Dataset(INPUT_DATASET_NAME)
+ds = dataiku.Dataset()
 df = ds.get_dataframe()
 logger.info("[+] Read dataset with {} rows and {} columns\n".format(df.shape[0], df.shape[1]))
 
 logger.info("[+] Exporting input dataframe to CSV...")
-df.to_csv(path_or_buf=os.path.join(out_folder, 'export.csv'), sep="|",header=False, index=False)
+df.to_csv(path_or_buf=, sep="|",header=False, index=False)
 logger.info("[+] Exported to CSV\n")
 
 
