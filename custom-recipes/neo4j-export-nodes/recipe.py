@@ -36,7 +36,7 @@ EXPORT_FILE_NAME      = 'export.csv'
 #==============================================================================
 
 logger = logging.getLogger()
-print id(logger)
+print "[++] Logger id in neo4_utils: {}".format(id(logger))
 #logger.setLevel(logging.INFO)
 #formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
 #file_handler = FileHandler(os.path.join(out_folder, 'export.log'), 'w')
