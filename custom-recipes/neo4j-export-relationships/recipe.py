@@ -12,8 +12,8 @@ from logging import FileHandler
 #==============================================================================
 
 # I/O settings
-INPUT_DATASET_NAME     = get_input_names_for_role('input-dataset')[0]
-OUTPUT_FOLDER_NAME     = get_output_names_for_role('output-folder')[0]
+INPUT_DATASET_NAME                = get_input_names_for_role('input-dataset')[0]
+OUTPUT_FOLDER_NAME                = get_output_names_for_role('output-folder')[0]
 
 # Recipe settings
 GRAPH_NODES_FROM_LABEL            = get_recipe_config().get('graph-nodes-from-label', None)
