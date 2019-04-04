@@ -59,4 +59,5 @@ def delete_nodes_with_label(graph=None, node_label=None):
         msg = msg + "[-] {}".format( str(e) )
         raise Exception(msg)
     
+
     
