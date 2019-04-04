@@ -83,20 +83,7 @@ if GRAPH_NODES_DELETE:
     delete_nodes_with_label(graph=graph, node_label=GRAPH_NODES_LABEL)
         
 # Actually load the data
-q = """
-  LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '|' 
-  CREATE (%s)
-""" % ('export.csv', schema)
-
-logger.info("[+] Loading CSV file into Neo4j...")
-try:
-    r = graph.run(q)
-    logger.info("[+] Loading complete")
-    logger.info(r.stats())
-except Exception, e:
-    logger.error("[-] Issue while loading CSV")
-    logger.error("[-] {}\n".format(str(e)))
-    
+create_nodes_from_csv(graph=None, csv=None, schema=None)
     
 #==============================================================================
 # FINAL CLEANUP
