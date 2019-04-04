@@ -51,6 +51,8 @@ def delete_nodes_with_label(graph=None, node_label=None):
     try:
         r = graph.run(q)
     except Exception, e:
+        msg = "[-] Issue while deleting nodes with label {}".format(node_label)
+        
         print str(e)
         raise Exception()
     
