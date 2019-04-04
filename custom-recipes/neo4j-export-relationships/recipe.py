@@ -99,7 +99,7 @@ r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES
 # Creating schema
 schema = ', '.join( ['line[{}] AS {}'.format(i, column) for i, column in enumerate(df.columns)] )
 logger.info("[+] Built Neo4j output schema")
-logger.info("[+]\n{}\n".format(schema))
+#logger.info("[+]\n{}\n".format(schema))
 
 
        
@@ -119,7 +119,8 @@ q = """
     GRAPH_RELATIONSHIP_VERB
 )
 
-logger.info("[+] Loading CSV file into Neo4j...")
+logger.info("[+] Loading CSV file into Neo4j using query:...")
+logger.info("[+] %s" % (q))
 try:
     r = graph.run(q)
     logger.info("[+] Loading complete")
