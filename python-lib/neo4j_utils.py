@@ -44,6 +44,10 @@ def build_node_schema(node_label=None, dataset=None):
 
 
 def delete_nodes_with_label(graph=None, node_label=None):
+    '''
+    Simple helper to delete all nodes with a given label within
+    a Neo4j graph
+    '''
     q = """
       MATCH (n:%s)
       DETACH DELETE n
