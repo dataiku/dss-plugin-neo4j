@@ -1,8 +1,8 @@
 {
     
     "meta" : {
-        "label" : "Export Edges",
-        "description" : "Create Neo4j edges from a Dataiku Dataset",
+        "label" : "Export Relationships",
+        "description" : "Create Neo4j relationships from a Dataiku Dataset",
         "icon" : "icon-upload",
         "iconColor": "green"
     },
