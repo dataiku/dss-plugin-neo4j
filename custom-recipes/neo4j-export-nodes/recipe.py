@@ -60,7 +60,7 @@ out, err = scp_nopassword_to_server(
     sshpath=SSH_IMPORT_DIRECTORY
 )
 
-if err == '':
+if err != '':
     msg = "[-] Issue while copying CSV file to Neo4j server\n"
     msg = msg + "[-] {}".format(err)
     raise Exception(msg)    
