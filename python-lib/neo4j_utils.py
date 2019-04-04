@@ -11,9 +11,9 @@ def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
         with ds.raw_formatted_data(format=format) as i:
             while True:
                 chunk = i.read(32000)
-            if len(chunk) == 0:
-                break
-            o.write(chunk)
+                if len(chunk) == 0:
+                    break
+                o.write(chunk)
     
     
 def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshpath=None):
