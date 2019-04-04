@@ -40,7 +40,7 @@
         },        
         {
             "name": "graph-nodes-from-label",
-            "label" : "Nodes Label",
+            "label" : "\"From\" Label",
             "type": "STRING",
             "description":"Labels for the nodes that will be created",
             "mandatory" : true
