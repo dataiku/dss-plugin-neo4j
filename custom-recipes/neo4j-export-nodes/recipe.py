@@ -72,15 +72,7 @@ if err != '':
 #==============================================================================
 
 # Creating schema
-schema = ''
-schema = schema + ':{}'.format(GRAPH_NODES_LABEL)
-schema = schema + ' {' + '\n'
-c = ',\n'.join( ['  {}: line[{}]'.format(column, i) for i, column in enumerate(df.columns)] )
-schema = schema + c
-schema = schema + '\n' + '}'
-
-logger.info("[+] Built Neo4j output schema for nodes with label {}".format(GRAPH_NODES_LABEL))
-logger.info("[+]\n{}\n".format(schema))
+schema = build_node_schema(node_name=GRAPH_NODES_LABEL, dataset=INPUT_DATASET_NAME)
 
 # Connect to Neo4j
 uri = NEO4J_URI
