@@ -65,6 +65,7 @@ def delete_nodes_with_label(graph=None, node_label=None):
     logger.info("[+] Starting deleting existing nodes with label {}...".format(node_label))
     try:
         r = graph.run(q)
+        logger.info("[+] Existing nodes with label {} deleted.".format(node_label))
     except Exception, e:
         msg = "[-] Issue while deleting nodes with label {}".format(node_label)
         msg = msg + "[-] {}".format( str(e) )
