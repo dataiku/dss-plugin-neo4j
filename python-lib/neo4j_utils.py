@@ -16,4 +16,4 @@ def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
             o.write(chunk)
     
     
-def scp_nopassword_to_server(file_to_copy=None, )
+def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshpath=None)
