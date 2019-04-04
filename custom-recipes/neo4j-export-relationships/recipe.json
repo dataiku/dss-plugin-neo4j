@@ -76,6 +76,13 @@
             "mandatory" : true
         },
         {
+            "name": "graph-relationship-verb",
+            "label" : "Verb defining the relationship",
+            "type": "STRING",
+            "description": "Verb (REL) defining the relationship (a)-[rel:REL]->(b)",
+            "mandatory" : true
+         ,
+        {
             "label": "Neo4j Settings",
             "type": "SEPARATOR"
         },        
