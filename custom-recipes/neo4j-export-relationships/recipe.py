@@ -18,8 +18,10 @@ OUTPUT_FOLDER_NAME                = get_output_names_for_role('output-folder')[0
 # Recipe settings
 GRAPH_NODES_FROM_LABEL            = get_recipe_config().get('graph-nodes-from-label', None)
 GRAPH_NODES_FROM_KEY              = get_recipe_config().get('graph-nodes-from-key', None)
+GRAPH_RELATIONSHIPS_FROM_KEY      = get_recipe_config().get('graph-relationships-from-key', None)
 GRAPH_NODES_TO_LABEL              = get_recipe_config().get('graph-nodes-to-label', None)
 GRAPH_NODES_TO_KEY                = get_recipe_config().get('graph-nodes-to-key', None)
+GRAPH_RELATIONSHIPS_TO_KEY        = get_recipe_config().get('graph-relationships-to-key', None)
 GRAPH_RELATIONSHIP_VERB           = get_recipe_config().get('graph-relationship-verb', None)
 GRAPH_RELATIONSHIP_SET_PROPERTIES = get_recipe_config().get('graph-relationship-set-properties', None)
 NEO4J_URI                         = get_recipe_config().get('neo4j-uri', None)
