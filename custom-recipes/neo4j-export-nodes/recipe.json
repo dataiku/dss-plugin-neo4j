@@ -71,7 +71,8 @@
             "label" : "Neo4j User",
             "type": "STRING",
             "description":"Neo4j Username",
-            "mandatory" : true
+            "mandatory" : true,
+            "defaultValue": "neo4j"
         },        
         {
             "name": "neo4j-password",
@@ -97,7 +98,8 @@
             "label" : "SSH User",
             "type": "STRING",
             "description":"SSH Username",
-            "mandatory" : true
+            "mandatory" : true,
+            "defaultValue": "neo4j"
             
         },        
         {
