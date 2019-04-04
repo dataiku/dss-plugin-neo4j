@@ -41,3 +41,7 @@ def build_node_schema(node_label=None, dataset=None):
     schema = schema + c
     schema = schema + '\n' + '}'
     return schema
+
+def delete_nodes_with_label(graph=None, node_label=None):
+    
+    
