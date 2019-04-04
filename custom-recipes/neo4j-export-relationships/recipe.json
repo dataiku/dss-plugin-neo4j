@@ -76,11 +76,12 @@
             "mandatory" : true
         },
         {
-            "name": "graph-relationship-verb",
-            "label" : "Verb defining the relationship",
-            "type": "STRING",
-            "description": "Verb (REL) defining the relationship (a)-[rel:REL]->(b)",
-            "mandatory" : true
+            "name": "graph-relationship-set-properties",
+            "label" : "Set properties",
+            "type": "BOOLEAN",
+            "description": "Should all the remaining columns be used to set relationship properties",
+            "mandatory" : true,
+            "defaultValue": false
          ,
         {
             "label": "Neo4j Settings",
