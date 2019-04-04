@@ -108,10 +108,14 @@ q = """
   USING PERIODIC COMMIT
   LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '|'
   WITH %s
-  MATCH (p:Product {product_id: product_id})
-  MATCH (h:Household {household_key: household_key})
-  MERGE (h)-[rel:BUYS]->(p)
-""" % ('export.csv', schema)
+  MATCH (f:%s {%s: %s})
+  MATCH (t:%s {%s: %s})
+  MERGE (f)-[rel:BUYS]->(t)
+""" % ('export.csv', 
+       schema, 
+       GRAPH_NODES_FROM_LABEL, GRAPH_NODES_FROM_KEY, GRAPH_RELATIONSHIPS_FROM_KEY,
+       GRAPH_NODES_TO_LABEL, GRAPH_NODES_TO_KEY, GRAPH_RELATIONSHIPS_TO_KEY,
+      )
 
 logger.info("[+] Loading CSV file into Neo4j...")
 try:
