@@ -2,6 +2,10 @@ import dataiku
 from subprocess import Popen, PIPE
 
 def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
+    '''
+    This function exports a Dataiku Dataset to CSV with no 
+    need to go through a Pandas dataframe first
+    '''
     ds = dataiku.Dataset(dataset)
     with open(output_file, "w") as o:
         with ds.raw_formatted_data(format=format) as i:
