@@ -3,6 +3,7 @@ import logging
 import dataiku
 import pandas as pd
 from py2neo import Graph
+from neo4j_utils import *
 from subprocess import Popen, PIPE
 from dataiku.customrecipe import *
 from logging import FileHandler
