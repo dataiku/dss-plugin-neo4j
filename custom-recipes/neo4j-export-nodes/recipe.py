@@ -83,7 +83,7 @@ if GRAPH_NODES_DELETE:
     delete_nodes_with_label(graph=graph, node_label=GRAPH_NODES_LABEL)
         
 # Actually load the data
-create_nodes_from_csv(graph=None, csv=None, schema=None)
+create_nodes_from_csv(graph=graph, csv=None, schema=None)
     
 #==============================================================================
 # FINAL CLEANUP
