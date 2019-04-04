@@ -1,4 +1,5 @@
 import dataiku
+from subprocess import Popen, PIPE
 
 def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
     ds = dataiku.Dataset(dataset)
