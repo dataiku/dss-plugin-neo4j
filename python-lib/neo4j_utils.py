@@ -21,5 +21,4 @@ def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshp
         ["scp", file_to_copy, "{}@{}:{}".format(sshuser, sshhost, sshpath)], 
         stdin=PIPE, stdout=PIPE, stderr=PIPE
     )
-
-out, err = p.communicate()
+    out, err = p.communicate()
