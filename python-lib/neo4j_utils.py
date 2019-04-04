@@ -49,6 +49,7 @@ def build_node_schema(node_label=None, dataset=None):
     c = ',\n'.join( ["  {}: line[{}]".format(r["name"], i) for i, r in enumerate(ds.read_schema())] )
     schema = schema + c
     schema = schema + '\n' + '}'
+    logger.info("[+] Schema generation complete for node {}.".format(node_label))
     return schema
 
 
