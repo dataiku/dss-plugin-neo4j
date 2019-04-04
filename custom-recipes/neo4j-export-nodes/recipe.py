@@ -72,7 +72,7 @@ if err != '':
 #==============================================================================
 
 # Creating schema
-schema = build_node_schema(node_name=GRAPH_NODES_LABEL, dataset=INPUT_DATASET_NAME)
+schema = build_node_schema(node_label=GRAPH_NODES_LABEL, dataset=INPUT_DATASET_NAME)
 
 # Connect to Neo4j
 uri = NEO4J_URI
