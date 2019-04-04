@@ -27,11 +27,13 @@ def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshp
     This function copies a file to a remote server using SCP. 
     It requires a password-less access (i.e SSH public key is available)
     '''
+    logger.info("[+] Copying file to remote server...")
     p = Popen(
         ["scp", file_to_copy, "{}@{}:{}".format(sshuser, sshhost, sshpath)], 
         stdin=PIPE, stdout=PIPE, stderr=PIPE
     )
     out, err = p.communicate()
+    logger.info("[+] Copying file complete.")
     return out, err
 
 
