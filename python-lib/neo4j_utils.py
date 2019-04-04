@@ -80,6 +80,7 @@ def create_nodes_from_csv(graph=None, csv=None, schema=None):
     logger.info("[+] Starting CSV import into Neo4j ...")
     try:
         r = graph.run(q)
+        logger.info("[+] CSV import complete.")
     except Exception, e:
         msg = "[-] Issue while loading CSV file"
         msg = msg + "[-] {}".format( str(e) )
