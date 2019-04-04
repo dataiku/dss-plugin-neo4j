@@ -47,15 +47,6 @@ out_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
 output_file = os.path.join(out_folder, 'export.csv')
 export_dataset(dataset=INPUT_DATASET_NAME, output_file=output_file)
 
-logging.info("[+] Reading dataset as dataframe...")
-ds = dataiku.Dataset()
-df = ds.get_dataframe()
-logger.info("[+] Read dataset with {} rows and {} columns\n".format(df.shape[0], df.shape[1]))
-
-logger.info("[+] Exporting input dataframe to CSV...")
-df.to_csv(path_or_buf=, sep="|",header=False, index=False)
-logger.info("[+] Exported to CSV\n")
-
 
 #==============================================================================
 # COPYING TO NEO4J SERVER
