@@ -43,9 +43,9 @@ logger.addHandler(file_handler)
 #==============================================================================
 # EXPORTING TO CSV
 #==============================================================================
-out_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
-output_file = os.path.join(out_folder, 'export.csv')
-export_dataset(dataset=INPUT_DATASET_NAME, output_file=output_file)
+export_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
+export_file = os.path.join(export_folder, 'export.csv')
+export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 
 
 #==============================================================================
