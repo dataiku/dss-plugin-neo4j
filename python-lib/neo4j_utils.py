@@ -34,6 +34,7 @@ def build_node_schema(node_label=None, dataset=None):
     This specific function generates the "schema" for a 
     node from a Dataiku Dataset
     '''
+    ds = dataiku.Dataset(dataset)
     schema = ''
     schema = schema + ':{}'.format(node_label)
     schema = schema + ' {' + '\n'
