@@ -53,11 +53,15 @@ export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 # COPYING TO NEO4J SERVER
 #==============================================================================
 
-scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshpath=None)
-out, err = scp_nopassword_to_server(file_to_copy=export_file, sshuser=SSH_USER, sshhost=SSH_HOST, sshpath=SSH_IMPORT_DIRECTORY)
+out, err = scp_nopassword_to_server(
+    file_to_copy=export_file, 
+    sshuser=SSH_USER, 
+    sshhost=SSH_HOST, 
+    sshpath=SSH_IMPORT_DIRECTORY
+)
 
 if err == '':
-    logger.info("[+] Copied file to Neo4j server\n")
+    
 else:
     logger.error("[-] Issue while copying CSV file to Neo4j server")
     logger.error("[-] {}\n".format(err))
