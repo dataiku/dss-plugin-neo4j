@@ -3,7 +3,6 @@ import dataiku
 from subprocess import Popen, PIPE
 
 logger = logging.getLogger()
-logger.info("[++] Logger id in recipe: {}".format(id(logger)))
 
 def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
     '''
