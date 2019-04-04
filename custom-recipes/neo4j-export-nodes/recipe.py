@@ -48,7 +48,7 @@ logger.addHandler(file_handler)
 #==============================================================================
 
 export_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
-export_file = os.path.join(export_folder, 'export.csv')
+export_file = os.path.join(export_folder, EXPORT_FILE_NAME)
 export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 
 
@@ -85,7 +85,7 @@ if GRAPH_NODES_DELETE:
     delete_nodes_with_label(graph=graph, node_label=GRAPH_NODES_LABEL)
         
 # Actually load the data
-create_nodes_from_csv(graph=graph, csv=None, schema=None)
+create_nodes_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=None)
     
 #==============================================================================
 # FINAL CLEANUP
