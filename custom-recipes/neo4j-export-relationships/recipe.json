@@ -40,18 +40,17 @@
         },        
         {
             "name": "graph-nodes-from-label",
-            "label" : "\"From\" Label",
+            "label" : "\"From\" node label",
             "type": "STRING",
-            "description":"Left-hand side (a) of the relationship (a)-[rel:REL]->(b)
+            "description": "Left-hand side node label (a) in the relationship (a)-[rel:REL]->(b)"
             "mandatory" : true
         },
         {
-            "name": "graph-nodes-from-label",
-            "label": "Delete Nodes",
-            "type": "BOOLEAN",
-            "description":"Should existing nodes with this label be deleted first?",
-            "mandatory" : true,
-            "defaultValue" : false
+            "name": "graph-nodes-from-key",
+            "label" : "\"From\" node lookup key",
+            "type": "STRING",
+            "description": "Left-hand side node key to lookup (a) in the relationship (a)-[rel:REL]->(b)"
+            "mandatory" : true
         },
         
         {
