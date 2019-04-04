@@ -29,9 +29,12 @@ def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshp
     return out, err
 
 
-def build_node_schema(node_name=None, dataset=None):
+def build_node_schema(node_label=None, dataset=None):
+    '''
+    This specific function generates the "schema" for a 
+    '''
     schema = ''
-    schema = schema + ':{}'.format(node_name)
+    schema = schema + ':{}'.format(node_label)
     schema = schema + ' {' + '\n'
     c = ',\n'.join( ["  {}: line[{}]".format(r["name"], i) for i, r in enumerate(dataset.read_schema())] )
     schema = schema + c
