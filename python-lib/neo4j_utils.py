@@ -32,6 +32,7 @@ def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshp
 def build_node_schema(node_label=None, dataset=None):
     '''
     This specific function generates the "schema" for a 
+    node from a Dataiku Dataset
     '''
     schema = ''
     schema = schema + ':{}'.format(node_label)
