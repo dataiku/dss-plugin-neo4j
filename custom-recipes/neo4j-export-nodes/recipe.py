@@ -53,17 +53,8 @@ export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 # COPYING TO NEO4J SERVER
 #==============================================================================
 
-logger.info("[+] Copying file to Neo4j server...")
-
-p = Popen(
-    [
-        "scp", 
-        os.path.join(out_folder, 'export.csv'), 
-        "{}@{}:{}".format(SSH_USER, SSH_HOST, SSH_IMPORT_DIRECTORY)
-    ], stdin=PIPE, stdout=PIPE, stderr=PIPE
-)
-
-out, err = p.communicate()
+scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshpath=None)
+out, err = scp_nopassword_to_server(file_to_copy=export_file, sshuser=SSH_USER, sshhost=SSH_HOST, sshpath=SSH_IMPORT_DIRECTORY)
 
 if err == '':
     logger.info("[+] Copied file to Neo4j server\n")
