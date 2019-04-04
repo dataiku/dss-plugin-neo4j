@@ -1,5 +1,9 @@
+import logging
 import dataiku
 from subprocess import Popen, PIPE
+
+logger = logging.getLogger()
+print id(logger)
 
 def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
     '''
