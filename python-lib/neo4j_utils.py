@@ -52,6 +52,6 @@ def delete_nodes_with_label(graph=None, node_label=None):
         r = graph.run(q)
     except Exception, e:
         print str(e)
-        raise E
+        raise Exception()
     
     
