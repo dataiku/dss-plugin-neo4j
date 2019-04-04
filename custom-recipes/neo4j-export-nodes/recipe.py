@@ -35,7 +35,7 @@ EXPORT_FILE_NAME      = 'export.csv'
 # LOGGING SETTINGS
 #==============================================================================
 
-logger = logging.getLogger("plugin-logger")
+logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
 logger.info("[++] Logger id in recipe: {}".format(id(logger)))
