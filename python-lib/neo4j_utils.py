@@ -3,7 +3,7 @@ import dataiku
 from subprocess import Popen, PIPE
 
 logger = logging.getLogger()
-print id(logger)
+print "[++] Logger id in neo4_utils: {}".format(id(logger))
 
 def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
     '''
