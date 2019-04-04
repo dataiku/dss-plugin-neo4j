@@ -127,7 +127,8 @@
             "label" : "SSH User",
             "type": "STRING",
             "description":"SSH Username",
-            "mandatory" : true
+            "mandatory" : true,
+            "defaultValue": "neo4j"
             
         },        
         {
