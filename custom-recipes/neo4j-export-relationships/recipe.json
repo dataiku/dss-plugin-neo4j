@@ -48,7 +48,8 @@
         {
             "name": "graph-nodes-from-key",
             "label" : "\"From\" node lookup key",
-            "type": "STRING",
+            "type": "COLUMN",
+            "columnRole": "input-dataset"
             "description": "Left-hand side node key to lookup (a) in the relationship (a)-[rel:REL]->(b)"
             "mandatory" : true
         },        
@@ -62,7 +63,8 @@
         {
             "name": "graph-nodes-to-key",
             "label" : "\"To\" node lookup key",
-            "type": "STRING",
+            "type": "COLUMN",
+            "columnRole": "input-dataset"
             "description": "Right-hand side node key to lookup (b) in the relationship (a)-[rel:REL]->(b)"
             "mandatory" : true
         },
