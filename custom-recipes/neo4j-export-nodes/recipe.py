@@ -38,7 +38,6 @@ EXPORT_FILE_NAME      = 'export.csv'
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
-logger.info("[++] Logger id in recipe: {}".format(id(logger)))
 
 export_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
 export_log = os.path.join(export_folder, 'export.log')
