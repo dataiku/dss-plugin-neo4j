@@ -38,9 +38,9 @@ EXPORT_FILE_NAME      = 'export.csv'
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
-file_handler = FileHandler(os.path.join(out_folder, 'export.log'), 'w')
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
+#file_handler = FileHandler(os.path.join(out_folder, 'export.log'), 'w')
+#file_handler.setFormatter(formatter)
+#logger.addHandler(file_handler)
 
 
 #==============================================================================
