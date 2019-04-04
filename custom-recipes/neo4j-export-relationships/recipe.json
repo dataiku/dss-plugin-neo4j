@@ -48,6 +48,13 @@
         {
             "name": "graph-nodes-from-key",
             "label" : "\"From\" node lookup key",
+            "type": "STRING",
+            "description": "Left-hand side node key to lookup (a) in the relationship (a)-[rel:REL]->(b)",
+            "mandatory" : true
+        },
+        {
+            "name": "graph-relationships-from-key",
+            "label" : "\"From\" lookup key in relationships",
             "type": "COLUMN",
             "columnRole": "input-dataset",
             "description": "Left-hand side node key to lookup (a) in the relationship (a)-[rel:REL]->(b)",
