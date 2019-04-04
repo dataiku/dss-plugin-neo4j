@@ -60,17 +60,14 @@ def delete_nodes_with_label(graph=None, node_label=None):
         raise Exception(msg)
     
 
-def create_nodes_from_csv(graph=None, schema=None):
+def create_nodes_from_csv(graph=None, csv=None, schema=None):
     q = """
-      LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '|' 
-  CREATE (%s)
-""" % ('export.csv', schema)
-
-logger.info("[+] Loading CSV file into Neo4j...")
-try:
-    r = graph.run(q)
-    logger.info("[+] Loading complete")
-    logger.info(r.stats())
-except Exception, e:
-    logger.error("[-] Issue while loading CSV")
-    logger.error("[-] {}\n".format(str(e)))
+      LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
+      CREATE (%s)
+    """ % (csv, schema)
+    try:
+        r = graph.run(q)
+    except Exception, e:
+        msg = "[-] Issue while loading CSV file"
+        msg = msg + "[-] {}".format( str(e) )
+        raise Exception(msg)
