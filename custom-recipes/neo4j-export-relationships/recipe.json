@@ -57,7 +57,7 @@
             "label" : "\"From\" lookup key in relationships",
             "type": "COLUMN",
             "columnRole": "input-dataset",
-            "description": "Left-hand side node key to lookup (a) in the relationship (a)-[rel:REL]->(b)",
+            "description": "Column to lookup in relationships dataset for (a) in the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },        
         {
