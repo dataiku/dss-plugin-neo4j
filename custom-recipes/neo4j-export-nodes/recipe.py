@@ -51,7 +51,7 @@ export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 
 
 #==============================================================================
-# COPYING TO NEO4J SERVER
+# COPYING FILE TO NEO4J SERVER
 #==============================================================================
 
 out, err = scp_nopassword_to_server(
