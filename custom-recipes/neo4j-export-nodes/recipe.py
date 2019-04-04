@@ -80,7 +80,7 @@ graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
 
 # Clean data if needed
 if GRAPH_NODES_DELETE:
-    delete_nodes_with_label(graph=graph, )
+    delete_nodes_with_label(graph=graph, node_label=GRAPH_NODES_LABEL)
         
 # Actually load the data
 q = """
