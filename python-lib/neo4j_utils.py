@@ -18,6 +18,8 @@ def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
                 if len(chunk) == 0:
                     break
                 o.write(chunk)
+    logger.info("[+] Export done.")
+
     
     
 def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshpath=None):
