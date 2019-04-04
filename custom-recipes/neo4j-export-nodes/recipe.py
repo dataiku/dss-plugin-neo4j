@@ -80,17 +80,7 @@ graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
 
 # Clean data if needed
 if GRAPH_NODES_DELETE:
-    q = """
-      MATCH (n:%s)
-      DETACH DELETE n
-    """ % (GRAPH_NODES_LABEL)
-    try:
-        r = graph.run(q)
-        logger.info("[+] Deleted existing nodes")
-        logger.info( r.stats() )
-    except Exception, e:
-        logger.error("[-] Failed to delete existing nodes")
-        logger.error(str(e))
+    delete_nodes_with_label(graph=graph, )
         
 # Actually load the data
 q = """
