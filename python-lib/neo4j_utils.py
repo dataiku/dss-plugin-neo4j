@@ -15,4 +15,5 @@ def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
                 break
             o.write(chunk)
     
-def copy_to_server
+    
+def scp_to_server(file_to_copy=None, )
