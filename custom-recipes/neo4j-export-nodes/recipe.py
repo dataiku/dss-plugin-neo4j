@@ -8,6 +8,7 @@ from subprocess import Popen, PIPE
 from dataiku.customrecipe import *
 from logging import FileHandler
 
+
 #==============================================================================
 # PLUGIN SETTINGS
 #==============================================================================
@@ -32,7 +33,6 @@ SSH_IMPORT_DIRECTORY  = get_recipe_config().get('ssh-import-directory', None)
 # LOGGING SETTINGS
 #==============================================================================
 
-
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
@@ -44,6 +44,7 @@ logger.addHandler(file_handler)
 #==============================================================================
 # EXPORTING TO CSV
 #==============================================================================
+
 export_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
 export_file = os.path.join(export_folder, 'export.csv')
 export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
