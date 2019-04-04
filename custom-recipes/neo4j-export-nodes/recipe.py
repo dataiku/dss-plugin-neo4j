@@ -46,7 +46,7 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 logger.info("*"*80)
-logger.info("* NEO4J EXPORT PROCESS START ")
+logger.info("* NEO4J EXPORT PROCESS STARTS ")
 logger.info("*"*80)
 
 #==============================================================================
