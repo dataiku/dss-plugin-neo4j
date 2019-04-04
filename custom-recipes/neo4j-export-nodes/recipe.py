@@ -86,6 +86,7 @@ if GRAPH_NODES_DELETE:
         
 # Actually load the data
 create_nodes_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=schema)
+
     
 #==============================================================================
 # FINAL CLEANUP
@@ -99,4 +100,4 @@ p = Popen(
 out, err = p.communicate()
 
 # Local file
-os.remove( os.path.join(out_folder, 'export.csv') )
+os.remove( export_file )
