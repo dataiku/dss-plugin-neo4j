@@ -62,6 +62,7 @@ def delete_nodes_with_label(graph=None, node_label=None):
       MATCH (n:%s)
       DETACH DELETE n
     """ % (node_label)
+    logger.info("[+] Starting deleting existing nodes with label {}...".format(node_label))
     try:
         r = graph.run(q)
     except Exception, e:
