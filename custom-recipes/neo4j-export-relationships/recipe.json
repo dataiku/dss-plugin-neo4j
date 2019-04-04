@@ -49,7 +49,7 @@
             "name": "graph-nodes-from-key",
             "label" : "\"From\" node lookup key",
             "type": "COLUMN",
-            "columnRole": "input-dataset"
+            "columnRole": "input-dataset",
             "description": "Left-hand side node key to lookup (a) in the relationship (a)-[rel:REL]->(b)"
             "mandatory" : true
         },        
