@@ -23,3 +23,13 @@ def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshp
     )
     out, err = p.communicate()
     return out, err
+
+
+def build_node_schema(node_name=None, dataset=None):
+    schema = ''
+    schema = schema + ':{}'.format(node_name)
+    schema = schema + ' {' + '\n'
+    c = ',\n'.join( ["  {}: line[{}]".format(r["name"], i) for i, r in enumerate(ds.read_schema())] )
+    schema = schema + c
+    schema = schema + '\n' + '}'
+    return schema
