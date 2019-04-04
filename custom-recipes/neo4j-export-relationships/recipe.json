@@ -39,7 +39,7 @@
             "type": "SEPARATOR"
         },        
         {
-            "name": "graph-nodes-label",
+            "name": "graph-nodes-from-label",
             "label" : "Nodes Label",
             "type": "STRING",
             "description":"Labels for the nodes that will be created",
