@@ -45,6 +45,9 @@ file_handler = FileHandler(export_log, 'w')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+logger.info("*"*80)
+logger.info("* NEO4J EXPORT PROCESS START ")
+logger.info("*"*80)
 
 #==============================================================================
 # EXPORTING TO CSV
