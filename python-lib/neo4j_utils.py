@@ -63,7 +63,7 @@ def delete_nodes_with_label(graph=None, node_label=None):
 
 def create_nodes_from_csv(graph=None, csv=None, schema=None):
     q = """
-      LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
+      LOAD CS FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
       CREATE (%s)
     """ % (csv, schema)
     try:
