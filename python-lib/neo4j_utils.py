@@ -18,9 +18,7 @@ def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
     
 def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshpath=None):
     p = Popen(
-        [
-            "scp", file_to_copy, "{}@{}:{}".format(sshuser, sshhost, sshpath)
-        ],
+        ["scp", file_to_copy, "{}@{}:{}".format(sshuser, sshhost, sshpath)], 
         stdin=PIPE, stdout=PIPE, stderr=PIPE
     )
 
