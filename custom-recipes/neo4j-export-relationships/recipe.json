@@ -67,10 +67,10 @@
             "mandatory" : true
         },
         {
-            "name": "graph-nodes-to-key",
-            "label" : "\"To\" node lookup key",
+            "name": "graph-relationship-verb",
+            "label" : "Verb defining the relationship",
             "type": "STRING",
-            "description": "Right-hand side node key to lookup (b) in the relationship (a)-[rel:REL]->(b)"
+            "description": "Verb (REL) defining the relationship (a)-[rel:REL]->(b)"
             "mandatory" : true
         },
         {
