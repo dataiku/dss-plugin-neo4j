@@ -14,7 +14,7 @@
         {
             "name": "input-dataset",
             "label": "Input Dataset",
-            "description": "Dataiku Dataset holding the edges",
+            "description": "Dataiku Dataset holding the relationships",
             "arity": "UNARY",
             "required": true,
             "acceptsDataset": true
