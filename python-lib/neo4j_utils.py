@@ -42,6 +42,16 @@ def build_node_schema(node_label=None, dataset=None):
     schema = schema + '\n' + '}'
     return schema
 
+
 def delete_nodes_with_label(graph=None, node_label=None):
+    q = """
+         MATCH (n:%s)
+         DETACH DELETE n
+    """ % (node_label)
+    try:
+        r = graph.run(q)
+    except Exception, e:
+        print str(e)
+        raise E
     
     
