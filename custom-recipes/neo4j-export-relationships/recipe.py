@@ -98,7 +98,7 @@ r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES
 
 # Creating schema
 schema = ', '.join( ['line[{}] AS {}'.format(i, column) for i, column in enumerate(df.columns)] )
-logger.info("[+] Built Neo4j output schema"
+logger.info("[+] Built Neo4j output schema")
 logger.info("[+]\n{}\n".format(schema))
 
 
