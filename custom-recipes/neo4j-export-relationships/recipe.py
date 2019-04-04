@@ -111,12 +111,13 @@ q = """
   MATCH (f:%s {%s: %s})
   MATCH (t:%s {%s: %s})
   MERGE (f)-[rel:%s]->(t)
-""" % ('export.csv', 
-       schema, 
-       GRAPH_NODES_FROM_LABEL, GRAPH_NODES_FROM_KEY, GRAPH_RELATIONSHIPS_FROM_KEY,
-       GRAPH_NODES_TO_LABEL, GRAPH_NODES_TO_KEY, GRAPH_RELATIONSHIPS_TO_KEY,
-       GRAPH_RELATIONSHIP_VERB
-      )
+""" % (
+    'export.csv', 
+    schema, 
+    GRAPH_NODES_FROM_LABEL, GRAPH_NODES_FROM_KEY, GRAPH_RELATIONSHIPS_FROM_KEY,
+    GRAPH_NODES_TO_LABEL, GRAPH_NODES_TO_KEY, GRAPH_RELATIONSHIPS_TO_KEY,
+    GRAPH_RELATIONSHIP_VERB
+)
 
 logger.info("[+] Loading CSV file into Neo4j...")
 try:
