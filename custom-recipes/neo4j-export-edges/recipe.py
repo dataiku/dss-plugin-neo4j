@@ -79,6 +79,15 @@ else:
 # LOADING DATA INTTO NEO4J
 #==============================================================================
 
+# Connect to Neo4j
+uri = NEO4J_URI
+graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
+
+# Add constraints and unique indices to the original nodes
+r = graph.run("CREATE CONSTRAINT ON (p:Product) ASSERT p.product_id IS UNIQUE")
+r = graph.run("CREATE CONSTRAINT ON (h:Household) ASSERT h.household_key IS UNIQUE")
+
+
 # Creating schema
 schema = ''
 schema = schema + ':{}'.format(GRAPH_NODES_LABEL)
@@ -90,28 +99,16 @@ schema = schema + '\n' + '}'
 logger.info("[+] Built Neo4j output schema for nodes with label {}".format(GRAPH_NODES_LABEL))
 logger.info("[+]\n{}\n".format(schema))
 
-# Connect to Neo4j
-uri = NEO4J_URI
-graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
 
-# Clean data if needed
-if GRAPH_NODES_DELETE:
-    q = """
-      MATCH (n:%s)
-      DETACH DELETE n
-    """ % (GRAPH_NODES_LABEL)
-    try:
-        r = graph.run(q)
-        logger.info("[+] Deleted existing nodes")
-        logger.info( r.stats() )
-    except Exception, e:
-        logger.error("[-] Failed to delete existing nodes")
-        logger.error(str(e))
-        
+       
 # Actually load the data
 q = """
-  LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '|' 
-  CREATE (%s)
+  USING PERIODIC COMMIT
+  LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '|'
+  WITH %s
+  MATCH (p:Product {product_id: product_id})
+  MATCH (h:Household {household_key: household_key})
+  MERGE (h)-[rel:BUYS]->(p)
 """ % ('export.csv', schema)
 
 logger.info("[+] Loading CSV file into Neo4j...")
