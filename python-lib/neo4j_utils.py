@@ -77,6 +77,7 @@ def create_nodes_from_csv(graph=None, csv=None, schema=None):
       LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
       CREATE (%s)
     """ % (csv, schema)
+    logger.info("[+] Starting CSV import into Neo4j ...")
     try:
         r = graph.run(q)
     except Exception, e:
