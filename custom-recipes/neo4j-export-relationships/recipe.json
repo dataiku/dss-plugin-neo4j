@@ -51,8 +51,21 @@
             "type": "STRING",
             "description": "Left-hand side node key to lookup (a) in the relationship (a)-[rel:REL]->(b)"
             "mandatory" : true
+        },        
+        {
+            "name": "graph-nodes-to-label",
+            "label" : "\"To\" node label",
+            "type": "STRING",
+            "description": "Right-hand side node label (b) in the relationship (a)-[rel:REL]->(b)"
+            "mandatory" : true
         },
-        
+        {
+            "name": "graph-nodes-to-key",
+            "label" : "\"To\" node lookup key",
+            "type": "STRING",
+            "description": "Right-hand side node key to lookup (b) in the relationship (a)-[rel:REL]->(b)"
+            "mandatory" : true
+        },        
         {
             "label": "Neo4j Settings",
             "type": "SEPARATOR"
