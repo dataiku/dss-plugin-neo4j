@@ -29,5 +29,6 @@ The Plugin has the following components:
 * Nodes and relationships attributes are all created as string - the Plugin does not handle data types
 * Only simple relationships are handled, in the form of (a)-(rel:REL)->(b)
 
+
 ## Contributing
 You are welcome to contribute to this Plugin. Please feel free to use Github issues and pull requests.
