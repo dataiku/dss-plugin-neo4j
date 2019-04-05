@@ -9,8 +9,8 @@
 ### Prerequisites
 In order to use the Plugin, you will need:
 
-* xxx
-* xxx
+* network connectivity open between the Neo4j host server and the DSS host server 
+* password-less ssh access from the DSS host server (for the user running DSS) to the Neo4j server (for the user running Neo4j) in order to copy files over scp 
 
 ### Plugin components
 The Plugin has the following components:
