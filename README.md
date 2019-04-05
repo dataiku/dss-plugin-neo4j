@@ -3,6 +3,7 @@
 
 ## Plugin information
 
+This Plugin will let you interact with the Neo4j graph database directly from Dataiku DSS. 
 
 ## Using the Plugin
 
