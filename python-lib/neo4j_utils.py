@@ -111,5 +111,32 @@ def build_relationships_schema(dataset=None):
 
 
 def create_relationships_from_csv(graph=None, csv=None, schema=None):
-    pass
+    q = """
+      USING PERIODIC COMMIT
+      LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
+      WITH %s
+      MATCH (f:%s {%s: %s})
+      MATCH (t:%s {%s: %s})
+      MERGE (f)-[rel:%s]->(t)
+    """ % (
+        csv, 
+    schema, 
+    GRAPH_NODES_FROM_LABEL, GRAPH_NODES_FROM_KEY, GRAPH_RELATIONSHIPS_FROM_KEY,
+    GRAPH_NODES_TO_LABEL, GRAPH_NODES_TO_KEY, GRAPH_RELATIONSHIPS_TO_KEY,
+    GRAPH_RELATIONSHIP_VERB
+)
 
+
+
+
+
+
+logger.info("[+] Loading CSV file into Neo4j using query:...")
+logger.info("[+] %s" % (q))
+try:
+    r = graph.run(q)
+    logger.info("[+] Loading complete")
+    logger.info(r.stats())
+except Exception, e:
+    logger.error("[-] Issue while loading CSV")
+    logger.error("[-] {}\n".format(str(e)))
