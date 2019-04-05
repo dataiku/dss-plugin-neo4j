@@ -135,3 +135,4 @@ def create_relationships_from_csv(graph=None, csv=None, schema=None):
     except Exception, e:
         logger.error("[-] Issue while loading CSV")
         logger.error("[-] {}".format(str(e)))
+        sys.exit(1)
