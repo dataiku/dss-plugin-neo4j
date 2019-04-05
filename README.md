@@ -32,6 +32,7 @@ The Plugin needs to be used in 2 steps:
 * The Plugins uses LOAD CSV to load data into Neo4j. It thus requires ssh access from the DSS host to the Neo4j host to copy input files. It may not offer the best performances for very large files.
 * Nodes and relationships attributes are all created as string - the Plugin does not handle data types
 * Only simple relationships are handled, in the form of (a)-(rel:REL)->(b)
+* Only URI's in the form of "bolt://" have been tested, with a username / password based authentication
 
 
 ## Contributing
