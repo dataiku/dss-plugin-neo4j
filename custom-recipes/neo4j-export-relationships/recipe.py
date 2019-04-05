@@ -94,10 +94,10 @@ r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES
 schema = build_relationships_schema(dataset=INPUT_DATASET_NAME)
 
 # Actually load the data
-create_relationships_from_csv(graph=None, csv=None, schema=None, 
-                                  graph_nodes_left_label=None, graph_nodes_left_key=None, graph_relationships_left_key=None,
-                                  graph_nodes_right_label=None, graph_nodes_right_key=None, graph_relationships_right_key=None,
-                                  graph_relationships_verb=None)
+create_relationships_from_csv(graph=None, csv=None, schema=None,
+                              graph_nodes_left_label=None, graph_nodes_left_key=None, graph_relationships_left_key=None,
+                              graph_nodes_right_label=None, graph_nodes_right_key=None, graph_relationships_right_key=None,
+                              graph_relationships_verb=None)
 
 """ % (
     'export.csv', 
