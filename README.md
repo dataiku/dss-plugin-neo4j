@@ -20,7 +20,8 @@ The Plugin has the following components:
 * an "Export Nodes" custom recipe that takes a DSS Dataset as input and creates Neo4j nodes
 * an "Export Relationships" custom recipe that takes a DSS Dataset as input and creates Neo4j relationships between existing nodes
 
-### Using the Plugin in Dataiku
+### Using the Plugin
+
 
 ### Plugins limitations and potential improvements
 
