@@ -15,7 +15,8 @@ In order to use the Plugin, you will need:
 ### Plugin components
 The Plugin has the following components:
 
-* xxx
+* an "Export Nodes" custom recipe that takes a DSS Dataset as input and creates Neo4j nodes
+* an "Export Relationships" custom recipe that takes a DSS Dataset as input and creates Neo4j relationships between existing nodes
 
 ### Using the Plugin in Dataiku
 
