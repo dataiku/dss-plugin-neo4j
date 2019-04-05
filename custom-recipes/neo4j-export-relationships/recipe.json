@@ -40,21 +40,21 @@
         },        
         {
             "name": "graph-nodes-from-label",
-            "label" : "(a) node label",
+            "label" : "(a) Node Label",
             "type": "STRING",
             "description": "Left-hand side node label (a) in the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },
         {
             "name": "graph-nodes-from-key",
-            "label" : "(a) node lookup key",
+            "label" : "(a) Node Lookup Key",
             "type": "STRING",
             "description": "Left-hand side node key to lookup (a) in the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },
         {
             "name": "graph-relationships-from-key",
-            "label" : "(a) lookup key in relationships",
+            "label" : "(a) Lookup Key in Relationships",
             "type": "COLUMN",
             "columnRole": "input-dataset",
             "description": "Lookup column in relationships for (a) in the relationship (a)-[rel:REL]->(b)",
@@ -62,21 +62,21 @@
         },        
         {
             "name": "graph-nodes-to-label",
-            "label" : "(b) node label",
+            "label" : "(b) Node Label",
             "type": "STRING",
             "description": "Right-hand side node label (b) in the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },
         {
             "name": "graph-nodes-to-key",
-            "label" : "(b) node lookup key",
+            "label" : "(b) Node Lookup Key",
             "type": "STRING",
             "description": "Right-hand side node key to lookup (b) in the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },
         {
             "name": "graph-relationships-to-key",
-            "label" : "(b) lookup key in relationships",
+            "label" : "(b) Lookup Key in Relationships",
             "type": "COLUMN",
             "columnRole": "input-dataset",
             "description": "Lookup column in relationships for (b) in the relationship (a)-[rel:REL]->(b)",
@@ -84,14 +84,14 @@
         },
         {
             "name": "graph-relationship-verb",
-            "label" : "Verb defining the relationship",
+            "label" : "Verb Defining the Relationship",
             "type": "STRING",
             "description": "Verb (REL) defining the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },
         {
             "name": "graph-relationship-set-properties",
-            "label" : "Set properties",
+            "label" : "Set Properties",
             "type": "BOOLEAN",
             "description": "Should all the remaining columns be used to set relationship properties",
             "mandatory" : true,
