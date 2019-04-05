@@ -102,3 +102,6 @@ def create_nodes_from_csv(graph=None, csv=None, schema=None):
 #==============================================================================
 # HELPERS FOR RELATIONSHIPS EXPORT
 #==============================================================================
+
+def build relationships_schema(dataset=None):
+    pass
