@@ -72,6 +72,9 @@ def delete_nodes_with_label(graph=None, node_label=None):
     
 
 def create_nodes_from_csv(graph=None, csv=None, schema=None):
+    '''
+    Actually creates Neo4j nodes from a Dataiku Dataset 
+    '''
     q = """
       LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
       CREATE (%s)
