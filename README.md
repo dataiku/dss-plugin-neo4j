@@ -4,6 +4,7 @@
 ## Plugin information
 
 This Plugin will let you interact with the Neo4j graph database directly from Dataiku DSS. 
+The current version of the Plugin offers the ability to load Dataiku data directly into Neo4j. In particular, it will let create new nodes and attributes from Dataiku Datasets, as well as setting their properties. 
 
 ## Using the Plugin
 
