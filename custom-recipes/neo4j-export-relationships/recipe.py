@@ -90,12 +90,9 @@ graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
 r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES_FROM_LABEL, GRAPH_NODES_FROM_KEY))
 r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES_TO_LABEL, GRAPH_NODES_TO_KEY))
 
-
 # Creating schema
 schema = build_relationships_schema(dataset=INPUT_DATASET_NAME)
 
-
-       
 # Actually load the data
 q = """
   USING PERIODIC COMMIT
