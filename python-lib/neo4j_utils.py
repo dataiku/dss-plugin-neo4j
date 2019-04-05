@@ -111,7 +111,10 @@ def build_relationships_schema(dataset=None):
     return schema
 
 
-def create_relationships_from_csv(graph=None, csv=None, schema=None):
+def create_relationships_from_csv(graph=None, csv=None, schema=None, 
+                                  graph_nodes_left_label=None, graph_nodes_left_key=None, graph_relationships_left_key=None,
+                                  graph_nodes_right_label=None, graph_nodes_right_key=None, graph_relationships_right_key=None,
+                                  graph_relationships_verb=None):
     q = """
       USING PERIODIC COMMIT
       LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
