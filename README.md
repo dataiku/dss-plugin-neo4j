@@ -9,7 +9,7 @@ The current version of the Plugin offers the ability to load Dataiku data direct
 ## Using the Plugin
 
 ### Prerequisites
-In order to use the Plugin, you will need:
+In order to use this Plugin, you will need:
 
 * network connectivity open between the Neo4j host server and the DSS host server 
 * password-less ssh access from the DSS host server (for the user running DSS) to the Neo4j server (for the user running Neo4j) in order to copy files over scp 
