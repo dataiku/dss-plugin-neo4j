@@ -120,11 +120,11 @@ def create_relationships_from_csv(graph=None, csv=None, schema=None):
       MERGE (f)-[rel:%s]->(t)
     """ % (
         csv, 
-    schema, 
-    GRAPH_NODES_FROM_LABEL, GRAPH_NODES_FROM_KEY, GRAPH_RELATIONSHIPS_FROM_KEY,
-    GRAPH_NODES_TO_LABEL, GRAPH_NODES_TO_KEY, GRAPH_RELATIONSHIPS_TO_KEY,
-    GRAPH_RELATIONSHIP_VERB
-)
+        schema, 
+        graph_nodes_left_label, graph_nodes_left_key, graph_relationships_left_key,
+        graph_nodes_right_label, graph_nodes_right_key, graph_relationships_right_key,
+        graph_relationships_verb
+    )
 
 
 
