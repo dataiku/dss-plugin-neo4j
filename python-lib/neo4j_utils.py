@@ -104,4 +104,9 @@ def create_nodes_from_csv(graph=None, csv=None, schema=None):
 #==============================================================================
 
 def build relationships_schema(dataset=None):
-    pass
+    ds = dataiku.Dataset(dataset)
+    schema = ', '.join( ["line[{}] AS {}".format(i, r["name"]) for i, r in enumerate(ds.read_schema())] )
+    logger.info("[+] Schema generation complete for relationships CSV file.")
+    return schema
+
+
