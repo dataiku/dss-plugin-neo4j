@@ -36,14 +36,20 @@ SSH_IMPORT_DIRECTORY              = get_recipe_config().get('ssh-import-director
 #==============================================================================
 # LOGGING SETTINGS
 #==============================================================================
-out_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
-file_handler = FileHandler(os.path.join(out_folder, 'export.log'), 'w')
+
+export_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
+export_log = os.path.join(export_folder, 'export.log')
+file_handler = FileHandler(export_log, 'w')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
+
+logger.info("*"*80)
+logger.info("* NEO4J EXPORT PROCESS START")
+logger.info("*"*80)
 
 
 #==============================================================================
