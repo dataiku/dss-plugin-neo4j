@@ -85,6 +85,6 @@ def create_nodes_from_csv(graph=None, csv=None, schema=None):
         r = graph.run(q)
         logger.info("[+] CSV import complete.")
     except Exception, e:
-        msg = "[-] Issue while loading CSV file"
-        msg = msg + "[-] {}".format( str(e) )
-        raise Exception(msg)
+        logger.error("[-] Issue while loading CSV file")
+        logger.error("[-] {}".format( str(e) ))
+        sys.exit(1)
