@@ -21,7 +21,10 @@ The Plugin has the following components:
 * an "Export Relationships" custom recipe that takes a DSS Dataset as input and creates Neo4j relationships between existing nodes
 
 ### Using the Plugin
+The Plugin needs to be used in 2 steps:
 
+1. Create one Dataset per node label/type with the required attributes in columns, and no duplicates, then use the "Export Nodes" recipe to load these nodes into Neo4j
+2. Create one Dataset stroring the relationships (2 columns) as well as their attributes - and no duplicates, then use the "Export Relationships" recipe to load them into Neo4j
 
 ### Plugins limitations and potential improvements
 
