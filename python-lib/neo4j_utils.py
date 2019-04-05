@@ -38,9 +38,12 @@ def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshp
         stdin=PIPE, stdout=PIPE, stderr=PIPE
     )
     out, err = p.communicate()
-    logger.info("[+] Copying file complete.")
-    return out, err
-
+    if err != '':
+        msg = "[-] Issue while copying CSV file to Neo4j server\n"
+        msg = msg + "[-] {}".format(err)
+        sys.exit(1)
+    else:
+        logger.info("[+] Copying file complete.")
 
 def delete_nodes_with_label(graph=None, node_label=None):
     '''
