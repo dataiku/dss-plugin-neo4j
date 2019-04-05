@@ -111,4 +111,8 @@ p = Popen(
 out, err = p.communicate()
 
 # Local file
-os.remove( os.path.join(out_folder, 'export.csv') )
+os.remove( export_file )
+
+logger.info("*"*80)
+logger.info("* NEO4J EXPORT PROCESS END")
+logger.info("*"*80)
