@@ -79,7 +79,7 @@
             "label" : "(b) lookup key in relationships",
             "type": "COLUMN",
             "columnRole": "input-dataset",
-            "description": "Column to lookup in relationships dataset for (b) in the relationship (a)-[rel:REL]->(b)",
+            "description": "Lookup column in relationships for (b) in the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },
         {
