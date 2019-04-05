@@ -89,10 +89,10 @@ def create_nodes_from_csv(graph=None, csv=None, schema=None):
       LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
       CREATE (%s)
     """ % (csv, schema)
-    logger.info("[+] Starting CSV import into Neo4j ...")
+    logger.info("[+] Start importing nodes into Neo4j ...")
     try:
         r = graph.run(q)
-        logger.info("[+] CSV import complete.")
+        logger.info("[+] Import complete.")
         logger.info(r.stats())
     except Exception, e:
         logger.error("[-] Issue while loading CSV file")
