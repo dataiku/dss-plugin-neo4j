@@ -130,7 +130,7 @@ def create_relationships_from_csv(graph=None, csv=None, schema=None):
     logger.info("[+] %s" % (q))
     try:
         r = graph.run(q)
-        logger.info("[+] CSV import complete.")
+        logger.info("[+] Import complete.")
         logger.info(r.stats())
     except Exception, e:
         logger.error("[-] Issue while loading CSV")
