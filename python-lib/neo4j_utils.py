@@ -126,7 +126,7 @@ def create_relationships_from_csv(graph=None, csv=None, schema=None):
         graph_nodes_right_label, graph_nodes_right_key, graph_relationships_right_key,
         graph_relationships_verb
     )
-    logger.info("[+] Start CSV import into Neo4j using query:...")
+    logger.info("[+] Start importing nodes into Neo4j ...")
     logger.info("[+] %s" % (q))
     try:
         r = graph.run(q)
