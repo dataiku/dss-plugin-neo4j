@@ -26,6 +26,7 @@ The Plugin needs to be used in 2 steps:
 1. Create one Dataset per node label/type with the required attributes in columns, and no duplicates, then use the "Export Nodes" recipe to load these nodes into Neo4j
 2. Create one Dataset stroring the relationships (2 columns) as well as their attributes - and no duplicates, then use the "Export Relationships" recipe to load them into Neo4j
 
+
 ### Plugins limitations and potential improvements
 
 * The Plugins uses LOAD CSV to load data into Neo4j. It thus requires ssh access from the DSS host to the Neo4j host to copy input files. It may not offer the best performances for very large files.
