@@ -1,2 +1,2 @@
-# dss-plugin-neo4j
+# Neo4J Plugin
 A DSS Plugin to interact with the Neo4j graph database
