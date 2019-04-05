@@ -22,9 +22,8 @@ The Plugin has the following components:
 
 ### Using the Plugin in Dataiku
 
+### Plugins limitations and potential improvements
+
 
 ## Contributing
-You are welcome to contribute to this Plugin. Please feel free to use Github issues and pull requests. Among potential improvements, you may want to add:
-
-* support for other methods in the Text Analytics or Computer Vision services (ex: OCR)
-* add support for other services
+You are welcome to contribute to this Plugin. Please feel free to use Github issues and pull requests.
