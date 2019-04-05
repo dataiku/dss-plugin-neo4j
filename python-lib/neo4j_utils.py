@@ -126,20 +126,12 @@ def create_relationships_from_csv(graph=None, csv=None, schema=None):
         graph_nodes_right_label, graph_nodes_right_key, graph_relationships_right_key,
         graph_relationships_verb
     )
-    logger.info("[+] Loading CSV file into Neo4j using query:...")
+    logger.info("[+] Start CSV import into Neo4j using query:...")
     logger.info("[+] %s" % (q))
-    
-
-
-
-
-
-
-
-try:
-    r = graph.run(q)
-    logger.info("[+] Loading complete")
-    logger.info(r.stats())
-except Exception, e:
-    logger.error("[-] Issue while loading CSV")
-    logger.error("[-] {}\n".format(str(e)))
+    try:
+        r = graph.run(q)
+        logger.info("[+] CSV import complete.")
+        logger.info(r.stats())
+    except Exception, e:
+        logger.error("[-] Issue while loading CSV")
+        logger.error("[-] {}".format(str(e)))
