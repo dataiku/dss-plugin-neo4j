@@ -5,6 +5,11 @@ from subprocess import Popen, PIPE
 
 logger = logging.getLogger()
 
+
+#==============================================================================
+# GENERAL HELPERS
+#==============================================================================
+
 def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
     '''
     This function exports a Dataiku Dataset to CSV with no 
@@ -37,22 +42,6 @@ def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshp
     return out, err
 
 
-def build_node_schema(node_label=None, dataset=None):
-    '''
-    This specific function generates the "schema" for a 
-    node from a Dataiku Dataset
-    '''
-    ds = dataiku.Dataset(dataset)
-    schema = ''
-    schema = schema + ':{}'.format(node_label)
-    schema = schema + ' {' + '\n'
-    c = ',\n'.join( ["  {}: line[{}]".format(r["name"], i) for i, r in enumerate(ds.read_schema())] )
-    schema = schema + c
-    schema = schema + '\n' + '}'
-    logger.info("[+] Schema generation complete for node {}.".format(node_label))
-    return schema
-
-
 def delete_nodes_with_label(graph=None, node_label=None):
     '''
     Simple helper to delete all nodes with a given label within
@@ -70,7 +59,27 @@ def delete_nodes_with_label(graph=None, node_label=None):
         logger.error("[-] Issue while deleting nodes with label {}".format(node_label))
         logger.error("[-] {}".format( str(e) ))
         sys.exit(1)
-    
+        
+        
+#==============================================================================
+# HELPERS FOR NODES EXPORT
+#==============================================================================
+
+def build_node_schema(node_label=None, dataset=None):
+    '''
+    This specific function generates the "schema" for a 
+    node from a Dataiku Dataset
+    '''
+    ds = dataiku.Dataset(dataset)
+    schema = ''
+    schema = schema + ':{}'.format(node_label)
+    schema = schema + ' {' + '\n'
+    c = ',\n'.join( ["  {}: line[{}]".format(r["name"], i) for i, r in enumerate(ds.read_schema())] )
+    schema = schema + c
+    schema = schema + '\n' + '}'
+    logger.info("[+] Schema generation complete for node {}.".format(node_label))
+    return schema
+
 
 def create_nodes_from_csv(graph=None, csv=None, schema=None):
     '''
@@ -88,3 +97,8 @@ def create_nodes_from_csv(graph=None, csv=None, schema=None):
         logger.error("[-] Issue while loading CSV file")
         logger.error("[-] {}".format( str(e) ))
         sys.exit(1)
+        
+        
+#==============================================================================
+# HELPERS FOR RELATIONSHIPS EXPORT
+#==============================================================================
