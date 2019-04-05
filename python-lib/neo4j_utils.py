@@ -67,9 +67,9 @@ def delete_nodes_with_label(graph=None, node_label=None):
         r = graph.run(q)
         logger.info("[+] Existing nodes with label {} deleted.".format(node_label))
     except Exception, e:
-        msg = "[-] Issue while deleting nodes with label {}".format(node_label)
-        msg = msg + "[-] {}".format( str(e) )
-        raise Exception(msg)
+        logger.error("[-] Issue while deleting nodes with label {}".format(node_label))
+        logger.error("[-] {}".format( str(e) ))
+        sys.exit(1)
     
 
 def create_nodes_from_csv(graph=None, csv=None, schema=None):
