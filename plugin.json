@@ -7,7 +7,7 @@
         "author" : "Dataiku (Thomas)",
         "icon" : "icon-upload",
         "licenseInfo" : "Apache Software License",
-        "url" : "https://www.dataiku.com",
+        "url" : "https://github.com/dataiku/dss-plugin-neo4j",
         "tags" : ["graph", "connectivity"]
     }
 }
