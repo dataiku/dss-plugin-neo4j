@@ -27,7 +27,7 @@ The Plugin has the following components:
 
 * The Plugins uses LOAD CSV to load data into Neo4j. It thus requires ssh access from the DSS host to the Neo4j host to copy input files. It may not offer the best performances for very large files.
 * Nodes and relationships attributes are all created as string - the Plugin does not handle data types
-
+* Only simple relationships are handled, in the form of (a)-(rel:REL)->(b)
 
 ## Contributing
 You are welcome to contribute to this Plugin. Please feel free to use Github issues and pull requests.
