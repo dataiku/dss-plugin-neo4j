@@ -94,13 +94,11 @@ r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES
 schema = build_relationships_schema(dataset=INPUT_DATASET_NAME)
 
 # Actually load the data
-q = """
-  USING PERIODIC COMMIT
-  LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '|'
-  WITH %s
-  MATCH (f:%s {%s: %s})
-  MATCH (t:%s {%s: %s})
-  MERGE (f)-[rel:%s]->(t)
+create_relationships_from_csv(graph=None, csv=None, schema=None, 
+                                  graph_nodes_left_label=None, graph_nodes_left_key=None, graph_relationships_left_key=None,
+                                  graph_nodes_right_label=None, graph_nodes_right_key=None, graph_relationships_right_key=None,
+                                  graph_relationships_verb=None)
+
 """ % (
     'export.csv', 
     schema, 
@@ -109,15 +107,6 @@ q = """
     GRAPH_RELATIONSHIP_VERB
 )
 
-logger.info("[+] Loading CSV file into Neo4j using query:...")
-logger.info("[+] %s" % (q))
-try:
-    r = graph.run(q)
-    logger.info("[+] Loading complete")
-    logger.info(r.stats())
-except Exception, e:
-    logger.error("[-] Issue while loading CSV")
-    logger.error("[-] {}\n".format(str(e)))
     
     
 #==============================================================================
