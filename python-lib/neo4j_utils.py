@@ -107,11 +107,21 @@ def create_nodes_from_csv(graph=None, csv=None, schema=None):
 # HELPERS FOR RELATIONSHIPS EXPORT
 #==============================================================================
 
-def build_relationships_schema(dataset=None):
+def build_relationships_schema(dataset=None, key_a=None, key_b=None):
+    # CSV input schema
     ds = dataiku.Dataset(dataset)
     schema = ', '.join( ["line[{}] AS {}".format(i, r["name"]) for i, r in enumerate(ds.read_schema())] )
-    logger.info("[+] Schema generation complete for relationships CSV file.")
-    return schema
+    # Edges attributes
+    attributes = ""
+    attributes = attributes + "{"
+    o = []
+    for c in ds.read_schema():
+        if c["name"] not in[key_a, key_b]:
+            o.append("{}:{}".format(c["name"], c["name"]))
+    attributes = attributes + ", ".join(o)
+    attributes = attributes + "}"
+    logger.info("[+] Schema generation complete for relationships CSV file and attributes.")
+    return (schema, attributes)
 
 
 def create_relationships_from_csv(graph=None, csv=None, schema=None, 
