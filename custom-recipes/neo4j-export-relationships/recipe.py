@@ -17,21 +17,21 @@ INPUT_DATASET_NAME                = get_input_names_for_role('input-dataset')[0]
 OUTPUT_FOLDER_NAME                = get_output_names_for_role('output-folder')[0]
 
 # Recipe settings
-GRAPH_NODES_FROM_LABEL            = get_recipe_config().get('graph-nodes-from-label', None)
-GRAPH_NODES_FROM_KEY              = get_recipe_config().get('graph-nodes-from-key', None)
-GRAPH_RELATIONSHIPS_FROM_KEY      = get_recipe_config().get('graph-relationships-from-key', None)
-GRAPH_NODES_TO_LABEL              = get_recipe_config().get('graph-nodes-to-label', None)
-GRAPH_NODES_TO_KEY                = get_recipe_config().get('graph-nodes-to-key', None)
-GRAPH_RELATIONSHIPS_TO_KEY        = get_recipe_config().get('graph-relationships-to-key', None)
+GRAPH_NODES_FROM_LABEL             = get_recipe_config().get('graph-nodes-from-label', None)
+GRAPH_NODES_FROM_KEY               = get_recipe_config().get('graph-nodes-from-key', None)
+GRAPH_RELATIONSHIPS_FROM_KEY       = get_recipe_config().get('graph-relationships-from-key', None)
+GRAPH_NODES_TO_LABEL               = get_recipe_config().get('graph-nodes-to-label', None)
+GRAPH_NODES_TO_KEY                 = get_recipe_config().get('graph-nodes-to-key', None)
+GRAPH_RELATIONSHIPS_TO_KEY         = get_recipe_config().get('graph-relationships-to-key', None)
 GRAPH_RELATIONSHIPS_VERB           = get_recipe_config().get('graph-relationships-verb', None)
 GRAPH_RELATIONSHIPS_SET_PROPERTIES = get_recipe_config().get('graph-relationships-set-properties', False)
 GRAPH_RELATIONSHIPS_DELETE         = get_recipe_config().get('graph-relationships-delete', True)
-NEO4J_URI                         = get_recipe_config().get('neo4j-uri', None)
-NEO4J_USER                        = get_recipe_config().get('neo4j-user', None)
-NEO4J_PASSWORD                    = get_recipe_config().get('neo4j-password', None)
-SSH_HOST                          = get_recipe_config().get('ssh-host', None)
-SSH_USER                          = get_recipe_config().get('ssh-user', None)
-SSH_IMPORT_DIRECTORY              = get_recipe_config().get('ssh-import-directory', None)
+NEO4J_URI                          = get_recipe_config().get('neo4j-uri', None)
+NEO4J_USER                         = get_recipe_config().get('neo4j-user', None)
+NEO4J_PASSWORD                     = get_recipe_config().get('neo4j-password', None)
+SSH_HOST                           = get_recipe_config().get('ssh-host', None)
+SSH_USER                           = get_recipe_config().get('ssh-user', None)
+SSH_IMPORT_DIRECTORY               = get_recipe_config().get('ssh-import-directory', None)
 
 EXPORT_FILE_NAME      = 'export.csv'
 
