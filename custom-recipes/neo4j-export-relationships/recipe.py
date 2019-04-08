@@ -83,8 +83,10 @@ uri = NEO4J_URI
 graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
 
 # Add constraints and unique indices to the original nodes
+logger.info("[+] Creating constraints on nodes...")
 r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES_FROM_LABEL, GRAPH_NODES_FROM_KEY))
 r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES_TO_LABEL, GRAPH_NODES_TO_KEY))
+logger.info("[+] Done creating constraints on nodes.")
 
 # Creating schema
 (schema, attributes) = build_relationships_schema(
