@@ -91,7 +91,7 @@ logger.info(  "[+] Done creating constraints on nodes.")
 
 # Clean data if needed
 if GRAPH_NODES_DELETE:
-    delete_nodes_with_label(graph=graph, node_label=GRAPH_NODES_LABEL)
+    delete_relationships(graph=graph, nodes_a_label=GRAPH_NODES_FROM_LABEL, nodes_b_label=GRAPH_NODES_TO_LABEL, relationships_verb=GRAPH_RELATIONSHIPS_VERB)
 
 # Creating schema
 (schema, attributes) = build_relationships_schema(
