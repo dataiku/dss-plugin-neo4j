@@ -90,7 +90,7 @@ r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES
 logger.info(  "[+] Done creating constraints on nodes.")
 
 # Clean data if needed
-if GRAPH_NODES_DELETE:
+if GRAPH_RELATIONSHIPS_DELETE:
     delete_relationships(graph=graph, nodes_a_label=GRAPH_NODES_FROM_LABEL, nodes_b_label=GRAPH_NODES_TO_LABEL, relationships_verb=GRAPH_RELATIONSHIPS_VERB)
 
 # Creating schema
