@@ -73,7 +73,7 @@ def delete_relationships(graph=None, nodes_a_label=None, nodes_b_label=None, rel
         r = graph.run(q)
         logger.info("[+] Existing relationships deleted.")
     except Exception, e:
-        logger.error("[-] Issue while deleting nodes with label {}".format(node_label))
+        logger.error("[-] Issue while deleting relationships")
         logger.error("[-] {}".format( str(e) ))
         sys.exit(1)
     
