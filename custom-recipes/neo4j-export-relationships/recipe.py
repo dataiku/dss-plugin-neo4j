@@ -19,10 +19,10 @@ OUTPUT_FOLDER_NAME                = get_output_names_for_role('output-folder')[0
 # Recipe settings
 GRAPH_NODES_FROM_LABEL             = get_recipe_config().get('graph-nodes-from-label', None)
 GRAPH_NODES_FROM_KEY               = get_recipe_config().get('graph-nodes-from-key', None)
-GRAPH_RELATIONSHIPS_FROM_KEY       = get_recipe_config().get('graph-relationships-from-key', None)
 GRAPH_NODES_TO_LABEL               = get_recipe_config().get('graph-nodes-to-label', None)
 GRAPH_NODES_TO_KEY                 = get_recipe_config().get('graph-nodes-to-key', None)
 GRAPH_RELATIONSHIPS_TO_KEY         = get_recipe_config().get('graph-relationships-to-key', None)
+GRAPH_RELATIONSHIPS_FROM_KEY       = get_recipe_config().get('graph-relationships-from-key', None)
 GRAPH_RELATIONSHIPS_VERB           = get_recipe_config().get('graph-relationships-verb', None)
 GRAPH_RELATIONSHIPS_SET_PROPERTIES = get_recipe_config().get('graph-relationships-set-properties', False)
 GRAPH_RELATIONSHIPS_DELETE         = get_recipe_config().get('graph-relationships-delete', True)
