@@ -114,6 +114,7 @@ def build_relationships_schema(dataset=None, key_a=None, key_b=None, set_propert
     # Edges attributes
     attributes = ""
     if set_properties:
+        logger.info("[+] Setting relationships properties")
         attributes = attributes + "{"
         o = []
         for c in ds.read_schema():
