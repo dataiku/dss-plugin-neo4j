@@ -24,7 +24,7 @@ GRAPH_NODES_TO_LABEL              = get_recipe_config().get('graph-nodes-to-labe
 GRAPH_NODES_TO_KEY                = get_recipe_config().get('graph-nodes-to-key', None)
 GRAPH_RELATIONSHIPS_TO_KEY        = get_recipe_config().get('graph-relationships-to-key', None)
 GRAPH_RELATIONSHIP_VERB           = get_recipe_config().get('graph-relationship-verb', None)
-GRAPH_RELATIONSHIP_SET_PROPERTIES = get_recipe_config().get('graph-relationship-set-properties', None)
+GRAPH_RELATIONSHIP_SET_PROPERTIES = get_recipe_config().get('graph-relationship-set-properties', False)
 NEO4J_URI                         = get_recipe_config().get('neo4j-uri', None)
 NEO4J_USER                        = get_recipe_config().get('neo4j-user', None)
 NEO4J_PASSWORD                    = get_recipe_config().get('neo4j-password', None)
@@ -87,7 +87,7 @@ r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES
 r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES_TO_LABEL, GRAPH_NODES_TO_KEY))
 
 # Creating schema
-(schema, attributes) = build_relationships_schema(dataset=INPUT_DATASET_NAME, key_a=None, key_b=None, set_properties=False)
+(schema, attributes) = build_relationships_schema(dataset=INPUT_DATASET_NAME, key_a=graph_nodes_left_key, key_b=GRAPH_NODES_TO_KEY, set_properties=False)
 
 # Actually load the data
 create_relationships_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=schema,
