@@ -113,13 +113,14 @@ def build_relationships_schema(dataset=None, key_a=None, key_b=None, set_propert
     schema = ', '.join( ["line[{}] AS {}".format(i, r["name"]) for i, r in enumerate(ds.read_schema())] )
     # Edges attributes
     attributes = ""
-    attributes = attributes + "{"
-    o = []
-    for c in ds.read_schema():
-        if c["name"] not in[key_a, key_b]:
-            o.append("{}:{}".format(c["name"], c["name"]))
-    attributes = attributes + ", ".join(o)
-    attributes = attributes + "}"
+    if set_properties:
+        attributes = attributes + "{"
+        o = []
+        for c in ds.read_schema():
+            if c["name"] not in[key_a, key_b]:
+                o.append("{}:{}".format(c["name"], c["name"]))
+        attributes = attributes + ", ".join(o)
+        attributes = attributes + "}"
     logger.info("[+] Schema generation complete for relationships CSV file and attributes.")
     return (schema, attributes)
 
