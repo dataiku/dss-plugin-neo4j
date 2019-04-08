@@ -98,6 +98,14 @@
             "defaultValue": false
         },
         {
+            "name": "graph-relationship-delete",
+            "label" : "Set Properties",
+            "type": "BOOLEAN",
+            "description": "Should all the remaining columns be used to set relationship properties",
+            "mandatory" : true,
+            "defaultValue": false
+        },
+        {
             "label": "Neo4j Settings",
             "type": "SEPARATOR"
         },        
