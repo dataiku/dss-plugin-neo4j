@@ -87,7 +87,7 @@ r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES
 r = graph.run("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE" % (GRAPH_NODES_TO_LABEL, GRAPH_NODES_TO_KEY))
 
 # Creating schema
-(schema, attributes) = build_relationships_schema(dataset=INPUT_DATASET_NAME)
+(schema, attributes) = build_relationships_schema(dataset=INPUT_DATASET_NAME, key_a=None, key_b=None, set_properties=False)
 
 # Actually load the data
 create_relationships_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=schema,
