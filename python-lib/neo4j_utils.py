@@ -107,6 +107,7 @@ def create_nodes_from_csv(graph=None, csv=None, schema=None):
       CREATE (%s)
     """ % (csv, schema)
     logger.info("[+] Start importing nodes into Neo4j...")
+    logger.info("[+] %s" % (q))
     try:
         r = graph.run(q)
         logger.info("[+] Import complete.")
