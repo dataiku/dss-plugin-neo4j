@@ -124,7 +124,7 @@ def build_relationships_schema(dataset=None, key_a=None, key_b=None):
     return (schema, attributes)
 
 
-def create_relationships_from_csv(graph=None, csv=None, schema=None, 
+def create_relationships_from_csv(graph=None, csv=None, schema=None, graph_relationships_attributes=None,
                                   graph_nodes_left_label=None, graph_nodes_left_key=None, graph_relationships_left_key=None,
                                   graph_nodes_right_label=None, graph_nodes_right_key=None, graph_relationships_right_key=None,
                                   graph_relationships_verb=None):
@@ -134,13 +134,13 @@ def create_relationships_from_csv(graph=None, csv=None, schema=None,
       WITH %s
       MATCH (f:%s {%s: %s})
       MATCH (t:%s {%s: %s})
-      MERGE (f)-[rel:%s]->(t)
+      MERGE (f)-[rel:%s %s]->(t)
     """ % (
         csv, 
         schema, 
         graph_nodes_left_label, graph_nodes_left_key, graph_relationships_left_key,
         graph_nodes_right_label, graph_nodes_right_key, graph_relationships_right_key,
-        graph_relationships_verb
+        graph_relationships_verb, graph_relationships_attributes
     )
     logger.info("[+] Start importing relationships into Neo4j...")
     logger.info("[+] %s" % (q))
