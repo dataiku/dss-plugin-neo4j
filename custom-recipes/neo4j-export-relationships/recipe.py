@@ -25,6 +25,7 @@ GRAPH_NODES_TO_KEY                = get_recipe_config().get('graph-nodes-to-key'
 GRAPH_RELATIONSHIPS_TO_KEY        = get_recipe_config().get('graph-relationships-to-key', None)
 GRAPH_RELATIONSHIP_VERB           = get_recipe_config().get('graph-relationship-verb', None)
 GRAPH_RELATIONSHIP_SET_PROPERTIES = get_recipe_config().get('graph-relationship-set-properties', False)
+GRAPH_RELATIONSHIP_DELETE         = get_recipe_config().get('graph-relationship-delete', True)
 NEO4J_URI                         = get_recipe_config().get('neo4j-uri', None)
 NEO4J_USER                        = get_recipe_config().get('neo4j-user', None)
 NEO4J_PASSWORD                    = get_recipe_config().get('neo4j-password', None)
