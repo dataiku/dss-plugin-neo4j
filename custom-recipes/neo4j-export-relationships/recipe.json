@@ -99,11 +99,11 @@
         },
         {
             "name": "graph-relationship-delete",
-            "label" : "Set Properties",
+            "label": "Delete Relationship",
             "type": "BOOLEAN",
-            "description": "Should all the remaining columns be used to set relationship properties",
+            "description":"Should existing relationships be deleted first?",
             "mandatory" : true,
-            "defaultValue": false
+            "defaultValue" : true
         },
         {
             "label": "Neo4j Settings",
