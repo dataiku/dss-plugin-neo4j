@@ -94,14 +94,14 @@ logger.info(  "[+] Done creating constraints on nodes.")
     dataset=INPUT_DATASET_NAME, 
     key_a=GRAPH_NODES_FROM_KEY, 
     key_b=GRAPH_NODES_TO_KEY, 
-    set_properties=GRAPH_RELATIONSHIP_SET_PROPERTIES
+    set_properties=GRAPH_RELATIONSHIPS_SET_PROPERTIES
 )
 
 # Actually load the data
 create_relationships_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=schema,
                               graph_nodes_left_label=GRAPH_NODES_FROM_LABEL, graph_nodes_left_key=GRAPH_NODES_FROM_KEY, graph_relationships_left_key=GRAPH_RELATIONSHIPS_FROM_KEY,
                               graph_nodes_right_label=GRAPH_NODES_TO_LABEL, graph_nodes_right_key=GRAPH_NODES_TO_KEY, graph_relationships_right_key=GRAPH_RELATIONSHIPS_TO_KEY,
-                              graph_relationships_verb=GRAPH_RELATIONSHIP_VERB, graph_relationships_attributes=attributes)
+                              graph_relationships_verb=GRAPH_RELATIONSHIPS_VERB, graph_relationships_attributes=attributes)
 
     
 #==============================================================================
