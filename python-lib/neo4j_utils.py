@@ -124,10 +124,10 @@ def build_relationships_schema(dataset=None, key_a=None, key_b=None):
     return (schema, attributes)
 
 
-def create_relationships_from_csv(graph=None, csv=None, schema=None, graph_relationships_attributes=None,
+def create_relationships_from_csv(graph=None, csv=None, schema=None,
                                   graph_nodes_left_label=None, graph_nodes_left_key=None, graph_relationships_left_key=None,
                                   graph_nodes_right_label=None, graph_nodes_right_key=None, graph_relationships_right_key=None,
-                                  graph_relationships_verb=None):
+                                  graph_relationships_verb=None, graph_relationships_attributes=None):
     q = """
       USING PERIODIC COMMIT
       LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
