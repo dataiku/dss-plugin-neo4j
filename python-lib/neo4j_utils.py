@@ -68,10 +68,10 @@ def delete_relationships(graph=None, nodes_a_label=None, nodes_b_label=None, rel
       MATCH (:%s)-[r:%s]-(:%s) 
       DELETE r
     """ % (nodes_a_label, relationships_verb, nodes_b_label)
-    logger.info("[+] Start deleting existing relationshios between {} and {} with verb {}...".format(nodes_a_label, nodes_b_label, relationships_verb))
+    logger.info("[+] Start deleting existing relationships between {} and {} with verb {}...".format(nodes_a_label, nodes_b_label, relationships_verb))
     try:
         r = graph.run(q)
-        logger.info("[+] Existing nodes with label {} deleted.".format(node_label))
+        logger.info("[+] Existing relationships deleted.")
     except Exception, e:
         logger.error("[-] Issue while deleting nodes with label {}".format(node_label))
         logger.error("[-] {}".format( str(e) ))
