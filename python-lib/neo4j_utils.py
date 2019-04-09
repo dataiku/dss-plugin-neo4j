@@ -12,7 +12,7 @@ logger = logging.getLogger()
 
 def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
     '''
-    This function exports a Dataiku Dataset to CSV with no 
+    This function exports a Dataiku Dataset to CSV with no
     need to go through a Pandas dataframe first
     '''
     logger.info("[+] Starting file export...")
@@ -29,12 +29,12 @@ def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
 
 def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshpath=None):
     '''
-    This function copies a file to a remote server using SCP. 
+    This function copies a file to a remote server using SCP.
     It requires a password-less access (i.e SSH public key is available)
     '''
     logger.info("[+] Copying file to remote server...")
     p = Popen(
-        ["scp", file_to_copy, "{}@{}:{}".format(sshuser, sshhost, sshpath)], 
+        ["scp", file_to_copy, "{}@{}:{}".format(sshuser, sshhost, sshpath)],
         stdin=PIPE, stdout=PIPE, stderr=PIPE
     )
     out, err = p.communicate()
@@ -62,10 +62,10 @@ def delete_nodes_with_label(graph=None, node_label=None):
         logger.error("[-] Issue while deleting nodes with label {}".format(node_label))
         logger.error("[-] {}".format( str(e) ))
         sys.exit(1)
-        
+
 def delete_relationships(graph=None, nodes_a_label=None, nodes_b_label=None, relationships_verb=None):
     q = """
-      MATCH (:%s)-[r:%s]-(:%s) 
+      MATCH (:%s)-[r:%s]-(:%s)
       DELETE r
     """ % (nodes_a_label, relationships_verb, nodes_b_label)
     logger.info("[+] Start deleting existing relationships between {} and {} with verb {}...".format(nodes_a_label, nodes_b_label, relationships_verb))
@@ -76,15 +76,15 @@ def delete_relationships(graph=None, nodes_a_label=None, nodes_b_label=None, rel
         logger.error("[-] Issue while deleting relationships")
         logger.error("[-] {}".format( str(e) ))
         sys.exit(1)
-    
-        
+
+
 #==============================================================================
 # HELPERS FOR NODES EXPORT
 #==============================================================================
 
 def build_node_schema(node_label=None, dataset=None):
     '''
-    This specific function generates the "schema" for a 
+    This specific function generates the "schema" for a
     node from a Dataiku Dataset
     '''
     ds = dataiku.Dataset(dataset)
@@ -100,10 +100,10 @@ def build_node_schema(node_label=None, dataset=None):
 
 def create_nodes_from_csv(graph=None, csv=None, schema=None):
     '''
-    Actually creates Neo4j nodes from a Dataiku Dataset 
+    Actually creates Neo4j nodes from a Dataiku Dataset
     '''
     q = """
-      LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
+      LOAD CSV FROM 'file:///%s' AS line
       CREATE (%s)
     """ % (csv, schema)
     logger.info("[+] Start importing nodes into Neo4j...")
@@ -116,8 +116,8 @@ def create_nodes_from_csv(graph=None, csv=None, schema=None):
         logger.error("[-] Issue while loading CSV file")
         logger.error("[-] {}".format( str(e) ))
         sys.exit(1)
-        
-        
+
+
 #==============================================================================
 # HELPERS FOR RELATIONSHIPS EXPORT
 #==============================================================================
@@ -153,8 +153,8 @@ def create_relationships_from_csv(graph=None, csv=None, schema=None,
       MATCH (t:%s {%s: %s})
       MERGE (f)-[rel:%s %s]->(t)
     """ % (
-        csv, 
-        schema, 
+        csv,
+        schema,
         graph_nodes_left_label, graph_nodes_left_key, graph_relationships_left_key,
         graph_nodes_right_label, graph_nodes_right_key, graph_relationships_right_key,
         graph_relationships_verb, graph_relationships_attributes
