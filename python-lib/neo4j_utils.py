@@ -147,7 +147,7 @@ def create_relationships_from_csv(graph=None, csv=None, schema=None,
                                   graph_relationships_verb=None, graph_relationships_attributes=None):
     q = """
       USING PERIODIC COMMIT
-      LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
+      LOAD CSV FROM 'file:///%s' AS line
       WITH %s
       MATCH (f:%s {%s: %s})
       MATCH (t:%s {%s: %s})
