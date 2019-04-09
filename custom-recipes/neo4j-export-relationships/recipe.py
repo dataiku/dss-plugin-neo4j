@@ -67,12 +67,12 @@ export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 #==============================================================================
 
 scp_nopassword_to_server(
-    file_to_copy=export_file, 
-    sshuser=SSH_USER, 
-    sshhost=SSH_HOST, 
+    file_to_copy=export_file,
+    sshuser=SSH_USER,
+    sshhost=SSH_HOST,
     sshpath=SSH_IMPORT_DIRECTORY
 )
-    
+
 
 #==============================================================================
 # LOADING DATA INTTO NEO4J
@@ -94,9 +94,9 @@ if GRAPH_RELATIONSHIPS_DELETE:
 
 # Creating schema
 (schema, attributes) = build_relationships_schema(
-    dataset=INPUT_DATASET_NAME, 
-    key_a=GRAPH_NODES_FROM_KEY, 
-    key_b=GRAPH_NODES_TO_KEY, 
+    dataset=INPUT_DATASET_NAME,
+    key_a=GRAPH_NODES_FROM_KEY,
+    key_b=GRAPH_NODES_TO_KEY,
     set_properties=GRAPH_RELATIONSHIPS_SET_PROPERTIES
 )
 
@@ -106,14 +106,14 @@ create_relationships_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=schema,
                               graph_nodes_right_label=GRAPH_NODES_TO_LABEL, graph_nodes_right_key=GRAPH_NODES_TO_KEY, graph_relationships_right_key=GRAPH_RELATIONSHIPS_TO_KEY,
                               graph_relationships_verb=GRAPH_RELATIONSHIPS_VERB, graph_relationships_attributes=attributes)
 
-    
+
 #==============================================================================
 # FINAL CLEANUP
 #==============================================================================
 
 # Remote file
 p = Popen(
-    ["ssh", "{}@{}".format(SSH_USER, SSH_HOST), "rm -rf", "{}/export.csv".format(SSH_IMPORT_DIRECTORY)], 
+    ["ssh", "{}@{}".format(SSH_USER, SSH_HOST), "rm -rf", "{}/export.csv".format(SSH_IMPORT_DIRECTORY)],
     stdin=PIPE, stdout=PIPE, stderr=PIPE
 )
 out, err = p.communicate()

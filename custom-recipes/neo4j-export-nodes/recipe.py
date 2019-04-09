@@ -62,12 +62,12 @@ export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 #==============================================================================
 
 scp_nopassword_to_server(
-    file_to_copy=export_file, 
-    sshuser=SSH_USER, 
-    sshhost=SSH_HOST, 
+    file_to_copy=export_file,
+    sshuser=SSH_USER,
+    sshhost=SSH_HOST,
     sshpath=SSH_IMPORT_DIRECTORY
-)   
-    
+)
+
 
 #==============================================================================
 # LOADING DATA INTO NEO4J
@@ -83,18 +83,18 @@ graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
 # Clean data if needed
 if GRAPH_NODES_DELETE:
     delete_nodes_with_label(graph=graph, node_label=GRAPH_NODES_LABEL)
-        
+
 # Actually load the data
 create_nodes_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=schema)
 
-    
+
 #==============================================================================
 # FINAL CLEANUP
 #==============================================================================
 
 # Remote file
 p = Popen(
-    ["ssh", "{}@{}".format(SSH_USER, SSH_HOST), "rm -rf", "{}/export.csv".format(SSH_IMPORT_DIRECTORY)], 
+    ["ssh", "{}@{}".format(SSH_USER, SSH_HOST), "rm -rf", "{}/export.csv".format(SSH_IMPORT_DIRECTORY)],
     stdin=PIPE, stdout=PIPE, stderr=PIPE
 )
 out, err = p.communicate()
