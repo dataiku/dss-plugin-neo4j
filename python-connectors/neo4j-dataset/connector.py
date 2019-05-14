@@ -1,6 +1,3 @@
-# This file is the actual code for the custom Python dataset neo4j_neo4j-dataset
-
-# import the base class for the custom dataset
 from six.moves import xrange
 from dataiku.connector import Connector
 
