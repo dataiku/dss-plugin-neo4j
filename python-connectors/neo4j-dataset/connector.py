@@ -28,6 +28,7 @@ class Neo4jConnector(Connector):
                             partition_id=None, records_limit = -1):
         if self.config["queryMode"] == "nodes":
             q = "MATCH (n:{}) RETURN n".format(self.config["nodeType"])
+            print(q)
             r = self.graph.run(q)
             for record in r.data():
                 yield dict(record["n"])            
