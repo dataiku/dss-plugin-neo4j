@@ -30,7 +30,7 @@
         <div ng-if="config.queryMode=='cypher'">
             <strong>Cypher query:</strong>
             <div>
-                <textarea></textarea>
+                <textarea ng-model="config.cypherQuery"></textarea>
             </div>
         </div>
         <div ng-if="config.queryMode=='nodes'">
