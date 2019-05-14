@@ -6,6 +6,6 @@
     },
     "readable" : true,
     "writable" : false,
-    "paramsTemplate": "instagram-users.html",
+    "paramsTemplate": "neo4j.html",
     "paramsModule" : "neo4j.module"
 }
