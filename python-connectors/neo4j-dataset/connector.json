@@ -7,5 +7,5 @@
     "readable" : true,
     "writable" : false,
     "paramsTemplate": "instagram-users.html",
-    "paramsModule" : "instagram.module"
+    "paramsModule" : "neo4j.module"
 }
