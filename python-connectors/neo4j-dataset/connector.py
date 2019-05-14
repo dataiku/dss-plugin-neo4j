@@ -1,15 +1,7 @@
 from six.moves import xrange
 from dataiku.connector import Connector
 
-"""
-A custom Python dataset is a subclass of Connector.
-
-The parameters it expects and some flags to control its handling by DSS are
-specified in the connector.json file.
-
-Note: the name of the class itself is not relevant.
-"""
-class MyConnector(Connector):
+class Neo4jConnector(Connector):
 
     def __init__(self, config, plugin_config):
         """
