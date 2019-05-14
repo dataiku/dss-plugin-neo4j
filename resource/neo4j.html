@@ -4,16 +4,11 @@
 <div id="main-container">
     <div ng-controller="Neo4jController">        
         <strong>Neo4j connection information:</strong>
-        <form novalidate>
-            <div>
+        <div>
                 <label for="neo4j-uri">URI:</label>
                 <input ng-model="config.neo4j-uri" type="text" name="neo4j-uri" placeholder="My dataset" id="neo4j-uri">
-            </div>
-            <div>
                 <label for="neo4j-user">Username:</label>
                 <input type="text" name="neo4j-user" placeholder="My dataset" id="neo4j-user">
-            </div>
-            <div>
                 <label for="neo4j-user">Password:</label>
                 <input type="text" name="neo4j-password" placeholder="My dataset" id="neo4j-password">
             </div>
