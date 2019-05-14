@@ -6,16 +6,16 @@
         <strong>Neo4j connection information:</strong>
         <div>
             <label for="neo4j-uri">URI:</label>
-            <input ng-model="config.neo4j-uri" type="text" name="neo4j-uri" placeholder="bolt://..." id="neo4j-uri">
+            <input ng-model="config.neo4jUri" type="text" name="neo4j-uri" placeholder="bolt://..." id="neo4j-uri">
             <label for="neo4j-user">Username:</label>
-            <input ng-model="config.neo4j-user" type="text" name="neo4j-user" placeholder="Neo4j username..." id="neo4j-user">
+            <input ng-model="config.neo4jUsername" type="text" name="neo4j-user" placeholder="Neo4j username..." id="neo4j-user">
             <label for="neo4j-user">Password:</label>
-            <input ng-model="config.neo4j-password" type="password" name="neo4j-password" placeholder="Neo4j password..." id="neo4j-password">
+            <input ng-model="config.neo4jPassword" type="password" name="neo4j-password" placeholder="Neo4j password..." id="neo4j-password">
         </div>
         <br/>
         <strong>Choose a type of query:</strong>
         <div>
-            <select ng-model="config.query-mode">
+            <select ng-model="config.queryMode">
                 <option value="nodes">Get all nodes</option>
                 <option value="cypher">Run Cypher</option>
             </select>
