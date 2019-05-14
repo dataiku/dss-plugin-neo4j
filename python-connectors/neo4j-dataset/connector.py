@@ -11,7 +11,8 @@ class Neo4jConnector(Connector):
         print(json.dumps(config, indent=2))
         print(80*'*')
         # perform some more initialization
-        self.theparam1 = self.config.get("parameter1", "defaultValue")
+        self.config = config
+        self.plugin_config = plugin_config
 
     def get_read_schema(self):
         """
