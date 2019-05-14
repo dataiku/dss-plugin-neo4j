@@ -1,6 +1,6 @@
 {
     "meta" : {
-        "label" : "Neo4j Connector",
+        "label" : "Neo4j",
         "description" : "Custom connector for the Neo4j graph database",
         "icon" : "icon-puzzle-piece"
     },
