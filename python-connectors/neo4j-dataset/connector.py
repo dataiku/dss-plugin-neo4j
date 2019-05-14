@@ -25,10 +25,11 @@ class Neo4jConnector(Connector):
 
     def generate_rows(self, dataset_schema=None, dataset_partitioning=None,
                             partition_id=None, records_limit = -1):
-        for i in xrange(1,10):
-            yield { "first_col" : str(i), "my_string" : "Yes" }
         print(80*'*')
-        print self.config["queryMode"] == "nodes"
+        if self.config["queryMode"] == "nodes":
+            for i in xrange(1,10):
+                yield { "first_col" : str(i), "my_string" : "Yes" }
+            
         #if self.config["queryMode"] == "nodes":
         #    q = "MATCH (n:{}) RETURN n".format(self.config["nodeType"])
         #    r = self.graph.run(q)
