@@ -24,20 +24,9 @@ class Neo4jConnector(Connector):
         return None
 
     def generate_rows(self, dataset_schema=None, dataset_partitioning=None,
-                            partition_id=None, records_limit = -1):
-        print(80*'*')
+                            partition_id=None, records_limit = -1):            
         if self.config["queryMode"] == "nodes":
             q = "MATCH (n:{}) RETURN n".format(self.config["nodeType"])
             r = self.graph.run(q)
-            df = r.to_data_frame()
-            print df.shape
-            for i in xrange(1,10):
-                yield { "first_col" : str(i), "my_string" : "Yes" }
-            
-        #if self.config["queryMode"] == "nodes":
-        #    q = "MATCH (n:{}) RETURN n".format(self.config["nodeType"])
-        #    r = self.graph.run(q)
-        #    for record in r.data():
-        #        print(record["n"])
-        #        #yield dict(record["n"])
-        #        yield { "first_col" : "a", "my_string" : "Yes" }
+            for record in r.data():
+                yield dict(record["n"])
