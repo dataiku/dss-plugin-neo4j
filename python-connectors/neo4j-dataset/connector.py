@@ -50,18 +50,3 @@ class Neo4jConnector(Connector):
 
     def get_records_count(self, partitioning=None, partition_id=None):
         raise Exception("unimplemented")
-
-
-class CustomDatasetWriter(object):
-    def __init__(self):
-        pass
-
-    def write_row(self, row):
-        """
-        Row is a tuple with N + 1 elements matching the schema passed to get_writer.
-        The last element is a dict of columns not found in the schema
-        """
-        raise Exception("unimplemented")
-
-    def close(self):
-        pass
