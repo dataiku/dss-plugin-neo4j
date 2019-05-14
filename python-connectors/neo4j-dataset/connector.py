@@ -26,17 +26,8 @@ class Neo4jConnector(Connector):
 
     def generate_rows(self, dataset_schema=None, dataset_partitioning=None,
                             partition_id=None, records_limit = -1):
-        """
-        The main reading method.
-
-        Returns a generator over the rows of the dataset (or partition)
-        Each yielded row must be a dictionary, indexed by column name.
-
-        The dataset schema and partitioning are given for information purpose.
-        """
-        for i in xrange(1,10):
-            yield { "first_col" : str(i), "my_string" : "Yes" }
-
+        if self.config["queryMode"] == "nodes":
+            q = "MATCH (n:{}) RETURN n".format(self.config["nodeType"])
 
     def get_writer(self, dataset_schema=None, dataset_partitioning=None,
                          partition_id=None):
