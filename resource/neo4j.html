@@ -14,8 +14,11 @@
     
     <div ng-controller="Neo4jController">        
         <strong>Neo4j connection information:</strong>
-        <form>
-            
+        <form novalidate>
+            <div class="field">
+                <label for="neo4j-uri">Neo4j URI:</label>
+                <input type="text" name="neo4j-uri" placeholder="My dataset" id="neo4j-uri">
+            </div>
         </form>
         <strong>Choose a type of query</strong>
         <br/>
