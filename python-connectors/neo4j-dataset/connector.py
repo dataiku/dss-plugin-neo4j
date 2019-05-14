@@ -1,4 +1,5 @@
 import json
+from py2neo import Graph
 from six.moves import xrange
 from dataiku.connector import Connector
 
@@ -10,9 +11,12 @@ class Neo4jConnector(Connector):
         print("CONFIG:")
         print(json.dumps(config, indent=2))
         print(80*'*')
-        # perform some more initialization
+        # Read plugin parameters
         self.config = config
         self.plugin_config = plugin_config
+        # Create Neo4j connection
+        uri = self.config.get("neo4jUri", "bolt://localhost:7687")
+        graph = Graph(uri, auth=("neo4j", "dataiku"))
 
     def get_read_schema(self):
         return None
