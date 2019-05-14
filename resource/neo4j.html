@@ -5,12 +5,18 @@
     <div ng-controller="Neo4jController">        
         <strong>Neo4j connection information:</strong>
         <div>
-            <label for="neo4j-uri">URI:</label>
-            <input ng-model="config.neo4jUri" type="text" name="neo4j-uri" placeholder="bolt://..." id="neo4j-uri">
-            <label for="neo4j-user">Username:</label>
-            <input ng-model="config.neo4jUsername" type="text" name="neo4j-user" placeholder="Neo4j username..." id="neo4j-user">
-            <label for="neo4j-user">Password:</label>
-            <input ng-model="config.neo4jPassword" type="password" name="neo4j-password" placeholder="Neo4j password..." id="neo4j-password">
+            <div>
+                <label for="neo4j-uri">URI:</label>
+                <input ng-model="config.neo4jUri" type="text" name="neo4j-uri" placeholder="bolt://..." id="neo4j-uri">
+            </div>
+            <div>
+                <label for="neo4j-user">Username:</label>
+                <input ng-model="config.neo4jUsername" type="text" name="neo4j-user" placeholder="Neo4j username..." id="neo4j-user">                
+            </div>
+            <div>
+                <label for="neo4j-user">Password:</label>
+                <input ng-model="config.neo4jPassword" type="password" name="neo4j-password" placeholder="Neo4j password..." id="neo4j-password">
+            </div>
         </div>
         <br/>
         <strong>Choose a type of query:</strong>
