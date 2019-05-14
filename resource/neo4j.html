@@ -1,1 +1,42 @@
 <link href="/plugins/neo4j/resource/instagram.css" rel="stylesheet" type="text/css">
+
+<div id="main-container">
+    
+    <h3>Neo4j</h3>
+    <hr/>
+    <div>
+        Prout
+    </div>
+    <br/>
+    
+    <div ng-controller="Neo4jController">
+        
+        <strong>How many accounts to you plan to fetch?</strong>
+        <br/>
+        <select ng-model="config.mode">
+            <option value="collect-one">Just one account</option>
+            <option value="collect-few">A few accounts</option>
+        </select>
+        <br/>
+           
+        <div>
+            
+            <div class="settings" ng-if="config.mode=='collect-one'">
+                <div>
+                    <label>Account ID</label>
+                    <input type="text" ng-model="config.account_id" placeholder="Instagram account ID">
+                </div>
+                <div>
+                    <label>Access token</label>
+                    <input type="text" ng-model="config.access_token" placeholder="Valid access token">
+                </div>
+            </div>
+            
+            <div class="settings" ng-if="config.mode=='collect-few'">
+                ​<textarea class="accounts" ng-model="config.account_list" rows="15" cols="80" placeholder="Account ID<TAB>Access token"></textarea>
+            </div>
+            
+        </div>
+        
+    </div>
+</div>
