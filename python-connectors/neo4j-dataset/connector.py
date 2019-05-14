@@ -7,6 +7,7 @@ class Neo4jConnector(Connector):
     def __init__(self, config, plugin_config):
         Connector.__init__(self, config, plugin_config)
         print(80*'*')
+        print("CONFIG:")
         print(json.dumps(config, indent=2))
         print(80*'*')
         # perform some more initialization
