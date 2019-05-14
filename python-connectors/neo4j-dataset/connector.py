@@ -16,7 +16,10 @@ class Neo4jConnector(Connector):
         self.plugin_config = plugin_config
         # Create Neo4j connection
         uri = self.config.get("neo4jUri", "bolt://localhost:7687")
-        graph = Graph(uri, auth=("neo4j", "dataiku"))
+        username = self.config.get("neo4jUsername", "neo4j")
+        password = self.config.get("neo4jPassword", "dataiku")
+        self.graph = Graph(uri, auth=(username, password))
+        print self.graph
 
     def get_read_schema(self):
         return None
