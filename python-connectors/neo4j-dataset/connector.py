@@ -5,7 +5,9 @@ class Neo4jConnector(Connector):
 
     def __init__(self, config, plugin_config):
         Connector.__init__(self, config, plugin_config)
+        print(80*'*')
         print(config)
+        print(80*'*')
         # perform some more initialization
         self.theparam1 = self.config.get("parameter1", "defaultValue")
 
