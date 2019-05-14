@@ -28,6 +28,7 @@ class Neo4jConnector(Connector):
         if self.config["queryMode"] == "nodes":
             q = "MATCH (n:{}) RETURN n".format(self.config["nodeType"])
             r = self.graph.run(q)
+            print(r)
             for record in r.data():
                 #yield dict(record["n"])
                 yield { "first_col" : "a", "my_string" : "Yes" }
