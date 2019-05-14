@@ -29,7 +29,8 @@ class Neo4jConnector(Connector):
         if self.config["queryMode"] == "nodes":
             q = "MATCH (n:{}) RETURN n".format(self.config["nodeType"])
             r = self.graph.run(q)
-            
+            df = r.to_data_frame()
+            print df.shape
             for i in xrange(1,10):
                 yield { "first_col" : str(i), "my_string" : "Yes" }
             
