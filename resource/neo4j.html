@@ -13,11 +13,13 @@
             <input ng-model="config.neo4j-password" type="password" name="neo4j-password" placeholder="Neo4j password..." id="neo4j-password">
         </div>
         <br/>
-        <strong>Choose a type of query:</strong>        
-        <select ng-model="config.query-mode">
-            <option value="nodes">Get all nodes</option>
-            <option value="cypher">Run Cypher</option>
-        </select>
+        <strong>Choose a type of query:</strong>
+        <div>
+            <select ng-model="config.query-mode">
+                <option value="nodes">Get all nodes</option>
+                <option value="cypher">Run Cypher</option>
+            </select>
+        </div>        
         <br/>
     </div>
 </div>
