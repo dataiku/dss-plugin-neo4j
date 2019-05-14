@@ -1,3 +1,4 @@
+import json
 from six.moves import xrange
 from dataiku.connector import Connector
 
@@ -6,7 +7,7 @@ class Neo4jConnector(Connector):
     def __init__(self, config, plugin_config):
         Connector.__init__(self, config, plugin_config)
         print(80*'*')
-        print(config)
+        print(json.dumps(config, indent=2))
         print(80*'*')
         # perform some more initialization
         self.theparam1 = self.config.get("parameter1", "defaultValue")
