@@ -23,6 +23,6 @@ class MyRunnable(Runnable):
         Do stuff here. Can return a string or raise an exception.
         The progress_callback is a function expecting 1 value: current progress
         """
-        q = self.config.get("")
-            r = self.graph.run(q)
+        q = self.config.get("cypherQuery")
+        r = self.graph.run(q)
         
