@@ -12,28 +12,25 @@
     },
     "params": [
         {
-            "name": "parameter2",
-            "type": "INT",
-            "defaultValue" : 42
-            /* Note that standard json parsing will return it as a double in Python (instead of an int), so you need to write
-               int(self.config()['parameter2'])
-            */
+            "name": "neo4jUri",
+            "label": "URI",
+            "description": "URI of the Neo4j database (bolt://...)",
+            "type": "STRING",
+            "mandatory": true
         },
-
-        /* A "SELECT" parameter is a multi-choice selector. Choices are specified using the selectChoice field*/
         {
-            "name": "parameter8",
-            "type": "SELECT",
-            "selectChoices": [
-                {
-                    "value": "val_x",
-                    "label": "display name for val_x"
-                },
-                {
-                    "value": "val_y",
-                    "label": "display name for val_y"
-                },
-            ]
+            "name": "neo4jUsername",
+            "label": "Username",
+            "description": "Username to connect to the Neo4j database",
+            "type": "STRING",
+            "mandatory": true
+        },
+        {
+            "name": "neo4jPassword",
+            "label": "Password",
+            "description": "Password to connect to the Neo4j database",
+            "type": "PASSWORD",
+            "mandatory": true
         }
     ]
 }
