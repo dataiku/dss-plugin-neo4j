@@ -5,6 +5,11 @@ class MyRunnable(Runnable):
 
     def __init__(self, project_key, config, plugin_config):
         self.config = config
+        # Create Neo4j connection
+        uri = self.config.get("neo4jUri", None)
+        username = self.config.get("neo4jUsername", None)
+        password = self.config.get("neo4jPassword", None)
+        self.graph = Graph(uri, auth=(username, password))
         
     def get_progress_target(self):
         """
