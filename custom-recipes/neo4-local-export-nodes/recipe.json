@@ -86,7 +86,8 @@
             "label" : "Neo4j Import Directory",
             "type": "STRING",
             "description":"Neo4j Import Directory",
-            "mandatory" : true
+            "mandatory" : true,
+            "defaultValue": "/var/lib/neo4j/import/"
         }
     ]
 }
