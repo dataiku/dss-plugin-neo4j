@@ -1,3 +1,4 @@
+import json
 from py2neo import Graph
 from dataiku.runnables import Runnable
 
