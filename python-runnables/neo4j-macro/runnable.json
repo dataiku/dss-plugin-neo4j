@@ -24,14 +24,16 @@
             "label": "Username",
             "description": "Username to connect to the Neo4j database",
             "type": "STRING",
-            "mandatory": true
+            "mandatory": true,
+            "defaultValue": "neo4j"
         },
         {
             "name": "neo4jPassword",
             "label": "Password",
             "description": "Password to connect to the Neo4j database",
             "type": "PASSWORD",
-            "mandatory": true
+            "mandatory": true,
+            "defaultValue": "dataiku"
         },
         {
             "name": "cypherQuery",
