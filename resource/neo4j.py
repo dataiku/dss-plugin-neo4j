@@ -3,9 +3,9 @@ from py2neo import Graph
 #def do(payload, config, plugin_config, inputs):
 def do(config):
     # Create Neo4j connection
-    uri = config.get("neo4jUri", "bolt://localhost:7687")
-    username = config.get("neo4jUsername", "neo4j")
-    password = config.get("neo4jPassword", "dataiku")
+    uri = config.get("neo4jUri", None)
+    username = config.get("neo4jUsername", None)
+    password = config.get("neo4jPassword", None)
     graph = Graph(uri, auth=(username, password))
     # Get distinct nodes
     q = """MATCH (n) RETURN DISTINCT LABELS(n) AS Labels"""
