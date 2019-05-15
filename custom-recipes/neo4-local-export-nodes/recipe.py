@@ -60,3 +60,4 @@ export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 #==============================================================================
 
 outfile = os.path.join(NEO4J_IMPORT_DIR, EXPORT_FILE_NAME)
+shutil.copyfile(export_file, outfile)
