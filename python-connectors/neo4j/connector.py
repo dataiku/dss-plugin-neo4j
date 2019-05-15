@@ -29,3 +29,6 @@ class Neo4jConnector(Connector):
             r = self.graph.run(q)
             for record in r.data():
                 yield dict(record["n"])
+        elif self.config["queryMode"] == "cypher":
+            q = self.config["nodeType"]
+       
