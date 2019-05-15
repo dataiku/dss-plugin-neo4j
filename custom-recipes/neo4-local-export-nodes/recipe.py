@@ -61,3 +61,24 @@ export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 
 outfile = os.path.join(NEO4J_IMPORT_DIR, EXPORT_FILE_NAME)
 shutil.copyfile(export_file, outfile)
+
+
+#==============================================================================
+# LOADING DATA INTO NEO4J
+#==============================================================================
+
+# Creating schema
+schema = build_node_schema(node_label=GRAPH_NODES_LABEL, dataset=INPUT_DATASET_NAME)
+
+# Connect to Neo4j
+uri = NEO4J_URI
+graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
+
+# Clean data if needed
+if GRAPH_NODES_DELETE:
+    delete_nodes_with_label(graph=graph, node_label=GRAPH_NODES_LABEL)
+        
+# Actually load the data
+create_nodes_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=schema)
+
+
