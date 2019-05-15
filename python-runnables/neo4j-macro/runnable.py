@@ -13,10 +13,6 @@ class MyRunnable(Runnable):
         self.graph = Graph(uri, auth=(username, password))
         
     def get_progress_target(self):
-        """
-        If the runnable will return some progress info, have this function return a tuple of 
-        (target, unit) where unit is one of: SIZE, FILES, RECORDS, NONE
-        """
         return None
 
     def run(self, progress_callback):
