@@ -27,6 +27,13 @@
             "mandatory": true
         },
         {
+            "name": "neo4jPassword",
+            "label": "Password",
+            "description": "Password to connect to the Neo4j database",
+            "type": "PASSWORD",
+            "mandatory": true
+        },
+        {
             "name": "cypherQuery",
             "label": "Query",
             "type": "TEXTAREA",
