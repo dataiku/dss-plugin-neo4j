@@ -18,7 +18,7 @@
             "type": "TEXT",
             "mandatory": true,
             "defaultValue": "bolt://"
-        }
+        },
         {
             "name": "cypherQuery",
             "label": "Query",
