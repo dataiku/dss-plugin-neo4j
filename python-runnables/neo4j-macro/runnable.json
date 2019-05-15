@@ -17,7 +17,7 @@
             "description": "URI of the Neo4j database (bolt://...)",
             "type": "STRING",
             "mandatory": true,
-            "defaultValue": "bolt://"
+            "defaultValue": "bolt://localhost:7687"
         },
         {
             "name": "neo4jUsername",
