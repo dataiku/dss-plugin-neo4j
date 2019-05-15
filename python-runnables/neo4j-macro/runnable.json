@@ -1,4 +1,3 @@
-/* This file is the descriptor for the python runnable neo4j-macro */
 {
     /* Meta data for display purposes */
     "meta": {
@@ -6,24 +5,10 @@
         "description": "Dataiku macro to interact with a Neo4j graph database. Could be used for maintenance tasks for instance.",
         "icon": "icon-puzzle-piece"
     },
-
-    /* whether the runnable's code is untrusted */
     "impersonate": false,
-
-    /* list of required permissions on the project to see/run the runnable */
     "permissions": [],
-
-    /* what the code's run() returns:
-       - NONE : no result
-       - HTML : a string that is a html (utf8 encoded)
-       - FOLDER_FILE : a (folderId, path) pair to a file in a folder of this project (json-encoded)
-       - FILE : raw data (as a python string) that will be stored in a temp file by DSS
-       - URL : a url
-     */
     "resultType": "HTML",
-
-    /* label to use when the runnable's result is not inlined in the UI (ex: for urls) */
-    "resultLabel": "my production",
+    "resultLabel": "Cypher query results",
 
     /* for FILE resultType, the extension to use for the temp file */
     "extension": "txt",
