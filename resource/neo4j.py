@@ -6,5 +6,6 @@ def do(payload, config, plugin_config, inputs):
     username = config.get("neo4jUsername", "neo4j")
     password = config.get("neo4jPassword", "dataiku")
     graph = Graph(uri, auth=(username, password))
-    print graph
+    # Get distinct nodes
+    q = """MATCH (n) RETURN DISTINCT LABELS(n) AS Labels"""
     return {'nodes': ['a', 'b', 'c']}
