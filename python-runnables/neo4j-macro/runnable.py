@@ -26,5 +26,5 @@ class MyRunnable(Runnable):
         """
         q = self.config.get("cypherQuery")
         r = self.graph.run(q)
-        return json.dumps(dict(r.stats()), indent=2)
+        return '<pre>' + json.dumps(dict(r.stats()), indent=2) + '</pre>'
         
