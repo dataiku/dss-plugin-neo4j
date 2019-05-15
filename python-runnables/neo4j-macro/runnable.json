@@ -15,24 +15,21 @@
             "label": "URI",
             "description": "URI of the Neo4j database (bolt://...)",
             "type": "STRING",
-            "mandatory": true,
-            "defaultValue": "bolt://localhost:7687"
+            "mandatory": true
         },
         {
             "name": "neo4jUsername",
             "label": "Username",
             "description": "Username to connect to the Neo4j database",
             "type": "STRING",
-            "mandatory": true,
-            "defaultValue": "neo4j"
+            "mandatory": true
         },
         {
             "name": "neo4jPassword",
             "label": "Password",
             "description": "Password to connect to the Neo4j database",
             "type": "PASSWORD",
-            "mandatory": true,
-            "defaultValue": "dataiku"
+            "mandatory": true
         },
         {
             "name": "cypherQuery",
