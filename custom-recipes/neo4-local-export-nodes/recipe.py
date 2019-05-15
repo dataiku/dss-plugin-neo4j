@@ -21,6 +21,7 @@ GRAPH_NODES_DELETE    = get_recipe_config().get('graph-nodes-delete', False)
 NEO4J_URI             = get_recipe_config().get('neo4j-uri', None)
 NEO4J_USER            = get_recipe_config().get('neo4j-user', None)
 NEO4J_PASSWORD        = get_recipe_config().get('neo4j-password', None)
+NEO4J_IMPORT_DIR      = get_recipe_config().get('neo4j-import-dir', None)
 
 EXPORT_FILE_NAME      = 'export.csv'
 
