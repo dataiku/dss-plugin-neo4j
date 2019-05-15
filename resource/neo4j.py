@@ -8,4 +8,6 @@ def do(payload, config, plugin_config, inputs):
     graph = Graph(uri, auth=(username, password))
     # Get distinct nodes
     q = """MATCH (n) RETURN DISTINCT LABELS(n) AS Labels"""
-    return {'nodes': ['a', 'b', 'c']}
+    r = graph.run(q)
+    nodes = [n["Labels"][0] for n in r.data()]
+    return {'nodes': nodes}
