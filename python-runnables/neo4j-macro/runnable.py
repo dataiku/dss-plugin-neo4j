@@ -39,12 +39,10 @@ class MyRunnable(Runnable):
         html = html + json.dumps(dict(r.stats()), indent=2)
         html = html + "</pre>"
         
-        html = html + "<h5>Query results (if any, truncated to 10)</h5>"
+        html = html + "<h5>Query results (if any, truncated to 50)</h5>"
         try:
             df = r.to_data_frame()
-            if df.shape[0] > 10:
-                df= df.head(10)
-            html = html + df.to_html()
+            html = html + df.to_html(index=False, max_rows=50)
         except Exception, e:
             print(str(e))
             html = html + "<pre>No result to display.</pre>"
