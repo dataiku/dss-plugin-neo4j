@@ -22,7 +22,7 @@ class Neo4jConnector(Connector):
     def get_read_schema(self):
         return None
 
-    def generate_rows(self):            
+    def generate_rows(self, dataset_schema=None, dataset_partitioning=None, partition_id=None, records_limit = -1):            
         if self.config["queryMode"] == "nodes":
             q = "MATCH (n:{}) RETURN n".format(self.config["nodeType"])
             print q
