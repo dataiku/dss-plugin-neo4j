@@ -15,7 +15,7 @@
             "name": "neo4jUri",
             "label": "URI",
             "description": "URI of the Neo4j database (bolt://...)",
-            "type": "TEXT",
+            "type": "STRING",
             "mandatory": true,
             "defaultValue": "bolt://"
         },
