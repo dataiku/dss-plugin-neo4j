@@ -1,4 +1,10 @@
+from py2neo import Graph
+
 def do(payload, config, plugin_config, inputs):
-    print("HELLO FROM BACKEND")
-    print(config)
+    # Create Neo4j connection
+    uri = self.config.get("neo4jUri", "bolt://localhost:7687")
+    username = self.config.get("neo4jUsername", "neo4j")
+    password = self.config.get("neo4jPassword", "dataiku")
+    graph = Graph(uri, auth=(username, password))
+    print graph
     return {'nodes': ['a', 'b', 'c']}
