@@ -1,8 +1,7 @@
-# This file is the actual code for the Python runnable neo4j-macro
+
 from dataiku.runnables import Runnable
 
 class MyRunnable(Runnable):
-    """The base interface for a Python runnable"""
 
     def __init__(self, project_key, config, plugin_config):
         """
