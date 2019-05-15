@@ -25,4 +25,5 @@ class MyRunnable(Runnable):
         """
         q = self.config.get("cypherQuery")
         r = self.graph.run(q)
+        return r.stats()
         
