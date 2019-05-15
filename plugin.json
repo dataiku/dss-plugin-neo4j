@@ -9,5 +9,14 @@
         "licenseInfo": "Apache Software License",
         "url": "https://www.dataiku.com/dss/plugins/info/neo4j.html",
         "tags": ["Graph", "Connector"]
-    }
+    },
+    "pluginParams": [
+        {
+            "name": "parameter1",
+            "label" : "User-readable name",
+            "type": "STRING",
+            "description":"Some documentation for parameter1",
+            "mandatory" : true
+        }
+    ]
 }
