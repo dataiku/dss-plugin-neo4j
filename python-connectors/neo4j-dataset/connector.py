@@ -13,7 +13,6 @@ class Neo4jConnector(Connector):
         print(80*'*')
         # Read plugin parameters
         self.config = config
-        self.plugin_config = plugin_config
         # Create Neo4j connection
         uri = self.config.get("neo4jUri", "bolt://localhost:7687")
         username = self.config.get("neo4jUsername", "neo4j")
