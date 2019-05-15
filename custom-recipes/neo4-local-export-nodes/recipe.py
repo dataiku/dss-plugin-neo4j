@@ -51,3 +51,8 @@ logger.info("*"*80)
 
 export_file = os.path.join(export_folder, EXPORT_FILE_NAME)
 export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
+
+
+#==============================================================================
+# COPYING TO NEO4J IMPORT FOLDER
+#==============================================================================
