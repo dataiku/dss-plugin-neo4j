@@ -22,6 +22,7 @@ class Neo4jConnector(Connector):
     def generate_rows(self):            
         if self.config["queryMode"] == "nodes":
             q = "MATCH (n:{}) RETURN n".format(self.config["nodeType"])
+            print q
             r = self.graph.run(q)
             for record in r.data():
                 yield dict(record["n"])
