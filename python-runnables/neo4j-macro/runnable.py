@@ -27,14 +27,26 @@ class MyRunnable(Runnable):
         html = ""
         #html = html + "<hr/>"
         q = self.config.get("cypherQuery")
+        
         html = html + "<h5>Query</h5>"
         html = html + '<pre style="font-size: 11px">'
         html = html + q
         html = html + "</pre>"
+        
         r = self.graph.run(q)
         html = html + "<h5>Query statistics</h5>"
         html = html + '<pre style="font-size: 11px">'
         html = html + json.dumps(dict(r.stats()), indent=2)
         html = html + "</pre>"
+        
+        html = html + "<h5>Query results (if any, truncated to 10)</h5>"
+        try:
+            df = r.to_data_frame()
+            if df.shape[0] > 10:
+                do = df.head(10)
+            html = html + do.to_html()
+        except:
+            html = html + "<pre>No result to display.</pre>"
+            
         return html
         
