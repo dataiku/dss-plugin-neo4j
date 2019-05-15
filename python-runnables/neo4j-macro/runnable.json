@@ -12,7 +12,15 @@
     "macroRoles": [],
     "params": [
         {
-            "name": "query",
+            "name": "neo4jUri",
+            "label": "URI",
+            "description": "URI of the Neo4j database (bolt://...)",
+            "type": "TEXT",
+            "mandatory": true,
+            "defaultValue": "bolt://"
+        }
+        {
+            "name": "cypherQuery",
             "label": "Query",
             "type": "TEXTAREA",
             "description": "Type your custom Cypher query",
