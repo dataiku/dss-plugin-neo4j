@@ -1,4 +1,5 @@
 import os
+import shutil
 import logging
 import dataiku
 from py2neo import Graph
