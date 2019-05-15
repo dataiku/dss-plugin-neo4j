@@ -25,7 +25,7 @@ class MyRunnable(Runnable):
         The progress_callback is a function expecting 1 value: current progress
         """
         html = ""
-        html = html + "<h3>Query statistics</h3>"
+        html = html + "<h4>Query statistics</h4>"
         #html = html + "<hr/>"
         q = self.config.get("cypherQuery")
         r = self.graph.run(q)
