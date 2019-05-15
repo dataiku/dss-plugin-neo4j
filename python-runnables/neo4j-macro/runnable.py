@@ -17,7 +17,6 @@ class MyRunnable(Runnable):
 
     def run(self, progress_callback):
         html = ""
-        #html = html + "<hr/>"
         q = self.config.get("cypherQuery")
         
         html = html + "<h5>Query</h5>"
