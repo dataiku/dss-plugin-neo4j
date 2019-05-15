@@ -43,8 +43,8 @@ class MyRunnable(Runnable):
         try:
             df = r.to_data_frame()
             if df.shape[0] > 10:
-                do = df.head(10)
-            html = html + do.to_html()
+                df= df.head(10)
+            html = html + df.to_html()
         except Exception, e:
             print(str(e))
             html = html + "<pre>No result to display.</pre>"
