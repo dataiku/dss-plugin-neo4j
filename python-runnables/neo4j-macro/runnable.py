@@ -28,7 +28,9 @@ class MyRunnable(Runnable):
         #html = html + "<hr/>"
         q = self.config.get("cypherQuery")
         html = html + "<h5>Query</h5>"
+        html = html + "<pre>"
         html = html + q
+        html = html + "</pre>"
         r = self.graph.run(q)
         html = html + "<h5>Query statistics</h5>"
         html = html + "<pre>"
