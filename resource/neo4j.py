@@ -2,9 +2,9 @@ from py2neo import Graph
 
 def do(payload, config, plugin_config, inputs):
     # Create Neo4j connection
-    uri = self.config.get("neo4jUri", "bolt://localhost:7687")
-    username = self.config.get("neo4jUsername", "neo4j")
-    password = self.config.get("neo4jPassword", "dataiku")
+    uri = config.get("neo4jUri", "bolt://localhost:7687")
+    username = config.get("neo4jUsername", "neo4j")
+    password = config.get("neo4jPassword", "dataiku")
     graph = Graph(uri, auth=(username, password))
     print graph
     return {'nodes': ['a', 'b', 'c']}
