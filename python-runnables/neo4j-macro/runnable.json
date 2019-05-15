@@ -2,8 +2,8 @@
 {
     /* Meta data for display purposes */
     "meta": {
-        "label": "Custom runnable neo4j-macro",
-        "description": "Custom macro",
+        "label": "Neo4j",
+        "description": "Dataiku macro to interact with a Neo4j graph database.",
         "icon": "icon-puzzle-piece"
     },
 
