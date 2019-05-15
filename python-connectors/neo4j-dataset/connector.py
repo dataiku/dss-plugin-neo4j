@@ -19,8 +19,8 @@ class Neo4jConnector(Connector):
         password = self.config.get("neo4jPassword", "dataiku")
         self.graph = Graph(uri, auth=(username, password))
         
-   def get_read_schema(self):
-        return None     
+    def get_read_schema(self):
+        return None
 
     def generate_rows(self):            
         if self.config["queryMode"] == "nodes":
