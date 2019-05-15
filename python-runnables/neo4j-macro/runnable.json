@@ -20,6 +20,13 @@
             "defaultValue": "bolt://"
         },
         {
+            "name": "neo4jUsername",
+            "label": "Username",
+            "description": "Username to connect to the Neo4j database",
+            "type": "STRING",
+            "mandatory": true
+        },
+        {
             "name": "cypherQuery",
             "label": "Query",
             "type": "TEXTAREA",
