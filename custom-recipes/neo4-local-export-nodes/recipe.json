@@ -80,34 +80,6 @@
             "type": "PASSWORD",
             "description":"Neo4j Password",
             "mandatory" : true
-        },
-
-        {
-            "label": "Neo4j Server SSH Settings",
-            "type": "SEPARATOR"
-        },
-        {
-            "name": "ssh-host",
-            "label" : "SSH Host",
-            "type": "STRING",
-            "description":"IP or name of the server",
-            "mandatory" : true
-        },
-        {
-            "name": "ssh-user",
-            "label" : "SSH User",
-            "type": "STRING",
-            "description":"SSH Username",
-            "mandatory" : true,
-            "defaultValue": "neo4j"
-        },
-        {
-            "name": "ssh-import-directory",
-            "label" : "SSH Import Directory",
-            "type": "STRING",
-            "description":"Path of the Neo4J import directory",
-            "mandatory" : true,
-            "defaultValue" : "import"
         }
     ]
 }
