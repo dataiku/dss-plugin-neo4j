@@ -36,10 +36,7 @@
         <div ng-if="config.queryMode=='nodes'">
             <strong>Select nodes:</strong>
             <div>
-                <select ng-model="config.nodeType">
-                    <option value="Household">Household</option>
-                    <option value="Product">Product</option>
-                </select>
+                <select ng-model="config.nodeType" ng-options="n for n in nodes"></select>
             </div>
         </div>
     </div>
