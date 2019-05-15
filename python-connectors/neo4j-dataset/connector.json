@@ -7,5 +7,6 @@
     "readable" : true,
     "writable" : false,
     "paramsTemplate": "neo4j.html",
-    "paramsModule" : "neo4j.module"
+    "paramsModule": "neo4j.module",
+    "paramsPythonSetup": "neo4j.py"
 }
