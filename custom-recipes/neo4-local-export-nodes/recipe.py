@@ -82,3 +82,17 @@ if GRAPH_NODES_DELETE:
 create_nodes_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=schema)
 
 
+#==============================================================================
+# FINAL CLEANUP
+#==============================================================================
+
+# Remote file
+os.remove(outfile)
+
+# Local file
+os.remove( export_file )
+
+logger.info("*"*80)
+logger.info("* NEO4J EXPORT PROCESS END")
+logger.info("*"*80)
+
