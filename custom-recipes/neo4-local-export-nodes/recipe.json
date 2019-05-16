@@ -59,7 +59,7 @@
             "type": "SEPARATOR"
         },
         {
-            "name": "neo4jIimportDir",
+            "name": "neo4jImportDir",
             "label" : "Neo4j Import Directory",
             "type": "STRING",
             "description":"Neo4j Import Directory",
