@@ -99,7 +99,7 @@
         },
         {
             "name": "graphRelationshipsDelete",
-            "label": "Delete Relationship",
+            "label": "Delete Relationships",
             "type": "BOOLEAN",
             "description":"Should existing relationships be deleted first?",
             "mandatory" : true,
