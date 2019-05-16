@@ -102,7 +102,7 @@
             "defaultValue": "neo4j"
         },
         {
-            "name": "sshImportDirectory",
+            "name": "neo4jImportDirectory",
             "label" : "SSH Import Directory",
             "type": "STRING",
             "description":"Path of the Neo4J import directory",
