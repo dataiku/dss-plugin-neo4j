@@ -63,9 +63,6 @@ export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 
 logger.info("[+] Making file available to Neo4j...")
 outfile = os.path.join(NEO4J_IMPORT_DIR, EXPORT_FILE_NAME)
-logger.info("[+] Blah")
-print export_file
-print outfile
 shutil.copyfile(export_file, outfile)
 logger.info("[+] Done.")
 
