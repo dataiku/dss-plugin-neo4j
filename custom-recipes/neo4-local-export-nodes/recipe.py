@@ -17,7 +17,7 @@ INPUT_DATASET_NAME = get_input_names_for_role('inputDataset')[0]
 OUTPUT_FOLDER_NAME = get_output_names_for_role('outputDolder')[0]
 
 # Plugin settings
-NEO4J_URI          = 
+NEO4J_URI          = get_plugin_config().get('')
 
 # Recipe settings
 GRAPH_NODES_LABEL  = get_recipe_config().get('graphNodesLabel', None)
