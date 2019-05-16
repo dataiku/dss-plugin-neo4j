@@ -77,7 +77,6 @@ and investigations on the resulting graph. These recipes need to be used as foll
 
 ## Plugins limitations and potential improvements
 
-* The Plugins use LOAD CSV to load data into Neo4j. It assumes that DSS and Neo4j are running on 2 separate servers, and thus requires ssh access from the DSS host to the Neo4j host to copy input files.
 * Nodes and relationships attributes are all created as string - the Plugin does not handle data types
 * Only simple relationships are handled, in the form of (a)-(rel:REL)->(b)
 * Only URI's in the form of "bolt://" have been tested, with a username / password based authentication
