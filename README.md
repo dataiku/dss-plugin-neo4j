@@ -44,11 +44,14 @@ As for the custom Recipes to load data into Neo4j:
   * "Local", to be used when DSS and Neo4j run on the same host machine
   * "Remote", to be used when DSS and Neo4j run on separate machines
   
-Generally speaking, the "Export Nodes" functionality needs always to be used **before** "Export Relationships". 
-The nodes must exist in the Neo4j database prior to loading potential relationships between them. 
+#### Technical notes and requirements
 
-The Plugin assumes that you know where the Neo4j "import directory" (cf. [documentation](https://neo4j.com/docs/operations-manual/current/configuration/file-locations/)) 
-is located, otherwise check with your administrators.
+* The Plugin assumes that **you know where the Neo4j "import directory" is located** (cf. [documentation](https://neo4j.com/docs/operations-manual/current/configuration/file-locations/)), otherwise check with your administrators.
+* The 
+
+**Important**
+
+When the "Remote" option is used (meaning that Neo4j and DSS do not run on the same server), some 
 
 ### Using the Plugin
 The Plugin needs to be used in 2 steps:
