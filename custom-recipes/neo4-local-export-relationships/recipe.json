@@ -53,7 +53,7 @@
             "mandatory" : true
         },
         {
-            "name": "graph-relationships-from-key",
+            "name": "graphRelationshipsFromKey",
             "label" : "(a) Lookup Key in Relationships",
             "type": "COLUMN",
             "columnRole": "input-dataset",
@@ -61,14 +61,14 @@
             "mandatory" : true
         },
         {
-            "name": "graph-nodes-to-label",
+            "name": "graphNodesToLabel",
             "label" : "(b) Node Label",
             "type": "STRING",
             "description": "Right-hand side node label (b) in the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },
         {
-            "name": "graph-nodes-to-key",
+            "name": "graphNodesToKey",
             "label" : "(b) Node Lookup Key",
             "type": "STRING",
             "description": "Right-hand side node key to lookup (b) in the relationship (a)-[rel:REL]->(b)",
