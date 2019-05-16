@@ -12,7 +12,7 @@
 
     "inputRoles" : [
         {
-            "name": "input-dataset",
+            "name": "inputDataset",
             "label": "Input Dataset",
             "description": "Dataiku Dataset holding the nodes",
             "arity": "UNARY",
@@ -22,7 +22,7 @@
     ],
     "outputRoles" : [
         {
-            "name": "output-folder",
+            "name": "outputFolder",
             "label": "Results Folder",
             "description": "Dataiku Folder storing the export log and results",
             "arity": "UNARY",
@@ -39,14 +39,14 @@
             "type": "SEPARATOR"
         },
         {
-            "name": "graph-nodes-label",
+            "name": "graphNodesLabel",
             "label" : "Nodes Label",
             "type": "STRING",
             "description":"Labels for the nodes that will be created",
             "mandatory" : true
         },
         {
-            "name": "graph-nodes-delete",
+            "name": "graphNodesDelete",
             "label": "Delete Nodes",
             "type": "BOOLEAN",
             "description":"Should existing nodes with this label be deleted first?",
