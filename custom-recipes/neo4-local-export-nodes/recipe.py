@@ -14,7 +14,7 @@ from logging import FileHandler
 
 # I/O settings
 INPUT_DATASET_NAME = get_input_names_for_role('inputDataset')[0]
-OUTPUT_FOLDER_NAME = get_output_names_for_role('outputDolder')[0]
+OUTPUT_FOLDER_NAME = get_output_names_for_role('outputFolder')[0]
 
 # Plugin settings
 NEO4J_URI          = get_plugin_config().get("neo4jUri", None)
