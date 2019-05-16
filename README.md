@@ -30,7 +30,7 @@ These parameters need to be entered in the Plugin global settings (available fro
 
 Additionally, if Neo4j runs on a separate server than DSS, the **two servers will need to be able to communicate** to exchange data, so the proper networking and security configuration has to be set up (to be checked with your administrators).
 
-### Sepcific Notes
+### Specific Notes
 The Macro and Dataset components do not require specific actions or knowledge to be used. 
 
 * an "Export Nodes" custom recipe that takes a DSS Dataset as input and creates Neo4j nodes
