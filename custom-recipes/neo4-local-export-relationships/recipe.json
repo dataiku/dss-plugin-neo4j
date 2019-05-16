@@ -75,7 +75,7 @@
             "mandatory" : true
         },
         {
-            "name": "graph-relationships-to-key",
+            "name": "graphRelationshipsToKey",
             "label" : "(b) Lookup Key in Relationships",
             "type": "COLUMN",
             "columnRole": "input-dataset",
@@ -83,14 +83,14 @@
             "mandatory" : true
         },
         {
-            "name": "graph-relationships-verb",
+            "name": "graphRelationshipsVerb",
             "label" : "Verb Defining the Relationship",
             "type": "STRING",
             "description": "Verb (REL) defining the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },
         {
-            "name": "graph-relationships-set-properties",
+            "name": "graphRelationshipsSetProperties",
             "label" : "Set Properties",
             "type": "BOOLEAN",
             "description": "Should all the remaining columns be used to set relationship properties",
@@ -98,7 +98,7 @@
             "defaultValue": false
         },
         {
-            "name": "graph-relationships-delete",
+            "name": "graphRelationshipsDelete",
             "label": "Delete Relationship",
             "type": "BOOLEAN",
             "description":"Should existing relationships be deleted first?",
