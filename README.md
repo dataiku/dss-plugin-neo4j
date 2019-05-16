@@ -47,7 +47,7 @@ As for the custom Recipes to load data into Neo4j:
 #### Technical notes and requirements
 
 * The Plugin assumes that **you know where the Neo4j "import directory" is located** (cf. [documentation](https://neo4j.com/docs/operations-manual/current/configuration/file-locations/)), otherwise check with your administrators.
-* The 
+* The **Linux account used by Dataiku must have write permissions on the Neo4j import directory**, owned by default by the Neo4j Linux service account.
 
 **Important**
 
