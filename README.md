@@ -71,11 +71,8 @@ and investigations on the resulting graph. These recipes need to be used as foll
     * Create a DSS Dataset by type of Nodes, with a node key and a set of node attributes (columns)
     * Use the "Export Node" functionality for each of these Datasets to create the Nodes in Neo4j
   * Then load Relationships
-    * 
-
-
-1. Create one Dataset per node label/type with the required attributes in columns, and no duplicates, then use the "Export Nodes" recipe to load these nodes into Neo4j
-2. Create one Dataset stroring the relationships (2 columns) as well as their attributes - and no duplicates, then use the "Export Relationships" recipe to load them into Neo4j
+    * Create a DSS Dataset by type of Relationship, with at least 2 columns defining the two nodes part of the relationship (a left-hand side node key, and right-hand side node key), and optionally others columns that can be used as attributes
+    * Use the "Export Relationships" functionality to load the data into Neo4j, specifying how these Relationships match with existing nodes, and which "verb" defines the relationship
 
 
 ## Plugins limitations and potential improvements
