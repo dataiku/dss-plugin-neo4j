@@ -8,7 +8,7 @@
     },
 
     "kind" : "PYTHON",
-    "selectableFromDataset": "input-dataset",
+    "selectableFromDataset": "inputDataset",
 
     "inputRoles" : [
         {
