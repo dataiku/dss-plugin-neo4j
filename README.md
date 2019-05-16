@@ -3,7 +3,8 @@
 
 ## Overview
 
-The purpose of this Dataiku Plugin is to allow DSS users to interact with the [Neo4j](https://neo4j.com/) graph platform. Neo4j offers a popular database and language (Cypher), which lets users query and analyse graph data structures. 
+The purpose of this Dataiku Plugin is to allow DSS users to interact with the [Neo4j](https://neo4j.com/) graph platform. 
+Neo4j offers a popular database and language (Cypher), which lets users query and analyse graph data structures. 
 The current version of the Plugin has different options to both read and write from/to Neo4j.
 
 
@@ -26,20 +27,27 @@ The main prerequisite to use this Plugin is to **know the credentials to connect
 * Neo4j database username
 * Neo4j database password
 
-These parameters need to be entered in the Plugin global settings (available from the *Administration > Plugins* pane), possibly by a DSS admin. 
+These parameters need to be entered in the Plugin global settings (available from the *Administration > Plugins* pane), 
+possibly by a DSS admin. 
 
-Additionally, if Neo4j runs on a separate server than DSS, the **two servers will need to be able to communicate** to exchange data, so the proper networking and security configuration has to be set up (to be checked with your administrators).
+Additionally, if Neo4j runs on a separate server than DSS, the **two servers will need to be able to communicate** to exchange data, 
+so the proper networking and security configuration has to be set up (to be checked with your administrators).
 
 ### Specific Notes
 The Macro and Dataset components do not require specific actions or knowledge to be used, beyond the prerequisites above. 
 
-As for the custom Recipes:
+As for the custom Recipes to load data into Neo4j:
 * there are two types of Recipes:
   * "Export Nodes", that takes a DSS Dataset as input and creates Neo4j nodes
   * "Export Relationships", that takes a DSS Dataset as input and creates Neo4j relationships between existing nodes
 * each type of Recipe comes in two flavors:
   * "Local", to be used when DSS and Neo4j run on the same host machine
   * "Remote", to be used when DSS and Neo4j run on separate machines
+  
+Generally speaking, the "Export Nodes" functionality needs always to be used **before** "Export Relationships". 
+The nodes must exist in the Neo4j database prior to loading potential relationships between them. 
+
+The 
 
 ### Using the Plugin
 The Plugin needs to be used in 2 steps:
