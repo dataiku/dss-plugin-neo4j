@@ -13,8 +13,8 @@ from logging import FileHandler
 #==============================================================================
 
 # I/O settings
-INPUT_DATASET_NAME    = get_input_names_for_role('inputDataset')[0]
-OUTPUT_FOLDER_NAME    = get_output_names_for_role('outputDolder')[0]
+INPUT_DATASET_NAME = get_input_names_for_role('inputDataset')[0]
+OUTPUT_FOLDER_NAME = get_output_names_for_role('outputDolder')[0]
 
 # Recipe settings
 GRAPH_NODES_LABEL  = get_recipe_config().get('graphNodesLabel', None)
