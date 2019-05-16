@@ -16,9 +16,9 @@ INPUT_DATASET_NAME                = get_input_names_for_role('input-dataset')[0]
 OUTPUT_FOLDER_NAME                = get_output_names_for_role('output-folder')[0]
 
 # Plugin settings
-NEO4J_URI          = get_plugin_config().get("neo4jUri", None)
-NEO4J_USERNAME     = get_plugin_config().get("neo4jUsername", None)
-NEO4J_PASSWORD     = get_plugin_config().get("neo4jPassword", None)
+NEO4J_URI                          = get_plugin_config().get("neo4jUri", None)
+NEO4J_USERNAME                     = get_plugin_config().get("neo4jUsername", None)
+NEO4J_PASSWORD                     = get_plugin_config().get("neo4jPassword", None)
 
 # Recipe settings
 GRAPH_NODES_FROM_LABEL             = get_recipe_config().get('graph-nodes-from-label', None)
@@ -30,7 +30,7 @@ GRAPH_RELATIONSHIPS_TO_KEY         = get_recipe_config().get('graph-relationship
 GRAPH_RELATIONSHIPS_VERB           = get_recipe_config().get('graph-relationships-verb', None)
 GRAPH_RELATIONSHIPS_SET_PROPERTIES = get_recipe_config().get('graph-relationships-set-properties', False)
 GRAPH_RELATIONSHIPS_DELETE         = get_recipe_config().get('graph-relationships-delete', True)
-NEO4J_IMPORT_DIR   = get_recipe_config().get('neo4jImportDir', None)
+NEO4J_IMPORT_DIR                   = get_recipe_config().get('neo4jImportDir', None)
 
 EXPORT_FILE_NAME      = 'export.csv'
 
