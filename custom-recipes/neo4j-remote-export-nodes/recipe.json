@@ -1,7 +1,7 @@
 {
 
     "meta" : {
-        "label" : "Export Nodes",
+        "label" : "Export Nodes (Remote)",
         "description" : "Create Neo4j nodes from a Dataiku Dataset.\nUse when Neo4j is hosted on a different server than DSS.",
         "icon": "icon-upload",
         "iconColor": "green"
