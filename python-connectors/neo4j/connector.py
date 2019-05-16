@@ -9,10 +9,11 @@ class Neo4jConnector(Connector):
         Connector.__init__(self, config, plugin_config)
         # Read plugin parameters
         self.config = config
+        self.plugin_config = plugin_config
         # Create Neo4j connection
-        uri = self.config.get("neo4jUri", None)
-        username = self.config.get("neo4jUsername", None)
-        password = self.config.get("neo4jPassword", None)
+        uri = self.plugin_config.get("neo4jUri", None)
+        username = self.plugin_config.get("neo4jUsername", None)
+        password = self.plugin_config.get("neo4jPassword", None)
         self.graph = Graph(uri, auth=(username, password))
         
     def get_read_schema(self):
