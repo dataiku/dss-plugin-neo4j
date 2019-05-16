@@ -12,7 +12,7 @@
 
     "inputRoles" : [
         {
-            "name": "input-dataset",
+            "name": "inputDataset",
             "label": "Input Dataset",
             "description": "Dataiku Dataset holding the relationships",
             "arity": "UNARY",
@@ -22,7 +22,7 @@
     ],
     "outputRoles" : [
         {
-            "name": "output-folder",
+            "name": "outputFolder",
             "label": "Results Folder",
             "description": "Dataiku Folder storing the export log and results",
             "arity": "UNARY",
