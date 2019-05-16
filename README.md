@@ -3,7 +3,7 @@
 
 ## Overview
 
-The purpose of this Dataiku Plugin is to allow DSS users to interact with the Neo4j graph database. 
+The purpose of this Dataiku Plugin is to allow DSS users to interact with the (https://neo4j.com/)[Neo4j] graph platform. 
 The current version of the Plugin offers the ability to load Dataiku data directly into Neo4j. In particular, it will let you create new nodes and attributes in the graph from Dataiku Datasets, as well as setting their properties. 
 
 ## Using the Plugin
