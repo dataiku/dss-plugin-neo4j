@@ -64,7 +64,7 @@ It could be used for instance to perform maintenance tasks on the database, crea
 * the Dataset can be used when a user needs to **get data outside of Neo4j and into DSS**. The connector allows to retrieve all nodes with a given label,  
 or to perform an arbitratry [Cypher](https://neo4j.com/docs/cypher-manual/current/) query. The resulting DSS Dataset can be used in larger Flow and  
 blended with other data sources as required, and could serve as an input for a ML model (specifically, one could use Cypher to create graph-related features for a model)
-* the Recipes can be used when a users needs 
+* the Recipes can be used when a users needs to **load DSS data into Neo4j**. 
 
 
 1. Create one Dataset per node label/type with the required attributes in columns, and no duplicates, then use the "Export Nodes" recipe to load these nodes into Neo4j
