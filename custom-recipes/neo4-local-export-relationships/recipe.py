@@ -63,15 +63,13 @@ export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
 
 
 #==============================================================================
-# COPYING TO NEO4J SERVER
+# COPYING TO NEO4J IMPORT FOLDER
 #==============================================================================
 
-scp_nopassword_to_server(
-    file_to_copy=export_file, 
-    sshuser=SSH_USER, 
-    sshhost=SSH_HOST, 
-    sshpath=SSH_IMPORT_DIRECTORY
-)
+logger.info("[+] Making file available to Neo4j...")
+outfile = os.path.join(NEO4J_IMPORT_DIR, EXPORT_FILE_NAME)
+shutil.copyfile(export_file, outfile)
+logger.info("[+] Done.")
     
 
 #==============================================================================
@@ -80,7 +78,7 @@ scp_nopassword_to_server(
 
 # Connect to Neo4j
 uri = NEO4J_URI
-graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
+graph = Graph(uri, auth=("{}".format(NEO4J_USERNAME), "{}".format(NEO4J_PASSWORD)))
 
 # Add constraints and unique indices to the original nodes
 logger.info(  "[+] Creating constraints on nodes...")
@@ -112,14 +110,10 @@ create_relationships_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=schema,
 #==============================================================================
 
 # Remote file
-p = Popen(
-    ["ssh", "{}@{}".format(SSH_USER, SSH_HOST), "rm -rf", "{}/export.csv".format(SSH_IMPORT_DIRECTORY)], 
-    stdin=PIPE, stdout=PIPE, stderr=PIPE
-)
-out, err = p.communicate()
+os.remove(outfile)
 
 # Local file
-os.remove( export_file )
+os.remove(export_file)
 
 logger.info("*"*80)
 logger.info("* NEO4J EXPORT PROCESS END")
