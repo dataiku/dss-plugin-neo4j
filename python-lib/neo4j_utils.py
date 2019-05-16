@@ -45,6 +45,7 @@ def scp_nopassword_to_server(file_to_copy=None, sshuser=None, sshhost=None, sshp
     else:
         logger.info("[+] Copying file complete.")
 
+
 def delete_nodes_with_label(graph=None, node_label=None):
     '''
     Simple helper to delete all nodes with a given label within
@@ -62,7 +63,8 @@ def delete_nodes_with_label(graph=None, node_label=None):
         logger.error("[-] Issue while deleting nodes with label {}".format(node_label))
         logger.error("[-] {}".format( str(e) ))
         sys.exit(1)
-        
+
+
 def delete_relationships(graph=None, nodes_a_label=None, nodes_b_label=None, relationships_verb=None):
     q = """
       MATCH (:%s)-[r:%s]-(:%s) 
