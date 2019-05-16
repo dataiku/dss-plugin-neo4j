@@ -87,14 +87,14 @@
             "type": "SEPARATOR"
         },
         {
-            "name": "ssh-host",
+            "name": "sshHost",
             "label" : "SSH Host",
             "type": "STRING",
             "description":"IP or name of the server",
             "mandatory" : true
         },
         {
-            "name": "ssh-user",
+            "name": "sshUser",
             "label" : "SSH User",
             "type": "STRING",
             "description":"SSH Username",
@@ -102,7 +102,7 @@
             "defaultValue": "neo4j"
         },
         {
-            "name": "ssh-import-directory",
+            "name": "sshImportDirectory",
             "label" : "SSH Import Directory",
             "type": "STRING",
             "description":"Path of the Neo4J import directory",
