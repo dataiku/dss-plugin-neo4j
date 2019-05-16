@@ -1,7 +1,6 @@
 from py2neo import Graph
 
-#def do(payload, config, plugin_config, inputs):
-def do(config, plugin_config):
+def do(payload, config, plugin_config, inputs):
     # Create Neo4j connection
     uri = plugin_config.get("neo4jUri", None)
     username = plugin_config.get("neo4jUsername", None)
