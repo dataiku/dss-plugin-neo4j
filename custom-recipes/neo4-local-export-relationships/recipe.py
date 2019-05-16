@@ -30,7 +30,7 @@ GRAPH_RELATIONSHIPS_TO_KEY         = get_recipe_config().get('graph-relationship
 GRAPH_RELATIONSHIPS_VERB           = get_recipe_config().get('graph-relationships-verb', None)
 GRAPH_RELATIONSHIPS_SET_PROPERTIES = get_recipe_config().get('graph-relationships-set-properties', False)
 GRAPH_RELATIONSHIPS_DELETE         = get_recipe_config().get('graph-relationships-delete', True)
-SSH_IMPORT_DIRECTORY               = get_recipe_config().get('ssh-import-directory', None)
+NEO4J_IMPORT_DIR   = get_recipe_config().get('neo4jImportDir', None)
 
 EXPORT_FILE_NAME      = 'export.csv'
 
