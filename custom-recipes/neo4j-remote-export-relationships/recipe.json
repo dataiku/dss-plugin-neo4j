@@ -2,7 +2,7 @@
 
     "meta" : {
         "label" : "Export Relationships",
-        "description" : "Create Neo4j relationships from a Dataiku Dataset",
+        "description" : "Create Neo4j relationships from a Dataiku Dataset.\nUse when Neo4j is hosted on a different server than DSS.",
         "icon": "icon-upload",
         "iconColor": "green"
     },
