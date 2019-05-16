@@ -46,7 +46,7 @@
             "mandatory" : true
         },
         {
-            "name": "graph-nodes-delete",
+            "name": "graphNodesDelete",
             "label": "Delete Nodes",
             "type": "BOOLEAN",
             "description":"Should existing nodes with this label be deleted first?",
@@ -59,7 +59,7 @@
             "type": "SEPARATOR"
         },
         {
-            "name": "neo4j-import-dir",
+            "name": "neo4jIimportDir",
             "label" : "Neo4j Import Directory",
             "type": "STRING",
             "description":"Neo4j Import Directory",
