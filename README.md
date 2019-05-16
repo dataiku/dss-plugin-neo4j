@@ -20,7 +20,7 @@ The Plugin is made of the following components:
 ## Using the Plugin
 
 ### Neo4j Credentials
-The main prerequisite to use thie Plugin is to know the credentials to connect to the Neo4j database:
+The main prerequisite to use this Plugin is to **know the credentials to connect to the Neo4j database**:
 
 * Neo4j database URI
 * Neo4j database username
@@ -28,8 +28,10 @@ The main prerequisite to use thie Plugin is to know the credentials to connect t
 
 These parameters need to be entered in the Plugin global settings (available from the *Administration > Plugins* pane), possibly by a DSS admin. 
 
-### Plugin components
-The Plugin has the following components:
+Additionally, if Neo4j runs on a separate server than DSS, the **two servers will need to be able to communicate** to exchange data, so the proper networking and security rules have to be set up (to be checked with your administrators).
+
+### Sepcific Notes
+The Macro and Dataset components do not require specific actions or knowledge to be used. 
 
 * an "Export Nodes" custom recipe that takes a DSS Dataset as input and creates Neo4j nodes
 * an "Export Relationships" custom recipe that takes a DSS Dataset as input and creates Neo4j relationships between existing nodes
