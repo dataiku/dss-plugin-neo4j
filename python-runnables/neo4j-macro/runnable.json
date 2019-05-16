@@ -2,7 +2,7 @@
     "meta": {
         "label": "Neo4j",
         "description": "Dataiku macro to interact with a Neo4j graph database. Could be used for maintenance tasks for instance.",
-        "icon": "icon-puzzle-piece"
+        "icon": "icon-folder-close"
     },
     "impersonate": false,
     "permissions": [],
