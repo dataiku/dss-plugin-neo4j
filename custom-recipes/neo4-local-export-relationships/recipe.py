@@ -27,9 +27,9 @@ GRAPH_NODES_TO_LABEL               = get_recipe_config().get('graphNodesToLabel'
 GRAPH_NODES_TO_KEY                 = get_recipe_config().get('graphNodesToKey', None)
 GRAPH_RELATIONSHIPS_FROM_KEY       = get_recipe_config().get('graphRelationshipsFromKey', None)
 GRAPH_RELATIONSHIPS_TO_KEY         = get_recipe_config().get('graphRelationshipsToKey', None)
-GRAPH_RELATIONSHIPS_VERB           = get_recipe_config().get('graph-relationships-verb', None)
-GRAPH_RELATIONSHIPS_SET_PROPERTIES = get_recipe_config().get('graph-relationships-set-properties', False)
-GRAPH_RELATIONSHIPS_DELETE         = get_recipe_config().get('graph-relationships-delete', True)
+GRAPH_RELATIONSHIPS_VERB           = get_recipe_config().get('graphRelationshipsVerb', None)
+GRAPH_RELATIONSHIPS_SET_PROPERTIES = get_recipe_config().get('graphRelationshipsSetProperties', False)
+GRAPH_RELATIONSHIPS_DELETE         = get_recipe_config().get('graphRelationshipsDelete', True)
 NEO4J_IMPORT_DIR                   = get_recipe_config().get('neo4jImportDir', None)
 
 EXPORT_FILE_NAME      = 'export.csv'
