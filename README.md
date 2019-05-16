@@ -54,7 +54,7 @@ setfacl -m u:dataiku:rwx /var/lib/neo4j/import/
 ``` 
 * **When the "Remote" option is used** (meaning that Neo4j and DSS do not run on the same server), some additional steps are required:
   * the two servers must be able to communicate (check network configuration)
-  * the Dataiku Linux account must have password-less SSH access to the machine hosting Neo4j
+  * the Linux account specified in the Plugin must have password-less SSH access to the machine hosting Neo4j
 
 ### Using the Plugin
 The Plugin needs to be used in 2 steps:
