@@ -1,11 +1,11 @@
 from py2neo import Graph
 
 #def do(payload, config, plugin_config, inputs):
-def do(config):
+def do(config, plugin_config):
     # Create Neo4j connection
-    uri = config.get("neo4jUri", None)
-    username = config.get("neo4jUsername", None)
-    password = config.get("neo4jPassword", None)
+    uri = plugin_config.get("neo4jUri", None)
+    username = plugin_config.get("neo4jUsername", None)
+    password = plugin_config.get("neo4jPassword", None)
     graph = Graph(uri, auth=(username, password))
     # Get distinct nodes
     q = """MATCH (n) RETURN DISTINCT LABELS(n) AS Labels"""
