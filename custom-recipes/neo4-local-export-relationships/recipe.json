@@ -3,7 +3,7 @@
     "meta" : {
         "label" : "Export Relationships (Local)",
         "description" : "Create Neo4j relationships from a Dataiku Dataset when Neo4j and Dataiku are on the same server.\nNote that the nodes must have been created first.",
-        "icon" : "icon-upload",
+        "icon": "icon-upload",
         "iconColor": "green"
     },
 
