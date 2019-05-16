@@ -47,7 +47,8 @@ As for the custom Recipes to load data into Neo4j:
 Generally speaking, the "Export Nodes" functionality needs always to be used **before** "Export Relationships". 
 The nodes must exist in the Neo4j database prior to loading potential relationships between them. 
 
-The 
+The Plugin assumes that you know where the Neo4j "import directory" (cf. [documentation](https://neo4j.com/docs/operations-manual/current/configuration/file-locations/)) 
+is located, otherwise check with your administrators.
 
 ### Using the Plugin
 The Plugin needs to be used in 2 steps:
