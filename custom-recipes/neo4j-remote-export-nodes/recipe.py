@@ -24,7 +24,7 @@ NEO4J_USER            = get_recipe_config().get('neo4jUsername', None)
 NEO4J_PASSWORD        = get_recipe_config().get('neo4jPassword', None)
 SSH_HOST              = get_recipe_config().get('sshHost', None)
 SSH_USER              = get_recipe_config().get('sshUsername', None)
-SSH_IMPORT_DIRECTORY  = get_recipe_config().get('ssh-import-directory', None)
+SSH_IMPORT_DIRECTORY  = get_recipe_config().get('neo4jImportDir', None)
 
 EXPORT_FILE_NAME      = 'export.csv'
 
