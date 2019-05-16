@@ -12,7 +12,8 @@ The Plugin is made of the following components:
 
 * a **Macro** to run arbitrary Cypher statements against the Neo4j database, to be used when there is no need to output a Dataiku Dataset
 * a custom **Dataset** to get data out of Neo4j, either entire groups of nodes, or using a custom Cypher query
-* 
+* four custom **Recipes** to export Dataiku Datasets into Neo4j
+* a dedicated **Code Environment** that pulls the required Python libraries
 
 ## Using the Plugin
 
