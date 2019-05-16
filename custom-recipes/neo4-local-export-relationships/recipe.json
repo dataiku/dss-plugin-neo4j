@@ -110,55 +110,12 @@
             "type": "SEPARATOR"
         },
         {
-            "name": "neo4j-uri",
-            "label" : "Neo4j URI",
+            "name": "neo4jImportDir",
+            "label" : "Neo4j Import Directory",
             "type": "STRING",
-            "description":"Connection URI for Neo4j",
+            "description":"Neo4j Import Directory",
             "mandatory" : true,
-            "defaultValue": "bolt://localhost:7687"
-        },
-        {
-            "name": "neo4j-user",
-            "label" : "Neo4j User",
-            "type": "STRING",
-            "description":"Neo4j Username",
-            "mandatory" : true,
-            "defaultValue": "neo4j"
-        },
-        {
-            "name": "neo4j-password",
-            "label" : "Neo4j Password",
-            "type": "PASSWORD",
-            "description":"Neo4j Password",
-            "mandatory" : true
-        },
-
-        {
-            "label": "Neo4j Server SSH Settings",
-            "type": "SEPARATOR"
-        },
-        {
-            "name": "ssh-host",
-            "label" : "SSH Host",
-            "type": "STRING",
-            "description":"IP or name of the server",
-            "mandatory" : true
-        },
-        {
-            "name": "ssh-user",
-            "label" : "SSH User",
-            "type": "STRING",
-            "description":"SSH Username",
-            "mandatory" : true,
-            "defaultValue": "neo4j"
-        },
-        {
-            "name": "ssh-import-directory",
-            "label" : "SSH Import Directory",
-            "type": "STRING",
-            "description":"Path of the Neo4J import directory",
-            "mandatory" : true,
-            "defaultValue" : "import"
+            "defaultValue": "/var/lib/neo4j/import/"
         }
     ]
 }
