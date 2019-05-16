@@ -6,6 +6,7 @@
         "description": "Interacting with the Neo4j graph database",
         "author": "Dataiku (Thomas)",
         "icon": "icon-folder-close",
+        "iconColor": "green",
         "licenseInfo": "Apache Software License",
         "url": "https://www.dataiku.com/dss/plugins/info/neo4j.html",
         "tags": ["Graph", "Connector"]
