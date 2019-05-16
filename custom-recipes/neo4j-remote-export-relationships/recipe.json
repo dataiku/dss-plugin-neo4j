@@ -53,7 +53,7 @@
             "mandatory" : true
         },
         {
-            "name": "graph-relationships-from-key",
+            "name": "graphRelationshipsFromKey",
             "label" : "(a) Lookup Key in Relationships",
             "type": "COLUMN",
             "columnRole": "input-dataset",
