@@ -3,7 +3,7 @@
     "meta" : {
         "label" : "Export Nodes (Local)",
         "description" : "Create Neo4j nodes from a Dataiku Dataset when Neo4j and Dataiku are on the same server",
-        "icon": "icon-folder-close",
+        "icon": "icon-upload",
         "iconColor": "green"
     },
 
