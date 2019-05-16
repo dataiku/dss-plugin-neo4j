@@ -12,7 +12,7 @@
 
     "inputRoles" : [
         {
-            "name": "input-dataset",
+            "name": "inputDataset",
             "label": "Input Dataset",
             "description": "Dataiku Dataset holding the relationships",
             "arity": "UNARY",
@@ -22,7 +22,7 @@
     ],
     "outputRoles" : [
         {
-            "name": "output-folder",
+            "name": "outputFolder",
             "label": "Results Folder",
             "description": "Dataiku Folder storing the export log and results",
             "arity": "UNARY",
@@ -39,14 +39,14 @@
             "type": "SEPARATOR"
         },
         {
-            "name": "graph-nodes-from-label",
+            "name": "graphNodesFromLabel",
             "label" : "(a) Node Label",
             "type": "STRING",
             "description": "Left-hand side node label (a) in the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },
         {
-            "name": "graph-nodes-from-key",
+            "name": "graphNodesFromKey",
             "label" : "(a) Node Lookup Key",
             "type": "STRING",
             "description": "Left-hand side node key to lookup (a) in the relationship (a)-[rel:REL]->(b)",
