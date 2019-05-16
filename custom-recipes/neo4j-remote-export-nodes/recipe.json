@@ -102,7 +102,7 @@
             "defaultValue": "neo4j"
         },
         {
-            "name": "neo4jImportDirectory",
+            "name": "neo4jImportDir",
             "label" : "Neo4j Import Directory",
             "type": "STRING",
             "description":"Path of the Neo4J import directory",
