@@ -75,7 +75,7 @@ and investigations on the resulting graph. These recipes need to be used as foll
     * Use the "Export Relationships" functionality to load the data into Neo4j, specifying how these Relationships match with existing nodes, and which "verb" defines the relationship
 
 
-## Plugins limitations and potential improvements
+## Plugins limitations and improvements
 
 * Nodes and relationships attributes are all created as string - the Plugin does not handle data types
 * Only simple relationships are handled, in the form of (a)-(rel:REL)->(b)
