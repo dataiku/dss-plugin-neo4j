@@ -56,7 +56,7 @@
             "name": "graphRelationshipsFromKey",
             "label" : "(a) Lookup Key in Relationships",
             "type": "COLUMN",
-            "columnRole": "input-dataset",
+            "columnRole": "inputDataset",
             "description": "Lookup column in relationships for (a) in the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },
@@ -78,7 +78,7 @@
             "name": "graphRelationshipsToKey",
             "label" : "(b) Lookup Key in Relationships",
             "type": "COLUMN",
-            "columnRole": "input-dataset",
+            "columnRole": "inputDataset",
             "description": "Lookup column in relationships for (b) in the relationship (a)-[rel:REL]->(b)",
             "mandatory" : true
         },
