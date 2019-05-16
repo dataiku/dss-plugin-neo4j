@@ -66,7 +66,12 @@ It could be used for instance to perform maintenance tasks on the database, crea
 or to perform an arbitratry [Cypher](https://neo4j.com/docs/cypher-manual/current/) query. The resulting DSS Dataset can be used in larger Flow and  
 blended with other data sources as required, and could serve as an input for a ML model (specifically, one could use Cypher to create graph-related features for a model)
 * the Recipes can be used when a users needs to **load DSS data into Neo4j**. A typical use case would be to use Neo4j specific features to perform analytics  
-and investigations on the resulting graph. 
+and investigations on the resulting graph. These recipes need to be used as follows:
+  * Load Nodes first
+    * Create a DSS Dataset by type of Nodes, with a node key and a set of node attributes (columns)
+    * Use the "Export Node" functionality for each of these Datasets to create the Nodes in Neo4j
+  * Then load Relationships
+    * 
 
 
 1. Create one Dataset per node label/type with the required attributes in columns, and no duplicates, then use the "Export Nodes" recipe to load these nodes into Neo4j
