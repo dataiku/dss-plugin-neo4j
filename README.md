@@ -56,8 +56,16 @@ setfacl -m u:dataiku:rwx /var/lib/neo4j/import/
   * the two servers must be able to communicate (check network configuration)
   * the Linux account specified in the Plugin must have password-less SSH access to the machine hosting Neo4j
 
-### Using the Plugin
-The Plugin needs to be used in 2 steps:
+### Usage scenario
+The different components allow for different use cases:
+
+* the Macro can be used when a user needs to simply **interact with the database** and when no output Dataset is required.  
+It could be used for instance to perform maintenance tasks on the database, create indices, test Cypher queries, delete nodes...
+* the Dataset can be used when a user needs to **get data outside of Neo4j and into DSS**. The connector allows to retrieve all nodes with a given label,  
+or to perform an arbitratry [Cypher](https://neo4j.com/docs/cypher-manual/current/) query. The resulting DSS Dataset can be used in larger Flow and  
+blended with other data sources as required, and could serve as an input for a ML model (specifically, one could use Cypher to create graph-related features for a model)
+* the Recipes can be used when a users needs 
+
 
 1. Create one Dataset per node label/type with the required attributes in columns, and no duplicates, then use the "Export Nodes" recipe to load these nodes into Neo4j
 2. Create one Dataset stroring the relationships (2 columns) as well as their attributes - and no duplicates, then use the "Export Relationships" recipe to load them into Neo4j
