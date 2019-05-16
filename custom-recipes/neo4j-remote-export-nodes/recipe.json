@@ -94,7 +94,7 @@
             "mandatory" : true
         },
         {
-            "name": "sshUser",
+            "name": "sshUsername",
             "label" : "SSH User",
             "type": "STRING",
             "description":"SSH Username",
