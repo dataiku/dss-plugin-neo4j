@@ -34,9 +34,12 @@ Additionally, if Neo4j runs on a separate server than DSS, the **two servers wil
 The Macro and Dataset components do not require specific actions or knowledge to be used, beyond the prerequisites above. 
 
 As for the custom Recipes:
-
-* an "Export Nodes" custom recipe that takes a DSS Dataset as input and creates Neo4j nodes
-* an "Export Relationships" custom recipe that takes a DSS Dataset as input and creates Neo4j relationships between existing nodes
+* there are two types of Recipes:
+  * "Export Nodes", that takes a DSS Dataset as input and creates Neo4j nodes
+  * "Export Relationships", that takes a DSS Dataset as input and creates Neo4j relationships between existing nodes
+* each type of Recipe comes in two flavors:
+  * "Local", to be used when DSS and Neo4j run on the same host machine
+  * "Remote", to be used when DSS and Neo4j run on separate machines
 
 ### Using the Plugin
 The Plugin needs to be used in 2 steps:
