@@ -93,7 +93,7 @@ create_nodes_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=schema)
 os.remove(outfile)
 
 # Local file
-os.remove( export_file )
+os.remove(export_file)
 
 logger.info("*"*80)
 logger.info("* NEO4J EXPORT PROCESS END")
