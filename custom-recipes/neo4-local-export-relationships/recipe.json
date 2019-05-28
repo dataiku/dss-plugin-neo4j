@@ -1,18 +1,18 @@
 {
 
-    "meta" : {
-        "label" : "Export Relationships (Local)",
-        "description" : "Create Neo4j relationships from a Dataiku Dataset.\nUse when Neo4j is hosted on the same server as DSS.\nNote that the nodes must have been created first.",
+    "meta": {
+        "label": "Export Relationships (Local)",
+        "description": "Create Neo4j relationships from a Dataiku Dataset.\nUse when Neo4j is hosted on the same server as DSS.\nNote that the nodes must have been created first.",
         "icon": "icon-upload",
         "iconColor": "green"
     },
 
-    "kind" : "PYTHON",
-    "selectableFromDataset": "inputDataset",
+    "kind": "PYTHON",
+    "selectableFromDataset": "input_dataset",
 
-    "inputRoles" : [
+    "inputRoles": [
         {
-            "name": "inputDataset",
+            "name": "input_dataset",
             "label": "Input Dataset",
             "description": "Dataiku Dataset holding the relationships",
             "arity": "UNARY",
@@ -20,9 +20,9 @@
             "acceptsDataset": true
         }
     ],
-    "outputRoles" : [
+    "outputRoles": [
         {
-            "name": "outputFolder",
+            "name": "output_folder",
             "label": "Results Folder",
             "description": "Dataiku Folder storing the export log and results",
             "arity": "UNARY",
@@ -35,75 +35,75 @@
     "params": [
 
         {
-            "label":"Graph Settings",
+            "label": "Graph Settings",
             "type": "SEPARATOR"
         },
         {
             "name": "graphNodesFromLabel",
-            "label" : "(a) Node Label",
+            "label": "(a) Node Label",
             "type": "STRING",
             "description": "Left-hand side node label (a) in the relationship (a)-[rel:REL]->(b)",
-            "mandatory" : true
+            "mandatory": true
         },
         {
             "name": "graphNodesFromKey",
-            "label" : "(a) Node Lookup Key",
+            "label": "(a) Node Lookup Key",
             "type": "STRING",
             "description": "Left-hand side node key to lookup (a) in the relationship (a)-[rel:REL]->(b)",
-            "mandatory" : true
+            "mandatory": true
         },
         {
             "name": "graphRelationshipsFromKey",
-            "label" : "(a) Lookup Key in Relationships",
+            "label": "(a) Lookup Key in Relationships",
             "type": "COLUMN",
-            "columnRole": "inputDataset",
+            "columnRole": "input_dataset",
             "description": "Lookup column in relationships for (a) in the relationship (a)-[rel:REL]->(b)",
-            "mandatory" : true
+            "mandatory": true
         },
         {
             "name": "graphNodesToLabel",
-            "label" : "(b) Node Label",
+            "label": "(b) Node Label",
             "type": "STRING",
             "description": "Right-hand side node label (b) in the relationship (a)-[rel:REL]->(b)",
-            "mandatory" : true
+            "mandatory": true
         },
         {
             "name": "graphNodesToKey",
-            "label" : "(b) Node Lookup Key",
+            "label": "(b) Node Lookup Key",
             "type": "STRING",
             "description": "Right-hand side node key to lookup (b) in the relationship (a)-[rel:REL]->(b)",
-            "mandatory" : true
+            "mandatory": true
         },
         {
             "name": "graphRelationshipsToKey",
-            "label" : "(b) Lookup Key in Relationships",
+            "label": "(b) Lookup Key in Relationships",
             "type": "COLUMN",
-            "columnRole": "inputDataset",
+            "columnRole": "input_dataset",
             "description": "Lookup column in relationships for (b) in the relationship (a)-[rel:REL]->(b)",
-            "mandatory" : true
+            "mandatory": true
         },
         {
             "name": "graphRelationshipsVerb",
-            "label" : "Verb Defining the Relationship",
+            "label": "Verb Defining the Relationship",
             "type": "STRING",
             "description": "Verb (REL) defining the relationship (a)-[rel:REL]->(b)",
-            "mandatory" : true
+            "mandatory": true
         },
         {
             "name": "graphRelationshipsSetProperties",
-            "label" : "Set Properties",
+            "label": "Set Properties",
             "type": "BOOLEAN",
             "description": "Should all the remaining columns be used to set relationship properties",
-            "mandatory" : true,
+            "mandatory": true,
             "defaultValue": false
         },
         {
             "name": "graphRelationshipsDelete",
             "label": "Delete Relationships",
             "type": "BOOLEAN",
-            "description":"Should existing relationships be deleted first?",
-            "mandatory" : true,
-            "defaultValue" : true
+            "description": "Should existing relationships be deleted first?",
+            "mandatory": true,
+            "defaultValue": true
         },
         {
             "label": "Neo4j Settings",
@@ -111,10 +111,10 @@
         },
         {
             "name": "neo4jImportDir",
-            "label" : "Neo4j Import Directory",
+            "label": "Neo4j Import Directory",
             "type": "STRING",
-            "description":"Neo4j Import Directory",
-            "mandatory" : true,
+            "description": "Neo4j Import Directory",
+            "mandatory": true,
             "defaultValue": "/var/lib/neo4j/import/"
         }
     ]

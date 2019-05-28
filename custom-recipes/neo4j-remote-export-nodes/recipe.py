@@ -1,107 +1,47 @@
 import os
-import logging
-import dataiku
-from py2neo import Graph
-from neo4j_utils import *
+import shutil
 from subprocess import Popen, PIPE
+
+import dataiku
 from dataiku.customrecipe import *
-from logging import FileHandler
+from commons import *
 
+# --- Setup recipe
 
-#==============================================================================
-# PLUGIN SETTINGS
-#==============================================================================
+neo4jhandle = get_neo4jhandle()
+params = get_nodes_export_params()
+(input_dataset, output_folder) = get_input_output()
+input_dataset_schema = input_dataset.read_schema()
+logger = setup_logging(output_folder)
+EXPORT_FILE_NAME = 'export.csv'
 
-# I/O settings
-INPUT_DATASET_NAME    = get_input_names_for_role('inputDataset')[0]
-OUTPUT_FOLDER_NAME    = get_output_names_for_role('outputFolder')[0]
+# --- Run
 
-# Recipe settings
-GRAPH_NODES_LABEL     = get_recipe_config().get('graphNodesLabel', None)
-GRAPH_NODES_DELETE    = get_recipe_config().get('graphNodesDelete', False)
-NEO4J_URI             = get_recipe_config().get('neo4jUri', None)
-NEO4J_USER            = get_recipe_config().get('neo4jUsername', None)
-NEO4J_PASSWORD        = get_recipe_config().get('neo4jPassword', None)
-SSH_HOST              = get_recipe_config().get('sshHost', None)
-SSH_USER              = get_recipe_config().get('sshUsername', None)
-SSH_IMPORT_DIRECTORY  = get_recipe_config().get('neo4jImportDir', None)
-
-EXPORT_FILE_NAME      = 'export.csv'
-
-
-
-#==============================================================================
-# LOGGING SETTINGS
-#==============================================================================
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
-
-export_folder = dataiku.Folder(OUTPUT_FOLDER_NAME).get_path()
-export_log = os.path.join(export_folder, 'export.log')
-file_handler = FileHandler(export_log, 'w')
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
-
-logger.info("*"*80)
-logger.info("* NEO4J EXPORT PROCESS START")
-logger.info("*"*80)
-
-
-#==============================================================================
-# EXPORTING TO CSV
-#==============================================================================
-
-export_file = os.path.join(export_folder, EXPORT_FILE_NAME)
-export_dataset(dataset=INPUT_DATASET_NAME, output_file=export_file)
-
-
-#==============================================================================
-# COPYING FILE TO NEO4J SERVER
-#==============================================================================
+logger.info("NEO4J EXPORT START")
+export_file = os.path.join(output_folder, EXPORT_FILE_NAME)
+export_dataset(input_dataset, export_file)
 
 scp_nopassword_to_server(
-    file_to_copy=export_file, 
-    sshuser=SSH_USER, 
-    sshhost=SSH_HOST, 
-    sshpath=SSH_IMPORT_DIRECTORY
-)   
-    
+    file_to_copy=export_file,
+    sshuser=neo4jhandle.ssh_user,
+    sshhost=neo4jhandle.ssh_host,
+    sshpath=neo4jhandle.import_dir
+)
 
-#==============================================================================
-# LOADING DATA INTO NEO4J
-#==============================================================================
+if params.clear_before_run:
+    neo4jhandle.delete_nodes_with_label(params.nodes_label)
+neo4jhandle.load_nodes_csv(EXPORT_FILE_NAME, params.nodes_label, input_dataset_schema)
 
-# Creating schema
-schema = build_node_schema(node_label=GRAPH_NODES_LABEL, dataset=INPUT_DATASET_NAME)
-
-# Connect to Neo4j
-uri = NEO4J_URI
-graph = Graph(uri, auth=("{}".format(NEO4J_USER), "{}".format(NEO4J_PASSWORD)))
-
-# Clean data if needed
-if GRAPH_NODES_DELETE:
-    delete_nodes_with_label(graph=graph, node_label=GRAPH_NODES_LABEL)
-        
-# Actually load the data
-create_nodes_from_csv(graph=graph, csv=EXPORT_FILE_NAME, schema=schema)
-
-    
-#==============================================================================
-# FINAL CLEANUP
-#==============================================================================
+# --- Cleanup
 
 # Remote file
-p = Popen(
-    ["ssh", "{}@{}".format(SSH_USER, SSH_HOST), "rm -rf", "{}/export.csv".format(SSH_IMPORT_DIRECTORY)], 
-    stdin=PIPE, stdout=PIPE, stderr=PIPE
-)
-out, err = p.communicate()
+# p = Popen(
+#     ["ssh", "{}@{}".format(neo4jhandle.ssh_user, neo4jhandle.ssh_host), "rm -rf", "{}/export.csv".format(neo4jhandle.import_dir)],
+#     stdin=PIPE, stdout=PIPE, stderr=PIPE
+# )
+# out, err = p.communicate()
 
 # Local file
-os.remove( export_file )
+os.remove(export_file)
 
-logger.info("*"*80)
-logger.info("* NEO4J EXPORT PROCESS END")
-logger.info("*"*80)
+logger.info("NEO4J EXPORT DONE")

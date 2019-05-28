@@ -1,31 +1,14 @@
-<!--link href="/static/public/styles/1.0.0/dku-styles.css" rel="stylesheet" type="text/css"/-->
 <link href="/plugins/neo4j/resource/neo4j.css" rel="stylesheet" type="text/css"/>
 
 <div id="main-container">
-    <div ng-controller="Neo4jController">        
-        <!--strong>Neo4j connection information:</strong>
-        <div>
-            <div>
-                <label for="neo4j-uri">URI:</label>
-                <input ng-model="config.neo4jUri" type="text" name="neo4j-uri" placeholder="bolt://..." id="neo4j-uri">
-            </div>
-            <div>
-                <label for="neo4j-user">Username:</label>
-                <input ng-model="config.neo4jUsername" type="text" name="neo4j-user" placeholder="Neo4j username..." id="neo4j-user">                
-            </div>
-            <div>
-                <label for="neo4j-user">Password:</label>
-                <input ng-model="config.neo4jPassword" type="password" name="neo4j-password" placeholder="Neo4j password..." id="neo4j-password">
-            </div>
-        </div>
-        <br/-->
+    <div ng-controller="Neo4jController">
         <strong>Type of query:</strong>
         <div>
             <select ng-model="config.queryMode">
                 <option value="nodes">Get all nodes with certain label</option>
                 <option value="cypher">Custom Cypher query</option>
             </select>
-        </div>        
+        </div>
         <br/>
         <div ng-if="config.queryMode=='cypher'">
             <strong>Cypher query:</strong>

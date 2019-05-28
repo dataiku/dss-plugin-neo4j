@@ -1,12 +1,12 @@
 {
-    "meta" : {
-        "label" : "Neo4j",
-        "description" : "Connector for the Neo4j graph database",
-        "icon" : "icon-folder-close",
+    "meta": {
+        "label": "Neo4j",
+        "description": "Connector for the Neo4j graph database",
+        "icon": "icon-folder-close",
         "iconColor": "green"
     },
-    "readable" : true,
-    "writable" : false,
+    "readable": true,
+    "writable": false,
     "paramsTemplate": "neo4j.html",
     "paramsModule": "neo4j.module",
     "paramsPythonSetup": "neo4j.py"

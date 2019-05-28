@@ -1,18 +1,18 @@
 {
 
-    "meta" : {
-        "label" : "Export Nodes (Local)",
-        "description" : "Create Neo4j nodes from a Dataiku Dataset.\nUse when Neo4j is hosted on the same server as DSS.",
+    "meta": {
+        "label": "Export Nodes (Local)",
+        "description": "Create Neo4j nodes from a Dataiku Dataset.\nUse when Neo4j is hosted on the same server as DSS.",
         "icon": "icon-upload",
         "iconColor": "green"
     },
 
-    "kind" : "PYTHON",
-    "selectableFromDataset": "inputDataset",
+    "kind": "PYTHON",
+    "selectableFromDataset": "input_dataset",
 
-    "inputRoles" : [
+    "inputRoles": [
         {
-            "name": "inputDataset",
+            "name": "input_dataset",
             "label": "Input Dataset",
             "description": "Dataiku Dataset holding the nodes",
             "arity": "UNARY",
@@ -20,9 +20,9 @@
             "acceptsDataset": true
         }
     ],
-    "outputRoles" : [
+    "outputRoles": [
         {
-            "name": "outputFolder",
+            "name": "output_folder",
             "label": "Results Folder",
             "description": "Dataiku Folder storing the export log and results",
             "arity": "UNARY",
@@ -33,25 +33,24 @@
     ],
 
     "params": [
-
         {
-            "label":"Graph Settings",
+            "label": "Graph Settings",
             "type": "SEPARATOR"
         },
         {
-            "name": "graphNodesLabel",
-            "label" : "Nodes Label",
+            "name": "nodes_label",
+            "label": "Nodes label",
             "type": "STRING",
-            "description":"Labels for the nodes that will be created",
-            "mandatory" : true
+            "description": "",
+            "mandatory": true
         },
         {
             "name": "graphNodesDelete",
             "label": "Delete Nodes",
             "type": "BOOLEAN",
-            "description":"Should existing nodes with this label be deleted first?",
-            "mandatory" : true,
-            "defaultValue" : false
+            "description": "Should existing nodes with this label be deleted first?",
+            "mandatory": true,
+            "defaultValue": false
         },
 
         {
@@ -60,10 +59,10 @@
         },
         {
             "name": "neo4jImportDir",
-            "label" : "Neo4j Import Directory",
+            "label": "Neo4j Import Directory",
             "type": "STRING",
-            "description":"Neo4j Import Directory",
-            "mandatory" : true,
+            "description": "Neo4j Import Directory",
+            "mandatory": true,
             "defaultValue": "/var/lib/neo4j/import/"
         }
     ]
