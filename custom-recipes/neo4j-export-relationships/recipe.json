@@ -1,0 +1,113 @@
+{
+
+    "meta": {
+        "label": "Export Relationships",
+        "description": "Create Neo4j relationships from a Dataiku Dataset.\nEach row of a dataset should represent a relationship (A)-[rel:REL]->(B). \nOnly one A->B relationship should exist in the input dataset for a given a and b; otherwise they'll be merged into one. \nNote that the nodes must have been created first.",
+        "icon": "icon-visual_export_recipe",
+        "iconColor": "green"
+    },
+
+    "kind": "PYTHON",
+    "selectableFromDataset": "input_dataset",
+
+    "inputRoles": [
+        {
+            "name": "input_dataset",
+            "label": "Input Dataset",
+            "description": "Dataiku Dataset holding the relationships",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsDataset": true
+        }
+    ],
+    "outputRoles": [
+        {
+            "name": "output_folder",
+            "label": "Results Folder",
+            "description": "Dataiku Folder storing the export log and results",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsManagedFolder": true,
+            "acceptsDataset": false
+        }
+    ],
+    "params": [
+        {
+            "label": "Source node (a)",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "source_node_label",
+            "label": "Node label",
+            "type": "STRING",
+            "description": "",
+            "mandatory": true
+        },
+        {
+            "name": "source_node_lookup_key",
+            "label": "Node lookup key",
+            "type": "STRING",
+            "description": "The unique identifier for the source node (in Neo4j)",
+            "mandatory": true
+        },
+        {
+            "name": "source_node_id_column",
+            "label": "Lookup key column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "description": "The unique identifier for the source node (in input dataset)",
+            "mandatory": true
+        },
+        {
+            "label": "Target node (b)",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "target_node_label",
+            "label": "Node label",
+            "type": "STRING",
+            "description": "",
+            "mandatory": true
+        },
+        {
+            "name": "target_node_lookup_key",
+            "label": "Node lookup key",
+            "type": "STRING",
+            "description": "The unique identifier for the target node (in Neo4j)",
+            "mandatory": true
+        },
+        {
+            "name": "target_node_id_column",
+            "label": "Lookup key column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "description": "The unique identifier for the target node (in input dataset)",
+            "mandatory": true
+        },
+        {
+            "label": "Relationship",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "relationships_verb",
+            "label": "Verb defining the relationship",
+            "type": "STRING",
+            "description": "Choose any verb that will be used to define the relationship kind",
+            "mandatory": true
+        },
+        {
+            "name": "set_relationship_properties",
+            "label": "Set Properties",
+            "type": "BOOLEAN",
+            "description": "Use other columns to set relationship properties",
+            "defaultValue": false
+        },
+        {
+            "name": "clear_before_run",
+            "label": "Delete relationships before run",
+            "type": "BOOLEAN",
+            "description": "Relationships with the same verb between these two labels will be deleted",
+            "defaultValue": true
+        }
+    ]
+}
