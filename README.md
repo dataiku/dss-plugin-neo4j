@@ -46,7 +46,7 @@ and investigations on the resulting graph. These recipes need to be used as foll
 
 ## Plugins limitations and improvements
 
-* Nodes and relationships attributes are all created as string - the Plugin does not handle data types
+* Dates are exported to Neo4j as strings
 * Only simple relationships are handled, in the form of (a)-(rel:REL)->(b)
 * Only URI's in the form of "bolt://" have been tested, with a username / password based authentication
 
