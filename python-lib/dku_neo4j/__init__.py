@@ -101,11 +101,20 @@ MERGE (f)-[rel:`%s`]->(t)
         """
         if not set_properties:
             return ""
-        properties_columns = [c["name"] for c in columns_list if c["name"] not in excluded_columns]
-        return "\n".join([self._property(name, obj) for name in properties_columns])
+        properties_columns = [c for c in columns_list if c["name"] not in excluded_columns]
+        return "\n".join([self._property(c, obj) for c in properties_columns])
 
-    def _property(self, name, obj='rel'):
-        return "ON CREATE SET {}.`{}` = `{}`\nON MATCH SET {}.`{}` = `{}`".format(obj, name, name, obj, name, name)
+    def _property(self, col, obj):
+        print()
+        if col["type"] in ['int', 'bigint', 'smallint', 'tinyint']:
+            typedValue = "toInteger(`{}`)".format(col["name"])
+        elif col["type"] in ['double', 'float']:
+            typedValue = "toFloat(`{}`)".format(col["name"])
+        elif col["type"] == 'boolean':
+            typedValue = "toBoolean(`{}`)".format(col["name"])
+        else:
+            typedValue = "`{}`".format(col["name"])
+        return "ON CREATE SET {}.`{}` = {}\nON MATCH SET {}.`{}` = {}".format(obj, col["name"], typedValue, obj, col["name"], typedValue)
 
 
 class NodesExportParams(object):
