@@ -24,18 +24,18 @@ class Neo4jHandle(object):
           MATCH (n:`%s`)
           DETACH DELETE n
         """ % (params.nodes_label)
-        logger.info("[+] Deleting existing nodes: {}".format(q))
-        r = self.graph.run(q)
+        logger.info("[+] Delete nodes: {}".format(q))
+        self.graph.run(q)
 
     def delete_relationships(self, params):
         q = """
           MATCH (:`%s`)-[r:`%s`]-(:`%s`)
           DELETE r
         """ % (params.source_node_label, params.relationships_verb, params.target_node_label)
-        logger.info("[+] Delete existing relationships: {}".format(q))
-        r = self.graph.run(q)
+        logger.info("[+] Delete relationships: {}".format(q))
+        self.graph.run(q)
 
-    def load_nodes_csv(self, csv_file_path, nodes_label, columns_list):
+    def load_nodes(self, csv_file_path, nodes_label, columns_list):
         definition = self._build_nodes_definition(nodes_label, columns_list)
         # TODO no PERIODIC COMMIT?
         q = """
@@ -44,7 +44,6 @@ class Neo4jHandle(object):
         """ % (csv_file_path, definition)
         logger.info("[+] Importing nodes into Neo4j: %s" % (q))
         r = self.graph.run(q)
-        logger.info("[+] Import complete.")
         logger.info(r.stats())
 
     def add_unique_constraint_on_relationship_nodes(self, params):
@@ -54,7 +53,7 @@ class Neo4jHandle(object):
         self.graph.run(const1)
         self.graph.run(const2)
 
-    def load_relationships_csv(self, csv_file_path, columns_list, params):
+    def load_relationships(self, csv_file_path, columns_list, params):
         (definition, properties) = self._build_relationships_definition(
             columns_list=columns_list,
             key_a=params.source_node_lookup_key,
@@ -79,7 +78,6 @@ MERGE (f)-[rel:`%s`]->(t)
         )
         logger.info("[+] Import relationships into Neo4j: %s" % (q))
         r = self.graph.run(q)
-        logger.info("[+] Import complete.")
         logger.info(r.stats())
 
     def _build_nodes_definition(self, nodes_label, columns_list):
@@ -106,7 +104,7 @@ MERGE (f)-[rel:`%s`]->(t)
         return "ON CREATE SET rel.`{}` = `{}`\nON MATCH SET rel.`{}` = `{}`".format(name, name, name, name)
 
 class NodesExportParams(object):
-    def __init__(self, nodes_label, clear_before_run):
+    def __init__(self, nodes_label, clear_before_run=False):
         self.nodes_label = nodes_label
         self.clear_before_run = clear_before_run
 
@@ -124,8 +122,8 @@ class RelationshipsExportParams(object):
             target_node_lookup_key,
             target_node_id_column,
             relationships_verb,
-            set_relationship_properties,
-            clear_before_run,
+            set_relationship_properties=True,
+            clear_before_run=False,
         ):
         self.source_node_label = source_node_label
         self.source_node_lookup_key = source_node_lookup_key
@@ -138,4 +136,17 @@ class RelationshipsExportParams(object):
         self.clear_before_run = clear_before_run
 
     def check(self):
-        pass # TODO
+        if self.source_node_label is None or self.source_node_label == "":
+            raise ValueError('source_node_label not specified')
+        if self.source_node_lookup_key is None or self.source_node_lookup_key == "":
+            raise ValueError('source_node_lookup_key not specified')
+        if self.source_node_id_column is None or self.source_node_id_column == "":
+            raise ValueError('source_node_id_column not specified')
+        if self.target_node_label is None or self.target_node_label == "":
+            raise ValueError('target_node_label not specified')
+        if self.target_node_lookup_key is None or self.target_node_lookup_key == "":
+            raise ValueError('target_node_lookup_key not specified')
+        if self.target_node_id_column is None or self.target_node_id_column == "":
+            raise ValueError('target_node_id_column not specified')
+        if self.relationships_verb is None or self.relationships_verb == "":
+            raise ValueError('relationships_verb not specified')

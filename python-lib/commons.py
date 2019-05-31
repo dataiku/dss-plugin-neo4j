@@ -1,6 +1,6 @@
 import os
 import logging
-import sys
+import shutil
 from subprocess import Popen, PIPE
 
 import dataiku
@@ -83,10 +83,19 @@ def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
                 o.write(chunk)
     logger.info("[+] Export done.")
 
-def scp_nopassword_to_server(file_to_copy, neo4jhandle):
+def move_to_import_dir(export_file, neo4jhandle):
+    if neo4jhandle.is_remote:
+        _scp_nopassword_to_server(export_file, neo4jhandle)
+    else:
+        logger.info("[+] Move file to Neo4j import dir...")
+        outfile = os.path.join(neo4jhandle.import_dir, 'export.csv')
+        shutil.move(export_file, outfile)
+
+def _scp_nopassword_to_server(file_to_copy, neo4jhandle):
     """
     copies a file to a remote server using SCP. Requires a password-less access (i.e SSH public key is available)
     """
+    logger.info("[+] Send file to Neo4j import dir through SCP...")
     p = Popen(["scp", file_to_copy, "{}@{}:{}".format(neo4jhandle.ssh_user, neo4jhandle.ssh_host, neo4jhandle.import_dir)], stdin=PIPE, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
     if err != '':
