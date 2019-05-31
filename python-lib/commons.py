@@ -28,9 +28,10 @@ def get_neo4jhandle():
         get_plugin_config().get('neo4jUri'),
         get_plugin_config().get('neo4jUsername'),
         get_plugin_config().get('neo4jPassword'),
-        get_recipe_config().get('sshHost', None),
-        get_recipe_config().get('sshUsername', None),
-        get_recipe_config().get('neo4jImportDir')
+        get_plugin_config().get('neo4jImportDir'),
+        get_plugin_config().get('neo4jIsRemote', False),
+        get_plugin_config().get('sshHost', None),
+        get_plugin_config().get('sshUsername', None)
         )
     neo4jhandle.check()
     return neo4jhandle
@@ -44,7 +45,7 @@ def get_nodes_export_params():
     return params
 
 def get_relations_export_params():
-    params = RelationsExportParams(
+    params = RelationshipsExportParams(
         get_recipe_config().get('graphNodesFromLabel'),
         get_recipe_config().get('graphNodesFromKey'),
         get_recipe_config().get('graphNodesToLabel'),
@@ -69,10 +70,9 @@ def get_input_output():
     return (input_dataset, output_folder)
 
 def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
-    '''
-    This function exports a Dataiku Dataset to CSV with no
-    need to go through a Pandas dataframe first
-    '''
+    """
+    exports a Dataiku Dataset to CSV with no need to go through a Pandas dataframe first (string only)
+    """
     logger.info("[+] Starting file export...")
     with open(output_file, "w") as o:
         with dataset.raw_formatted_data(format=format) as i:
@@ -83,20 +83,15 @@ def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
                 o.write(chunk)
     logger.info("[+] Export done.")
 
-def scp_nopassword_to_server(file_to_copy, sshuser, sshhost, sshpath):
-    '''
-    This function copies a file to a remote server using SCP.
-    It requires a password-less access (i.e SSH public key is available)
-    '''
-    logger.info("[+] Copying file to remote server...")
-    p = Popen(
-        ["scp", file_to_copy, "{}@{}:{}".format(sshuser, sshhost, sshpath)],
-        stdin=PIPE, stdout=PIPE, stderr=PIPE
-    )
+def scp_nopassword_to_server(file_to_copy, neo4jhandle):
+    """
+    copies a file to a remote server using SCP. Requires a password-less access (i.e SSH public key is available)
+    """
+    p = Popen(["scp", file_to_copy, "{}@{}:{}".format(neo4jhandle.ssh_user, neo4jhandle.ssh_host, neo4jhandle.import_dir)], stdin=PIPE, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
     if err != '':
-        msg = "[-] Issue while copying CSV file to Neo4j server\n"
-        msg = msg + "[-] {}".format(err)
-        sys.exit(1) # TODO why not raise Exception
-    else:
-        logger.info("[+] Copying file complete.")
+        raise Exception(msg)
+
+def ssh_remove_file(file_path, neo4jhandle):
+    p = Popen(["ssh", "{}@{}".format(neo4jhandle.ssh_user, neo4jhandle.ssh_host), "rm -rf", file_path], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    out, err = p.communicate()

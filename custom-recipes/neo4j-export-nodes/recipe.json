@@ -1,9 +1,9 @@
 {
 
     "meta": {
-        "label": "Export Nodes (Local)",
-        "description": "Create Neo4j nodes from a Dataiku Dataset.\nUse when Neo4j is hosted on the same server as DSS.",
-        "icon": "icon-upload",
+        "label": "Export Nodes",
+        "description": "Create Neo4j nodes from a Dataiku Dataset.",
+        "icon": "icon-visual_export_recipe",
         "iconColor": "green"
     },
 
@@ -51,19 +51,6 @@
             "description": "Should existing nodes with this label be deleted first?",
             "mandatory": true,
             "defaultValue": false
-        },
-
-        {
-            "label": "Neo4j Settings",
-            "type": "SEPARATOR"
-        },
-        {
-            "name": "neo4jImportDir",
-            "label": "Neo4j Import Directory",
-            "type": "STRING",
-            "description": "Neo4j Import Directory",
-            "mandatory": true,
-            "defaultValue": "/var/lib/neo4j/import/"
         }
     ]
 }

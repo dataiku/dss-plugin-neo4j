@@ -1,9 +1,9 @@
 {
     "id": "neo4j",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "meta": {
         "label": "Neo4j",
-        "description": "Interacting with the Neo4j graph database",
+        "description": "Interact with the Neo4j graph database",
         "author": "Dataiku (Thomas)",
         "icon": "icon-folder-close",
         "iconColor": "green",
@@ -32,6 +32,34 @@
             "description": "Password to connect to the Neo4j database",
             "type": "PASSWORD",
             "mandatory": true
+        },
+        {
+            "name": "neo4jImportDir",
+            "label": "Neo4j Import Directory",
+            "type": "STRING",
+            "description": "Neo4j Import Directory",
+            "mandatory": true,
+            "defaultValue": "/var/lib/neo4j/import/"
+        },
+        {
+            "name": "neo4jIsRemote",
+            "label": "Remote Neo4j server",
+            "type": "BOOLEAN",
+            "description": "If Neo4j is on another machine than DSS data must be sent over SSH"
+        },
+        {
+            "name": "sshHost",
+            "label": "SSH Host",
+            "type": "STRING",
+            "description": "IP or name of the server",
+            "visibilityCondition": "model.neo4jIsRemote"
+        },
+        {
+            "name": "sshUsername",
+            "label": "SSH User",
+            "type": "STRING",
+            "description": "",
+            "visibilityCondition": "model.neo4jIsRemote"
         }
     ]
 }
