@@ -2,7 +2,7 @@
 
     "meta": {
         "label": "Export Relationships",
-        "description": "Create Neo4j relationships from a Dataiku Dataset.\nNote that the nodes must have been created first.",
+        "description": "Create Neo4j relationships from a Dataiku Dataset.\nEach row of a dataset should represent a relationship (A)-[rel:REL]->(B). \nOnly one A->B relationship should exist in the input dataset for a given a and b; otherwise they'll be merged into one. \nNote that the nodes must have been created first.",
         "icon": "icon-visual_export_recipe",
         "iconColor": "green"
     },
@@ -33,74 +33,80 @@
     ],
     "params": [
         {
-            "label": "Graph Settings",
+            "label": "Source node (a)",
             "type": "SEPARATOR"
         },
         {
-            "name": "graphNodesFromLabel",
-            "label": "(a) Node Label",
+            "name": "source_node_label",
+            "label": "Node label",
             "type": "STRING",
-            "description": "Left-hand side node label (a) in the relationship (a)-[rel:REL]->(b)",
+            "description": "",
             "mandatory": true
         },
         {
-            "name": "graphNodesFromKey",
-            "label": "(a) Node Lookup Key",
+            "name": "source_node_lookup_key",
+            "label": "Node lookup key",
             "type": "STRING",
-            "description": "Left-hand side node key to lookup (a) in the relationship (a)-[rel:REL]->(b)",
+            "description": "The unique identifier for the source node (in Neo4j)",
             "mandatory": true
         },
         {
-            "name": "graphRelationshipsFromKey",
-            "label": "(a) Lookup Key in Relationships",
+            "name": "source_node_id_column",
+            "label": "Lookup key column",
             "type": "COLUMN",
             "columnRole": "input_dataset",
-            "description": "Lookup column in relationships for (a) in the relationship (a)-[rel:REL]->(b)",
+            "description": "The unique identifier for the source node (in input dataset)",
             "mandatory": true
         },
         {
-            "name": "graphNodesToLabel",
-            "label": "(b) Node Label",
+            "label": "Target node (b)",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "target_node_label",
+            "label": "Node label",
             "type": "STRING",
-            "description": "Right-hand side node label (b) in the relationship (a)-[rel:REL]->(b)",
+            "description": "",
             "mandatory": true
         },
         {
-            "name": "graphNodesToKey",
-            "label": "(b) Node Lookup Key",
+            "name": "target_node_lookup_key",
+            "label": "Node lookup key",
             "type": "STRING",
-            "description": "Right-hand side node key to lookup (b) in the relationship (a)-[rel:REL]->(b)",
+            "description": "The unique identifier for the target node (in Neo4j)",
             "mandatory": true
         },
         {
-            "name": "graphRelationshipsToKey",
-            "label": "(b) Lookup Key in Relationships",
+            "name": "target_node_id_column",
+            "label": "Lookup key column",
             "type": "COLUMN",
             "columnRole": "input_dataset",
-            "description": "Lookup column in relationships for (b) in the relationship (a)-[rel:REL]->(b)",
+            "description": "The unique identifier for the target node (in input dataset)",
             "mandatory": true
         },
         {
-            "name": "graphRelationshipsVerb",
-            "label": "Verb Defining the Relationship",
+            "label": "Relationship",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "relationships_verb",
+            "label": "Verb defining the relationship",
             "type": "STRING",
-            "description": "Verb (REL) defining the relationship (a)-[rel:REL]->(b)",
+            "description": "Choose any verb that will be used to define the relationship kind",
             "mandatory": true
         },
         {
-            "name": "graphRelationshipsSetProperties",
+            "name": "set_relationship_properties",
             "label": "Set Properties",
             "type": "BOOLEAN",
-            "description": "Should all the remaining columns be used to set relationship properties",
-            "mandatory": true,
+            "description": "Use other columns to set relationship properties",
             "defaultValue": false
         },
         {
-            "name": "graphRelationshipsDelete",
-            "label": "Delete Relationships",
+            "name": "clear_before_run",
+            "label": "Drop relationships before run",
             "type": "BOOLEAN",
-            "description": "Should existing relationships be deleted first?",
-            "mandatory": true,
+            "description": "",
             "defaultValue": true
         }
     ]

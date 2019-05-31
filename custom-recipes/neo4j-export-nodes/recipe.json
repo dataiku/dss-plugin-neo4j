@@ -1,8 +1,8 @@
 {
 
     "meta": {
-        "label": "Export Nodes",
-        "description": "Create Neo4j nodes from a Dataiku Dataset.",
+        "label": "Export nodes",
+        "description": "Create Neo4j nodes from a Dataiku dataset.",
         "icon": "icon-visual_export_recipe",
         "iconColor": "green"
     },
@@ -34,10 +34,6 @@
 
     "params": [
         {
-            "label": "Graph Settings",
-            "type": "SEPARATOR"
-        },
-        {
             "name": "nodes_label",
             "label": "Nodes label",
             "type": "STRING",
@@ -45,11 +41,10 @@
             "mandatory": true
         },
         {
-            "name": "graphNodesDelete",
-            "label": "Delete Nodes",
+            "name": "clear_before_run",
+            "label": "Delete nodes before run",
             "type": "BOOLEAN",
-            "description": "Should existing nodes with this label be deleted first?",
-            "mandatory": true,
+            "description": "",
             "defaultValue": false
         }
     ]

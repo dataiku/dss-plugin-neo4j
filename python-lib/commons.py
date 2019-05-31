@@ -39,22 +39,22 @@ def get_neo4jhandle():
 def get_nodes_export_params():
     params = NodesExportParams(
         get_recipe_config().get('nodes_label'),
-        get_recipe_config().get('graphNodesDelete'),
+        get_recipe_config().get('clear_before_run'),
         )
     params.check()
     return params
 
 def get_relations_export_params():
     params = RelationshipsExportParams(
-        get_recipe_config().get('graphNodesFromLabel'),
-        get_recipe_config().get('graphNodesFromKey'),
-        get_recipe_config().get('graphNodesToLabel'),
-        get_recipe_config().get('graphNodesToKey'),
-        get_recipe_config().get('graphRelationshipsFromKey'),
-        get_recipe_config().get('graphRelationshipsToKey'),
-        get_recipe_config().get('graphRelationshipsVerb'),
-        get_recipe_config().get('graphRelationshipsSetProperties', False),
-        get_recipe_config().get('graphRelationshipsDelete', True)
+        get_recipe_config().get('source_node_label'),
+        get_recipe_config().get('source_node_lookup_key'),
+        get_recipe_config().get('source_node_id_column'),
+        get_recipe_config().get('target_node_label'),
+        get_recipe_config().get('target_node_lookup_key'),
+        get_recipe_config().get('target_node_id_column'),
+        get_recipe_config().get('relationships_verb'),
+        get_recipe_config().get('set_relationship_properties', False),
+        get_recipe_config().get('clear_before_run', True)
         )
     params.check()
     return params

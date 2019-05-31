@@ -31,7 +31,7 @@ class Neo4jHandle(object):
         q = """
           MATCH (:`%s`)-[r:`%s`]-(:`%s`)
           DELETE r
-        """ % (params.nodes_from_label, params.relationships_verb, params.nodes_to_label)
+        """ % (params.source_node_label, params.relationships_verb, params.target_node_label)
         logger.info("[+] Delete existing relationships: {}".format(q))
         r = self.graph.run(q)
 
@@ -48,32 +48,34 @@ class Neo4jHandle(object):
         logger.info(r.stats())
 
     def add_unique_constraint_on_relationship_nodes(self, params):
-        const1 = "CREATE CONSTRAINT ON (n:`%s`) ASSERT n.`%s` IS UNIQUE" % (params.nodes_from_label, params.nodes_from_key)
-        const2 = "CREATE CONSTRAINT ON (n:`%s`) ASSERT n.`%s` IS UNIQUE" % (params.nodes_to_label, params.nodes_to_key)
+        const1 = "CREATE CONSTRAINT ON (n:`%s`) ASSERT n.`%s` IS UNIQUE" % (params.source_node_label, params.source_node_lookup_key)
+        const2 = "CREATE CONSTRAINT ON (n:`%s`) ASSERT n.`%s` IS UNIQUE" % (params.target_node_label, params.target_node_lookup_key)
         logger.info("[+] Create constraints on nodes: \n\t" + const1 + "\n\t" + const2)
         self.graph.run(const1)
         self.graph.run(const2)
 
     def load_relationships_csv(self, csv_file_path, columns_list, params):
-        (definition, attributes) = self._build_relationships_definition(
+        (definition, properties) = self._build_relationships_definition(
             columns_list=columns_list,
-            key_a=params.nodes_from_key,
-            key_b=params.nodes_to_key,
-            set_properties=params.relationships_set_properties
+            key_a=params.source_node_lookup_key,
+            key_b=params.target_node_lookup_key,
+            set_properties=params.set_relationship_properties
         )
         q = """
-          USING PERIODIC COMMIT
-          LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
-          WITH %s
-          MATCH (f:`%s` {`%s`: `%s`})
-          MATCH (t:`%s` {`%s`: `%s`})
-          MERGE (f)-[rel:`%s` %s]->(t)
+USING PERIODIC COMMIT
+LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
+WITH %s
+MATCH (f:`%s` {`%s`: `%s`})
+MATCH (t:`%s` {`%s`: `%s`})
+MERGE (f)-[rel:`%s`]->(t)
+%s
         """ % (
             csv_file_path,
             definition,
-            params.nodes_from_label, params.nodes_from_key, params.relationships_from_key,
-            params.nodes_to_label, params.nodes_to_key, params.relationships_to_key,
-            params.relationships_verb, attributes
+            params.source_node_label, params.source_node_lookup_key, params.source_node_id_column,
+            params.target_node_label, params.target_node_lookup_key, params.target_node_id_column,
+            params.relationships_verb,
+            properties
         )
         logger.info("[+] Import relationships into Neo4j: %s" % (q))
         r = self.graph.run(q)
@@ -88,18 +90,20 @@ class Neo4jHandle(object):
         return definition
 
     def _build_relationships_definition(self, columns_list, key_a, key_b, set_properties=False):
+        """
+        Generates the definition (name the columns) and the properties to set.
+        Note that we don't use the syntax to set the properties in the match clause because it does not work well with NULL values
+        """
+
         definition = ', '.join(["line[{}] AS `{}`".format(i, r["name"]) for i, r in enumerate(columns_list)])
-        attributes = ""
+        properties_columns = [c for c in columns_list if c["name"] not in[key_a, key_b]]
+        properties = ""
         if set_properties:
-            logger.info("[+] Setting relationships properties")
-            attributes += "{"
-            o = []
-            for c in columns_list:
-                if c["name"] not in[key_a, key_b]:
-                    o.append("`{}`:`{}`".format(c["name"], c["name"]))
-            attributes += ", ".join(o)
-            attributes += "}"
-        return (definition, attributes)
+            properties = "\n".join([self._property(c["name"]) for c in properties_columns])
+        return (definition, properties)
+
+    def _property(self, name):
+        return "ON CREATE SET rel.`{}` = `{}`\nON MATCH SET rel.`{}` = `{}`".format(name, name, name, name)
 
 class NodesExportParams(object):
     def __init__(self, nodes_label, clear_before_run):
@@ -113,24 +117,24 @@ class NodesExportParams(object):
 class RelationshipsExportParams(object):
 
     def __init__(self,
-            nodes_from_label,
-            nodes_from_key,
-            nodes_to_label,
-            nodes_to_key,
-            relationships_from_key,
-            relationships_to_key,
+            source_node_label,
+            source_node_lookup_key,
+            source_node_id_column,
+            target_node_label,
+            target_node_lookup_key,
+            target_node_id_column,
             relationships_verb,
-            relationships_set_properties,
+            set_relationship_properties,
             clear_before_run,
         ):
-        self.nodes_from_label = nodes_from_label
-        self.nodes_from_key = nodes_from_key
-        self.nodes_to_label = nodes_to_label
-        self.nodes_to_key = nodes_to_key
-        self.relationships_from_key = relationships_from_key
-        self.relationships_to_key = relationships_to_key
+        self.source_node_label = source_node_label
+        self.source_node_lookup_key = source_node_lookup_key
+        self.source_node_id_column = source_node_id_column
+        self.target_node_label = target_node_label
+        self.target_node_lookup_key = target_node_lookup_key
+        self.target_node_id_column = target_node_id_column
         self.relationships_verb = relationships_verb
-        self.relationships_set_properties = relationships_set_properties
+        self.set_relationship_properties = set_relationship_properties
         self.clear_before_run = clear_before_run
 
     def check(self):
