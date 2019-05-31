@@ -104,9 +104,9 @@
         },
         {
             "name": "clear_before_run",
-            "label": "Drop relationships before run",
+            "label": "Delete relationships before run",
             "type": "BOOLEAN",
-            "description": "",
+            "description": "Relationships with the same verb between these two labels will be deleted",
             "defaultValue": true
         }
     ]

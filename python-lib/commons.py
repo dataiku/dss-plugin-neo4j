@@ -39,7 +39,8 @@ def get_neo4jhandle():
 def get_nodes_export_params():
     params = NodesExportParams(
         get_recipe_config().get('nodes_label'),
-        get_recipe_config().get('clear_before_run'),
+        get_recipe_config().get('node_id_column'),
+        get_recipe_config().get('clear_before_run', True)
         )
     params.check()
     return params
@@ -69,7 +70,7 @@ def get_input_output():
     output_folder = dataiku.Folder(output_folder_name).get_path()
     return (input_dataset, output_folder)
 
-def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
+def export_dataset(dataset, output_file, format="tsv-excel-noheader"):
     """
     exports a Dataiku Dataset to CSV with no need to go through a Pandas dataframe first (string only)
     """
@@ -83,13 +84,13 @@ def export_dataset(dataset=None, output_file=None, format="tsv-excel-noheader"):
                 o.write(chunk)
     logger.info("[+] Export done.")
 
-def move_to_import_dir(export_file, neo4jhandle):
+def move_to_import_dir(path, neo4jhandle):
     if neo4jhandle.is_remote:
-        _scp_nopassword_to_server(export_file, neo4jhandle)
+        _scp_nopassword_to_server(path, neo4jhandle)
     else:
         logger.info("[+] Move file to Neo4j import dir...")
         outfile = os.path.join(neo4jhandle.import_dir, 'export.csv')
-        shutil.move(export_file, outfile)
+        shutil.move(path, outfile)
 
 def _scp_nopassword_to_server(file_to_copy, neo4jhandle):
     """

@@ -31,7 +31,6 @@
             "acceptsDataset": false
         }
     ],
-
     "params": [
         {
             "name": "nodes_label",
@@ -41,10 +40,18 @@
             "mandatory": true
         },
         {
+            "name": "node_id_column",
+            "label": "Node id column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "description": "In case of duplicates, only one node is kept",
+            "mandatory": true
+        },
+        {
             "name": "clear_before_run",
             "label": "Delete nodes before run",
             "type": "BOOLEAN",
-            "description": "",
+            "description": "Nodes with this label will be deleted before run",
             "defaultValue": false
         }
     ]

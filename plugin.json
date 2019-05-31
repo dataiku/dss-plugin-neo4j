@@ -37,7 +37,7 @@
             "name": "neo4jImportDir",
             "label": "Neo4j Import Directory",
             "type": "STRING",
-            "description": "Neo4j Import Directory",
+            "description": "Check https://neo4j.com/docs/operations-manual/current/configuration/file-locations/",
             "mandatory": true,
             "defaultValue": "/var/lib/neo4j/import/"
         },

@@ -35,13 +35,21 @@ class Neo4jHandle(object):
         logger.info("[+] Delete relationships: {}".format(q))
         self.graph.run(q)
 
-    def load_nodes(self, csv_file_path, nodes_label, columns_list):
-        definition = self._build_nodes_definition(nodes_label, columns_list)
+    def load_nodes(self, csv_file_path, nodes_label, node_id_column, columns_list):
+        definition = self._schema(columns_list)
+        properties = self._properties(columns_list, [node_id_column], True, 'n')
         # TODO no PERIODIC COMMIT?
         q = """
-          LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
-          CREATE (%s)
-        """ % (csv_file_path, definition)
+LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
+WITH %s
+MERGE (n:`%s` {`%s`: `%s`})
+%s
+        """ % (
+            csv_file_path,
+            definition,
+            nodes_label, node_id_column, node_id_column,
+            properties
+            )
         logger.info("[+] Importing nodes into Neo4j: %s" % (q))
         r = self.graph.run(q)
         logger.info(r.stats())
@@ -54,12 +62,8 @@ class Neo4jHandle(object):
         self.graph.run(const2)
 
     def load_relationships(self, csv_file_path, columns_list, params):
-        (definition, properties) = self._build_relationships_definition(
-            columns_list=columns_list,
-            key_a=params.source_node_lookup_key,
-            key_b=params.target_node_lookup_key,
-            set_properties=params.set_relationship_properties
-        )
+        definition = self._schema(columns_list)
+        properties = self._properties(columns_list, [params.source_node_id_column, params.target_node_id_column], params.set_relationship_properties, 'rel')
         q = """
 USING PERIODIC COMMIT
 LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
@@ -87,30 +91,35 @@ MERGE (f)-[rel:`%s`]->(t)
         definition += '\n' + '}'
         return definition
 
-    def _build_relationships_definition(self, columns_list, key_a, key_b, set_properties=False):
+    def _schema(self, columns_list):
+        return ', '.join(["line[{}] AS `{}`".format(i, c["name"]) for i, c in enumerate(columns_list)])
+
+    def _properties(self, columns_list, excluded_columns, set_properties, obj):
         """
         Generates the definition (name the columns) and the properties to set.
         Note that we don't use the syntax to set the properties in the match clause because it does not work well with NULL values
         """
+        if not set_properties:
+            return ""
+        properties_columns = [c["name"] for c in columns_list if c["name"] not in excluded_columns]
+        return "\n".join([self._property(name, obj) for name in properties_columns])
 
-        definition = ', '.join(["line[{}] AS `{}`".format(i, r["name"]) for i, r in enumerate(columns_list)])
-        properties_columns = [c for c in columns_list if c["name"] not in[key_a, key_b]]
-        properties = ""
-        if set_properties:
-            properties = "\n".join([self._property(c["name"]) for c in properties_columns])
-        return (definition, properties)
+    def _property(self, name, obj='rel'):
+        return "ON CREATE SET {}.`{}` = `{}`\nON MATCH SET {}.`{}` = `{}`".format(obj, name, name, obj, name, name)
 
-    def _property(self, name):
-        return "ON CREATE SET rel.`{}` = `{}`\nON MATCH SET rel.`{}` = `{}`".format(name, name, name, name)
 
 class NodesExportParams(object):
-    def __init__(self, nodes_label, clear_before_run=False):
+    def __init__(self, nodes_label, node_id_column, clear_before_run=False):
         self.nodes_label = nodes_label
+        self.node_id_column = node_id_column
         self.clear_before_run = clear_before_run
 
     def check(self):
         if self.nodes_label is None:
-            raise ValueError('Nodes label not specified')
+            raise ValueError('nodes_label not specified')
+        if self.node_id_column is None:
+            raise ValueError('node_id_column not specified')
+
 
 class RelationshipsExportParams(object):
 
