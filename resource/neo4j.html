@@ -4,7 +4,7 @@
     <div ng-controller="Neo4jController">
         <strong>Type of query:</strong>
         <div>
-            <select ng-model="config.queryMode">
+            <select dku-bs-select ng-model="config.queryMode">
                 <option value="nodes">Get all nodes with certain label</option>
                 <option value="cypher">Custom Cypher query</option>
             </select>
@@ -19,7 +19,7 @@
         <div ng-if="config.queryMode=='nodes'">
             <strong>Select nodes:</strong>
             <div>
-                <select ng-model="config.nodeType" ng-options="n for n in nodes"></select>
+                <select dku-bs-select ng-model="config.nodeType" ng-options="n for n in nodes"></select>
             </div>
         </div>
     </div>
