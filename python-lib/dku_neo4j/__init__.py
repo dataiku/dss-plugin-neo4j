@@ -1,4 +1,5 @@
 import logging
+import shutil
 from py2neo import Graph
 
 logger = logging.getLogger()
@@ -19,13 +20,16 @@ class Neo4jHandle(object):
             if self.ssh_user is None or self.ssh_user == "":
                 raise ValueError("Plugin settings: SSH user is required for remote Neo4j server")
 
+    def run(self, cypher_query):
+        return self.graph.run(cypher_query)
+
     def delete_nodes(self, params):
         q = """
           MATCH (n:`%s`)
           DETACH DELETE n
         """ % (params.nodes_label)
         logger.info("[+] Delete nodes: {}".format(q))
-        self.graph.run(q)
+        self.run(q)
 
     def delete_relationships(self, params):
         q = """
@@ -33,7 +37,7 @@ class Neo4jHandle(object):
           DELETE r
         """ % (params.source_node_label, params.relationships_verb, params.target_node_label)
         logger.info("[+] Delete relationships: {}".format(q))
-        self.graph.run(q)
+        self.run(q)
 
     def load_nodes(self, csv_file_path, nodes_label, node_id_column, columns_list):
         definition = self._schema(columns_list)
@@ -51,15 +55,15 @@ MERGE (n:`%s` {`%s`: `%s`})
             properties
             )
         logger.info("[+] Importing nodes into Neo4j: %s" % (q))
-        r = self.graph.run(q)
+        r = self.run(q)
         logger.info(r.stats())
 
     def add_unique_constraint_on_relationship_nodes(self, params):
         const1 = "CREATE CONSTRAINT ON (n:`%s`) ASSERT n.`%s` IS UNIQUE" % (params.source_node_label, params.source_node_lookup_key)
         const2 = "CREATE CONSTRAINT ON (n:`%s`) ASSERT n.`%s` IS UNIQUE" % (params.target_node_label, params.target_node_lookup_key)
         logger.info("[+] Create constraints on nodes: \n\t" + const1 + "\n\t" + const2)
-        self.graph.run(const1)
-        self.graph.run(const2)
+        self.run(const1)
+        self.run(const2)
 
     def load_relationships(self, csv_file_path, columns_list, params):
         definition = self._schema(columns_list)
@@ -81,8 +85,41 @@ MERGE (f)-[rel:`%s`]->(t)
             properties
         )
         logger.info("[+] Import relationships into Neo4j: %s" % (q))
-        r = self.graph.run(q)
+        r = self.run(q)
         logger.info(r.stats())
+
+    def move_to_import_dir(self, file_to_move):
+        if self.is_remote:
+            self._scp_nopassword_to_server(file_to_move)
+        else:
+            logger.info("[+] Move file to Neo4j import dir...")
+            outfile = os.path.join(self.import_dir, 'export.csv')
+            shutil.move(file_to_move, outfile)
+
+    def delete_file_from_import_dir(self, file_path):
+        outfile = os.path.join(self.import_dir, file_path)
+        if self.is_remote:
+            self._ssh_remove_file(outfile)
+        else:
+            os.remove(outfile)
+
+    def _scp_nopassword_to_server(self, file_to_send):
+        """
+        copies a file to a remote server using SCP. Requires a password-less access (i.e SSH public key is available)
+        """
+        logger.info("[+] Send file to Neo4j import dir through SCP...")
+        p = Popen(["scp", file_to_send, "{}@{}:{}".format(self.ssh_user, self.ssh_host, self.import_dir)], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        out, err = p.communicate()
+        if err != '':
+            os.remove(file_to_send)
+            raise Exception(str(err))
+        os.remove(file_to_send)
+
+    def _ssh_remove_file(self, file_path):
+        p = Popen(["ssh", "{}@{}".format(self.ssh_user, self.ssh_host), "rm -rf", file_path], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        out, err = p.communicate()
+        if err != '':
+            logger.error(str(err))
 
     def _build_nodes_definition(self, nodes_label, columns_list):
         definition = ':{}'.format(nodes_label)
