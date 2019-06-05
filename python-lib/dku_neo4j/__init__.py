@@ -1,4 +1,5 @@
 import logging
+import os
 import shutil
 from py2neo import Graph
 
@@ -23,11 +24,11 @@ class Neo4jHandle(object):
     def run(self, cypher_query):
         return self.graph.run(cypher_query)
 
-    def delete_nodes(self, params):
+    def delete_nodes(self, nodes_label):
         q = """
           MATCH (n:`%s`)
           DETACH DELETE n
-        """ % (params.nodes_label)
+        """ % (nodes_label)
         logger.info("[+] Delete nodes: {}".format(q))
         self.run(q)
 
@@ -88,6 +89,34 @@ MERGE (f)-[rel:`%s`]->(t)
         r = self.run(q)
         logger.info(r.stats())
 
+    def load_combined(self, csv_file_path, params, columns_list):
+        print(params.relationship_properties)
+        definition = self._schema(columns_list)
+        # properties = self._properties(columns_list, excluded_columns, params.set_relationship_properties, 'rel')
+        q = """
+USING PERIODIC COMMIT
+LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
+WITH %s
+MERGE (src:`%s` {`%s`: `%s`})
+%s
+MERGE (tgt:`%s` {`%s`: `%s`})
+%s
+MERGE (src)-[rel:`%s`]->(tgt)
+%s
+        """ % (
+            csv_file_path,
+            definition,
+            params.source_node_label, params.source_node_lookup_key, params.source_node_id_column,
+            self._properties2(columns_list, params.source_node_properties, 'src'),
+            params.target_node_label, params.target_node_lookup_key, params.target_node_id_column,
+            self._properties2(columns_list, params.source_node_properties, 'tgt'),
+            params.relationships_verb,
+            self._properties2(columns_list, params.relationship_properties, 'rel')
+        )
+        logger.info("[+] Import relationships and nodes into Neo4j: %s" % (q))
+        r = self.run(q)
+        logger.info(r.stats())
+
     def move_to_import_dir(self, file_to_move):
         if self.is_remote:
             self._scp_nopassword_to_server(file_to_move)
@@ -131,6 +160,16 @@ MERGE (f)-[rel:`%s`]->(t)
     def _schema(self, columns_list):
         return ', '.join(["line[{}] AS `{}`".format(i, c["name"]) for i, c in enumerate(columns_list)])
 
+    def _properties2(self, all_columns_list, properties_map, identifier):
+        type_per_column = {}
+        for c in all_columns_list:
+            type_per_column[c['name']] = c['type']
+        properties_strings = []
+        for colname in properties_map:
+            propstr = self._property2(colname, properties_map[colname], type_per_column[colname], identifier)
+            properties_strings.append(propstr)
+        return "\n".join(properties_strings)
+
     def _properties(self, columns_list, excluded_columns, set_properties, obj):
         """
         Generates the definition (name the columns) and the properties to set.
@@ -142,7 +181,6 @@ MERGE (f)-[rel:`%s`]->(t)
         return "\n".join([self._property(c, obj) for c in properties_columns])
 
     def _property(self, col, obj):
-        print()
         if col["type"] in ['int', 'bigint', 'smallint', 'tinyint']:
             typedValue = "toInteger(`{}`)".format(col["name"])
         elif col["type"] in ['double', 'float']:
@@ -152,6 +190,19 @@ MERGE (f)-[rel:`%s`]->(t)
         else:
             typedValue = "`{}`".format(col["name"])
         return "ON CREATE SET {}.`{}` = {}\nON MATCH SET {}.`{}` = {}".format(obj, col["name"], typedValue, obj, col["name"], typedValue)
+
+    def _property2(self, colname, prop, coltype, identifier):
+        if coltype in ['int', 'bigint', 'smallint', 'tinyint']:
+            typedValue = "toInteger(`{}`)".format(colname)
+        elif coltype in ['double', 'float']:
+            typedValue = "toFloat(`{}`)".format(colname)
+        elif coltype == 'boolean':
+            typedValue = "toBoolean(`{}`)".format(colname)
+        else:
+            typedValue = "`{}`".format(colname)
+        oncreate = "ON CREATE SET `{}`.`{}` = {}".format(identifier, prop, typedValue)
+        onmatch = "" # "ON MATCH SET `{}`.`{}` = {}".format(identifier, prop, typedValue)
+        return oncreate + '\n' + onmatch
 
 
 class NodesExportParams(object):
@@ -205,3 +256,62 @@ class RelationshipsExportParams(object):
             raise ValueError('target_node_id_column not specified')
         if self.relationships_verb is None or self.relationships_verb == "":
             raise ValueError('relationships_verb not specified')
+
+class CombinedExportParams(object):
+    def __init__(self,
+            source_node_label,
+            source_node_id_column,
+            source_node_properties,
+            target_node_label,
+            target_node_id_column,
+            target_node_properties,
+            relationships_verb,
+            relationship_properties,
+            relationship_properties_use_all_remaining_columns=True,
+            clear_before_run=False):
+        self.source_node_label = source_node_label
+        self.source_node_id_column = source_node_id_column
+        self.source_node_properties = source_node_properties or {}
+        self.target_node_label = target_node_label
+        self.target_node_id_column = target_node_id_column
+        self.target_node_properties = target_node_properties or {}
+        self.relationships_verb = relationships_verb
+        self.relationship_properties = relationship_properties or {}
+        self.relationship_properties_use_all_remaining_columns = relationship_properties_use_all_remaining_columns
+        self.clear_before_run = clear_before_run
+
+        if source_node_id_column in source_node_properties:
+            self.source_node_lookup_key = source_node_properties[source_node_id_column]
+            source_node_properties.pop(source_node_id_column)
+        else:
+            self.source_node_lookup_key = source_node_id_column
+
+        if target_node_id_column in target_node_properties:
+            self.target_node_lookup_key = target_node_properties[target_node_id_column]
+            target_node_properties.pop(target_node_id_column)
+        else:
+            self.target_node_lookup_key = target_node_id_column
+
+
+    def check(self, input_dataset_columns):
+        if self.source_node_label is None or self.source_node_label == "":
+            raise ValueError("source_node_label not specified")
+        if self.target_node_label is None or self.target_node_label == "":
+            raise ValueError("target_node_label not specified")
+        if self.source_node_id_column is None or self.source_node_id_column == "":
+            raise ValueError("source_node_id_column not specified")
+        if self.target_node_id_column is None or self.target_node_id_column == "":
+            raise ValueError("target_node_id_column not specified")
+        if self.relationships_verb is None or self.relationships_verb == "":
+            raise ValueError("relationships_verb not specified")
+        existing_colnames = [c["name"] for c in input_dataset_columns]
+        for colname in self.source_node_properties:
+            if colname not in existing_colnames:
+                raise ValueError("source_node_properties. Column does not exist in input dataset: "+str(colname))
+        for colname in self.target_node_properties:
+            if colname not in existing_colnames:
+                raise ValueError("target_node_properties. Column does not exist in input dataset: "+str(colname))
+        for colname in self.relationship_properties:
+            if colname not in existing_colnames:
+                raise ValueError("relationship_properties. Column does not exist in input dataset: "+str(colname))
+

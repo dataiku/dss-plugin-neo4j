@@ -24,7 +24,7 @@ neo4jhandle.move_to_import_dir(export_file)
 
 # TODO add constraint?
 if params.clear_before_run:
-    neo4jhandle.delete_nodes(params)
+    neo4jhandle.delete_nodes(params.nodes_label)
 neo4jhandle.load_nodes('export.csv', params.nodes_label, params.node_id_column, input_dataset_schema)
 
 # --- Cleanup
