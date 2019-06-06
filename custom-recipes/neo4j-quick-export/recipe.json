@@ -55,7 +55,7 @@
             "name": "source_node_properties",
             "label": "Node properties",
             "type": "MAP",
-            "description": "column in DSS -> property in Neo4j"
+            "description": "column in DSS → property in Neo4j"
         },
         {
             "label": "Target node (b)",
@@ -80,7 +80,7 @@
             "name": "target_node_properties",
             "label": "Node properties",
             "type": "MAP",
-            "description": "column in DSS -> property in Neo4j"
+            "description": "column in DSS → property in Neo4j"
         },
         {
             "label": "Relationship",
@@ -94,18 +94,10 @@
             "mandatory": true
         },
         {
-            "name": "relationship_properties_use_all_remaining_columns",
-            "label": "Set Properties",
-            "type": "BOOLEAN",
-            "description": "Use other columns to set relationship properties",
-            "defaultValue": false
-        },
-        {
             "name": "relationship_properties",
             "label": "Relationship properties",
             "type": "MAP",
-            "description": "column in DSS -> property in Neo4j",
-            "visibilityCondition": "!model.relationship_properties_use_all_remaining_columns"
+            "description": "column in DSS → property in Neo4j"
         },
         {
             "label": "Clear before run",

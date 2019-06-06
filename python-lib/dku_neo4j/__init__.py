@@ -122,7 +122,8 @@ MERGE (src)-[rel:`%s`]->(tgt)
             self._scp_nopassword_to_server(file_to_move)
         else:
             logger.info("[+] Move file to Neo4j import dir...")
-            outfile = os.path.join(self.import_dir, 'export.csv')
+            filename = os.path.basename(file_to_move)
+            outfile = os.path.join(self.import_dir, filename)
             shutil.move(file_to_move, outfile)
 
     def delete_file_from_import_dir(self, file_path):
@@ -267,7 +268,6 @@ class CombinedExportParams(object):
             target_node_properties,
             relationships_verb,
             relationship_properties,
-            relationship_properties_use_all_remaining_columns=True,
             clear_before_run=False):
         self.source_node_label = source_node_label
         self.source_node_id_column = source_node_id_column
@@ -277,7 +277,6 @@ class CombinedExportParams(object):
         self.target_node_properties = target_node_properties or {}
         self.relationships_verb = relationships_verb
         self.relationship_properties = relationship_properties or {}
-        self.relationship_properties_use_all_remaining_columns = relationship_properties_use_all_remaining_columns
         self.clear_before_run = clear_before_run
 
         if source_node_id_column in source_node_properties:

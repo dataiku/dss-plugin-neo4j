@@ -46,6 +46,10 @@ def get_input_output():
     output_folder = dataiku.Folder(output_folder_name).get_path()
     return (input_dataset, output_folder)
 
+def get_export_file_name():
+    output_folder_name = get_output_names_for_role('output_folder')[0]
+    return 'dss_neo4j_export_' + output_folder_name + '.csv'
+
 def export_dataset(dataset, output_file, format="tsv-excel-noheader"):
     """
     exports a Dataiku Dataset to CSV with no need to go through a Pandas dataframe first (string only)
