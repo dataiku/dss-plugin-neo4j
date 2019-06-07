@@ -14,7 +14,7 @@ params = CombinedExportParams(
     get_recipe_config().get('target_node_id_column'),
     get_recipe_config().get('target_node_properties'),
     get_recipe_config().get('relationships_verb'),
-    get_recipe_config().get('relationship_properties'),
+    get_recipe_config().get('properties_map'),
     get_recipe_config().get('clear_before_run', True)
     )
 (input_dataset, output_folder) = get_input_output()

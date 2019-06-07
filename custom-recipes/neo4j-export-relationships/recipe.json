@@ -96,11 +96,21 @@
             "mandatory": true
         },
         {
-            "name": "set_relationship_properties",
-            "label": "Set Properties",
-            "type": "BOOLEAN",
-            "description": "Use other columns to set relationship properties",
-            "defaultValue": false
+            "name": "properties_mode",
+            "label": "Relationship properties",
+            "type": "SELECT",
+            "selectChoices": [
+                {"value": "ALL_OTHER_COLUMNS", "label": "All other columns"},
+                {"value": "SELECT_COLUMNS", "label": "Select columns"},
+            ],
+            "defaultValue": "ALL_OTHER_COLUMNS"
+        },
+        {
+            "name": "properties_map",
+            "label": "Columns to store",
+            "type": "MAP",
+            "description": "column in DSS → property in Neo4j",
+            "visibilityCondition": "model.properties_mode == 'SELECT_COLUMNS'"
         },
         {
             "name": "clear_before_run",

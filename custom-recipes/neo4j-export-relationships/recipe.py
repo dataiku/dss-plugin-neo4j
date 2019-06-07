@@ -14,13 +14,14 @@ params = RelationshipsExportParams(
     get_recipe_config().get('target_node_lookup_key'),
     get_recipe_config().get('target_node_id_column'),
     get_recipe_config().get('relationships_verb'),
-    get_recipe_config().get('set_relationship_properties', False),
+    get_recipe_config().get('properties_mode', False),
+    get_recipe_config().get('properties_map'),
     get_recipe_config().get('clear_before_run', True)
     )
-params.check()
 (input_dataset, output_folder) = get_input_output()
 logger = setup_logging(output_folder)
 input_dataset_schema = input_dataset.read_schema()
+params.check(input_dataset_schema)
 export_file_name = get_export_file_name()
 
 # --- Run

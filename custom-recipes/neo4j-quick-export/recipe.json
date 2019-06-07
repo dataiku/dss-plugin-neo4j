@@ -94,7 +94,7 @@
             "mandatory": true
         },
         {
-            "name": "relationship_properties",
+            "name": "properties_map",
             "label": "Relationship properties",
             "type": "MAP",
             "description": "column in DSS → property in Neo4j"
