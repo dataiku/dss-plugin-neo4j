@@ -42,14 +42,14 @@ class Neo4jHandle(object):
 
     def load_nodes(self, csv_file_path, columns_list, params):
         definition = self._schema(columns_list)
-        if params.properties_mode == 'ALL_COLUMNS':
+        if params.properties_mode == 'SELECT_COLUMNS':
+            properties_map = params.properties_map
+        else:
             properties_map = {}
             for col in columns_list:
                 if col['name'] not in [params.node_id_column]:
                     properties_map[col['name']] = col['name']
-        else:
-            properties_map = params.properties_map
-        properties = self._properties(columns_list, params.properties_map, 'n')
+        properties = self._properties(columns_list, properties_map, 'n')
         # TODO no PERIODIC COMMIT?
         q = """
 LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
@@ -75,13 +75,13 @@ MERGE (n:`%s` {`%s`: `%s`})
 
     def load_relationships(self, csv_file_path, columns_list, params):
         definition = self._schema(columns_list)
-        if params.properties_mode == 'ALL_COLUMNS':
+        if params.properties_mode == 'SELECT_COLUMNS':
+            properties_map = params.properties_map
+        else:
             properties_map = {}
             for col in columns_list:
                 if col['name'] not in [params.source_node_id_column, params.target_node_id_column]:
                     properties_map[col['name']] = col['name']
-        else:
-            properties_map = params.properties_map
         properties = self._properties(columns_list, properties_map, 'rel')
         q = """
 USING PERIODIC COMMIT
@@ -214,9 +214,12 @@ class NodesExportParams(object):
         self.properties_map = properties_map or {}
         self.clear_before_run = clear_before_run
 
-        if node_id_column in properties_map:
-            self.node_lookup_key = properties_map[node_id_column]
-            properties_map.pop(node_id_column)
+        if self.properties_mode == 'SELECT_COLUMNS':
+            if node_id_column in properties_map:
+                self.node_lookup_key = properties_map[node_id_column]
+                properties_map.pop(node_id_column)
+            else:
+                self.node_lookup_key = node_id_column
         else:
             self.node_lookup_key = node_id_column
 
