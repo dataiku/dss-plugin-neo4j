@@ -33,55 +33,55 @@
     ],
     "params": [
         {
-            "label": "Source node (a)",
+            "label": "Source nodes (a)",
             "type": "SEPARATOR"
         },
         {
             "name": "source_node_label",
-            "label": "Node label",
+            "label": "Label (a)",
             "type": "STRING",
-            "description": "",
+            "description": "In Neo4j",
             "mandatory": true
         },
         {
             "name": "source_node_lookup_key",
-            "label": "Node lookup key",
+            "label": "Node id (key)",
             "type": "STRING",
-            "description": "The unique identifier for the source node (in Neo4j)",
+            "description": "Nodes in Neo4j will be matched using this attribute",
             "mandatory": true
         },
         {
             "name": "source_node_id_column",
-            "label": "Lookup key column",
+            "label": "Node id column (values)",
             "type": "COLUMN",
             "columnRole": "input_dataset",
-            "description": "The unique identifier for the source node (in input dataset)",
+            "description": "Each value in this column will match a single node in Neo4j",
             "mandatory": true
         },
         {
-            "label": "Target node (b)",
+            "label": "Target nodes (b)",
             "type": "SEPARATOR"
         },
         {
             "name": "target_node_label",
-            "label": "Node label",
+            "label": "Label (b)",
             "type": "STRING",
-            "description": "",
+            "description": "In Neo4j",
             "mandatory": true
         },
         {
             "name": "target_node_lookup_key",
-            "label": "Node lookup key",
+            "label": "Node id (key)",
             "type": "STRING",
-            "description": "The unique identifier for the target node (in Neo4j)",
+            "description": "Nodes in Neo4j will be matched using this attribute",
             "mandatory": true
         },
         {
             "name": "target_node_id_column",
-            "label": "Lookup key column",
+            "label": "Node id column (values)",
             "type": "COLUMN",
             "columnRole": "input_dataset",
-            "description": "The unique identifier for the target node (in input dataset)",
+            "description": "Each value in this column will match a single node in Neo4j",
             "mandatory": true
         },
         {
@@ -90,9 +90,9 @@
         },
         {
             "name": "relationships_verb",
-            "label": "Verb defining the relationship",
+            "label": "Verb",
             "type": "STRING",
-            "description": "Choose any verb that will be used to define the relationship kind",
+            "description": "Choose the verb that will be used to define the relationship",
             "mandatory": true
         },
         {

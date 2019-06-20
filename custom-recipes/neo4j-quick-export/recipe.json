@@ -14,7 +14,7 @@
         {
             "name": "input_dataset",
             "label": "Input Dataset",
-            "description": "Dataiku Dataset holding the nodes",
+            "description": "Dataiku Dataset holding the nodes and relationships",
             "arity": "UNARY",
             "required": true,
             "acceptsDataset": true
@@ -33,12 +33,12 @@
     ],
     "params": [
         {
-            "label": "Source node (a)",
+            "label": "Source nodes (a)",
             "type": "SEPARATOR"
         },
         {
             "name": "source_node_label",
-            "label": "Node label",
+            "label": "Label (a)",
             "type": "STRING",
             "description": "",
             "mandatory": true
@@ -48,7 +48,7 @@
             "label": "Node id column",
             "type": "COLUMN",
             "columnRole": "input_dataset",
-            "description": "",
+            "description": "The column name will be used as the key",
             "mandatory": true
         },
         {
@@ -58,12 +58,12 @@
             "description": "column in DSS → property in Neo4j"
         },
         {
-            "label": "Target node (b)",
+            "label": "Target nodes (b)",
             "type": "SEPARATOR"
         },
         {
             "name": "target_node_label",
-            "label": "Node label",
+            "label": "Label (b)",
             "type": "STRING",
             "description": "",
             "mandatory": true
@@ -73,7 +73,7 @@
             "label": "Node id column",
             "type": "COLUMN",
             "columnRole": "input_dataset",
-            "description": "",
+            "description": "The column name will be used as the key",
             "mandatory": true
         },
         {
@@ -88,9 +88,9 @@
         },
         {
             "name": "relationships_verb",
-            "label": "Verb defining the relationship",
+            "label": "Verb",
             "type": "STRING",
-            "description": "Choose any verb that will be used to define the relationship kind",
+            "description": "Choose the verb that will be used to define the relationship",
             "mandatory": true
         },
         {
