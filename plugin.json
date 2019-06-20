@@ -4,7 +4,7 @@
     "meta": {
         "label": "Neo4j",
         "description": "Interact with the Neo4j graph database",
-        "author": "Dataiku (Thomas)",
+        "author": "Dataiku (Thomas Cabrol)",
         "icon": "icon-folder-close",
         "iconColor": "green",
         "licenseInfo": "Apache Software License",
@@ -14,22 +14,22 @@
     "params": [
         {
             "name": "neo4jUri",
-            "label": "URI",
-            "description": "URI of the Neo4j database (bolt://...)",
+            "label": "URI of the Neo4j database",
+            "description": "bolt://...",
             "type": "STRING",
             "mandatory": true
         },
         {
             "name": "neo4jUsername",
             "label": "Username",
-            "description": "Username to connect to the Neo4j database",
+            "description": "Username used to connect to the Neo4j database",
             "type": "STRING",
             "mandatory": true
         },
         {
             "name": "neo4jPassword",
             "label": "Password",
-            "description": "Password to connect to the Neo4j database",
+            "description": "Password used to connect to the Neo4j database",
             "type": "PASSWORD",
             "mandatory": true
         },
@@ -45,7 +45,7 @@
             "name": "neo4jIsRemote",
             "label": "Remote Neo4j server",
             "type": "BOOLEAN",
-            "description": "If Neo4j is on another machine than DSS data must be sent over SSH"
+            "description": "If Neo4j is on a different machine than DSS, data will be transfered via SSH"
         },
         {
             "name": "sshHost",
