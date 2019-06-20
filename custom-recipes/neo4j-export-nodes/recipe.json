@@ -69,7 +69,7 @@
             "label": "Delete nodes before run",
             "type": "BOOLEAN",
             "description": "Nodes with this label will be deleted before run",
-            "defaultValue": false
+            "defaultValue": true
         }
     ]
 }

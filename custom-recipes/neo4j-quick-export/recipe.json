@@ -108,7 +108,7 @@
             "label": "Clear before run",
             "type": "BOOLEAN",
             "description": "Nodes with this label (and attached relationships) will be deleted before run",
-            "defaultValue": false
+            "defaultValue": true
         }
     ]
 }
