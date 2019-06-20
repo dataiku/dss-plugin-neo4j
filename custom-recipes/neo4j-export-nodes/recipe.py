@@ -9,7 +9,7 @@ neo4jhandle = get_neo4jhandle()
 params = NodesExportParams(
     get_recipe_config().get('nodes_label'),
     get_recipe_config().get('node_id_column'),
-    get_recipe_config().get('properties_mode', False),
+    get_recipe_config().get('properties_mode'),
     get_recipe_config().get('properties_map'),
     get_recipe_config().get('clear_before_run', True)
     )

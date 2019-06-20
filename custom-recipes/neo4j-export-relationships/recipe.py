@@ -14,7 +14,7 @@ params = RelationshipsExportParams(
     get_recipe_config().get('target_node_lookup_key'),
     get_recipe_config().get('target_node_id_column'),
     get_recipe_config().get('relationships_verb'),
-    get_recipe_config().get('properties_mode', False),
+    get_recipe_config().get('properties_mode'),
     get_recipe_config().get('properties_map'),
     get_recipe_config().get('clear_before_run', True)
     )
