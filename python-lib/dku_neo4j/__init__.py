@@ -105,8 +105,8 @@ ON MATCH SET rel.weight = rel.weight + 1
         r = self.run(q)
         logger.info(r.stats())
 
-    def load_combined(self, csv_file_path, params, columns_list):
-        print(params.properties_map)
+    def load_combined(self, csv_file_path, columns_list, params):
+        #print(params.properties_map)
         definition = self._schema(columns_list)
         q = """
 USING PERIODIC COMMIT

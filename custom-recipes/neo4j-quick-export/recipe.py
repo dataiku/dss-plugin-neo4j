@@ -33,7 +33,7 @@ neo4jhandle.add_unique_constraint_on_relationship_nodes(params)
 if params.clear_before_run:
     neo4jhandle.delete_nodes(params.source_node_label)
     neo4jhandle.delete_nodes(params.target_node_label)
-neo4jhandle.load_combined(export_file_name, params, input_dataset_schema)
+neo4jhandle.load_combined(export_file_name, input_dataset_schema, params)
 
 # --- Cleanup
 neo4jhandle.delete_file_from_import_dir(export_file_name)
