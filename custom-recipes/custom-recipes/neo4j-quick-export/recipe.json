@@ -1,0 +1,114 @@
+{
+
+    "meta": {
+        "label": "Quick export (nodes and relationships)",
+        "description": "Create Neo4j nodes and relationships from a single Dataiku dataset.",
+        "icon": "icon-visual_export_recipe",
+        "iconColor": "green"
+    },
+
+    "kind": "PYTHON",
+    "selectableFromDataset": "input_dataset",
+
+    "inputRoles": [
+        {
+            "name": "input_dataset",
+            "label": "Input Dataset",
+            "description": "Dataiku Dataset holding the nodes and relationships",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsDataset": true
+        }
+    ],
+    "outputRoles": [
+        {
+            "name": "output_folder",
+            "label": "Results Folder",
+            "description": "Dataiku Folder storing the export log and results",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsManagedFolder": true,
+            "acceptsDataset": false
+        }
+    ],
+    "params": [
+        {
+            "label": "Source nodes (a)",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "source_node_label",
+            "label": "Label (a)",
+            "type": "STRING",
+            "description": "",
+            "mandatory": true
+        },
+        {
+            "name": "source_node_id_column",
+            "label": "Node id column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "description": "The column name will be used as the key",
+            "mandatory": true
+        },
+        {
+            "name": "source_node_properties",
+            "label": "Node properties",
+            "type": "MAP",
+            "description": "column in DSS → property in Neo4j"
+        },
+        {
+            "label": "Target nodes (b)",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "target_node_label",
+            "label": "Label (b)",
+            "type": "STRING",
+            "description": "",
+            "mandatory": true
+        },
+        {
+            "name": "target_node_id_column",
+            "label": "Node id column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "description": "The column name will be used as the key",
+            "mandatory": true
+        },
+        {
+            "name": "target_node_properties",
+            "label": "Node properties",
+            "type": "MAP",
+            "description": "column in DSS → property in Neo4j"
+        },
+        {
+            "label": "Relationship",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "relationships_verb",
+            "label": "Verb",
+            "type": "STRING",
+            "description": "Choose the verb that will be used to define the relationship",
+            "mandatory": true
+        },
+        {
+            "name": "properties_map",
+            "label": "Relationship properties",
+            "type": "MAP",
+            "description": "column in DSS → property in Neo4j"
+        },
+        {
+            "label": "Clear before run",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "clear_before_run",
+            "label": "Clear before run",
+            "type": "BOOLEAN",
+            "description": "Nodes with this label (and attached relationships) will be deleted before run",
+            "defaultValue": true
+        }
+    ]
+}
