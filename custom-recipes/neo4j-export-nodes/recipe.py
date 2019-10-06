@@ -17,7 +17,7 @@ params = NodesExportParams(
 logger = setup_logging(output_folder)
 input_dataset_schema = input_dataset.read_schema()
 params.check(input_dataset_schema)
-#export_file_name = get_export_file_name()
+export_file_name = get_export_file_name()
 
 # --- Run
 
