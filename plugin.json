@@ -1,6 +1,6 @@
 {
     "id": "neo4j",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "meta": {
         "label": "Neo4j",
         "description": "Interact with the Neo4j graph database",
@@ -32,35 +32,6 @@
             "description": "Password used to connect to the Neo4j database",
             "type": "PASSWORD",
             "mandatory": true
-        },
-        {
-            "name": "neo4jImportDir",
-            "label": "Neo4j Import Directory",
-            "type": "STRING",
-            "description": "Check https://neo4j.com/docs/operations-manual/current/configuration/file-locations/",
-            "mandatory": true,
-            "defaultValue": "/var/lib/neo4j/import/"
-        }//,
-        // TODO clean this - we force everything through the SCTP connexion for now
-        //{
-        //    "name": "neo4jIsRemote",
-        //    "label": "Remote Neo4j server",
-        //    "type": "BOOLEAN",
-        //    "description": "If Neo4j is on a different machine than DSS, data will be transfered via SSH"
-        //},
-        //{
-        //   "name": "sshHost",
-        //    "label": "SSH Host",
-        //    "type": "STRING",
-        //    "description": "IP or name of the server",
-        //    "visibilityCondition": "model.neo4jIsRemote"
-        //},
-        //{
-        //    "name": "sshUsername",
-        //    "label": "SSH User",
-        //    "type": "STRING",
-        //    "description": "",
-        //    "visibilityCondition": "model.neo4jIsRemote"
-        //}
+        }
     ]
 }

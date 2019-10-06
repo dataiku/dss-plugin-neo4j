@@ -22,19 +22,16 @@ params = RelationshipsExportParams(
 logger = setup_logging(output_folder)
 input_dataset_schema = input_dataset.read_schema()
 params.check(input_dataset_schema)
-export_file_name = get_export_file_name()
+export_file_fullname = os.path.join(get_export_file_path_in_folder(), get_export_file_name())
 
 # --- Run
 
-#export_file = os.path.join(output_folder, export_file_name)
-#export_dataset(input_dataset, export_file)
 export_dataset(input_dataset, output_folder)
-#neo4jhandle.move_to_import_dir(export_file)
 
 neo4jhandle.add_unique_constraint_on_relationship_nodes(params)
 if params.clear_before_run:
     neo4jhandle.delete_relationships(params)
-neo4jhandle.load_relationships(export_file_name, input_dataset_schema, params)
+neo4jhandle.load_relationships(export_file_fullname, input_dataset_schema, params)
 
 # --- Cleanup
 #neo4jhandle.delete_file_from_import_dir(export_file_name)
