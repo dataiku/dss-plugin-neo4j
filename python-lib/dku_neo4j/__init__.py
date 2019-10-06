@@ -7,19 +7,12 @@ logger = logging.getLogger()
 
 
 class Neo4jHandle(object):
-    def __init__(self, uri, username, password, import_dir, is_remote, ssh_host, ssh_user):
+    def __init__(self, uri, username, password):
         self.graph = Graph(uri, auth=("{}".format(username), "{}".format(password)))
-        self.import_dir = import_dir
-        self.is_remote = is_remote
-        self.ssh_host = ssh_host
-        self.ssh_user = ssh_user
 
     def check(self):
-        if self.is_remote:
-            if self.ssh_host is None or self.ssh_host == "":
-                raise ValueError("Plugin settings: SSH host is required for remote Neo4j server")
-            if self.ssh_user is None or self.ssh_user == "":
-                raise ValueError("Plugin settings: SSH user is required for remote Neo4j server")
+        # TODO was used with self managed SSH connection - going through SFTP folder now, anything to do here?
+        return
 
     def run(self, cypher_query):
         return self.graph.run(cypher_query)
@@ -137,40 +130,6 @@ ON MATCH SET rel.weight = rel.weight + 1
         logger.info("[+] Import relationships and nodes into Neo4j: %s" % (q))
         r = self.run(q)
         logger.info(r.stats())
-
-    def move_to_import_dir(self, file_to_move):
-        if self.is_remote:
-            self._scp_nopassword_to_server(file_to_move)
-        else:
-            logger.info("[+] Move file to Neo4j import dir...")
-            filename = os.path.basename(file_to_move)
-            outfile = os.path.join(self.import_dir, filename)
-            shutil.move(file_to_move, outfile)
-
-    def delete_file_from_import_dir(self, file_path):
-        outfile = os.path.join(self.import_dir, file_path)
-        if self.is_remote:
-            self._ssh_remove_file(outfile)
-        else:
-            os.remove(outfile)
-
-    def _scp_nopassword_to_server(self, file_to_send):
-        """
-        copies a file to a remote server using SCP. Requires a password-less access (i.e SSH public key is available)
-        """
-        logger.info("[+] Send file to Neo4j import dir through SCP...")
-        p = Popen(["scp", file_to_send, "{}@{}:{}".format(self.ssh_user, self.ssh_host, self.import_dir)], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-        out, err = p.communicate()
-        if err != '':
-            os.remove(file_to_send)
-            raise Exception(str(err))
-        os.remove(file_to_send)
-
-    def _ssh_remove_file(self, file_path):
-        p = Popen(["ssh", "{}@{}".format(self.ssh_user, self.ssh_host), "rm -rf", file_path], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-        out, err = p.communicate()
-        if err != '':
-            logger.error(str(err))
 
     def _build_nodes_definition(self, nodes_label, columns_list):
         definition = ':{}'.format(nodes_label)
