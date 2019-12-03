@@ -1,10 +1,10 @@
 {
     "id": "neo4j",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "meta": {
         "label": "Neo4j",
         "description": "Interact with the Neo4j graph database",
-        "author": "Dataiku (Thomas Cabrol)",
+        "author": "Dataiku (Thomas Cabrol and Kiel Guedec)",
         "icon": "icon-folder-close",
         "iconColor": "green",
         "licenseInfo": "Apache Software License",
