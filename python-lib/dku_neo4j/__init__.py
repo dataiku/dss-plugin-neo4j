@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 from py2neo import Graph
+import time
 
 logger = logging.getLogger()
 
@@ -100,6 +101,7 @@ ON MATCH SET rel.weight = rel.weight + 1
 
     def load_combined(self, csv_file_path, columns_list, params):
         #print(params.properties_map)
+        print("---- file is at: %s" % (csv_file_path,))
         definition = self._schema(columns_list)
         q = """
 USING PERIODIC COMMIT
@@ -304,3 +306,332 @@ class CombinedExportParams(object):
             if colname not in existing_colnames:
                 raise ValueError("properties_map. Column does not exist in input dataset: "+str(colname))
 
+
+
+
+# Dictionnary of info to generate CALL cypher functions depending on the algorithms selected
+ALGO_GENERAL_CONFIG = {
+    "pagerank": {
+        "function": "pageRank",
+        "result_name": "score",
+        "result_type": "float",
+        "weight_support": True,
+        "additional_params": {},
+        "algo_type": "centrality"
+    },
+    "betweenness": {
+        "function": "betweenness.sampled",
+        "result_name": "centrality",
+        "result_type": "float",
+        "weight_support": False,
+        "additional_params": {},
+        "algo_type": "centrality"
+    },
+    "closeness": {
+        "function": "closeness",
+        "result_name": "centrality",
+        "result_type": "float",
+        "weight_support": False,
+        "additional_params": {},
+        "algo_type": "centrality"
+    },
+    "indegree": {
+        "function": "degree",
+        "result_name": "score",
+        "result_type": "float",
+        "weight_support": True,
+        "additional_params": {"direction":"incoming"},
+        "algo_type": "centrality"
+    },
+    "outdegree": {
+        "function":"degree",
+        "result_name":"score",
+        "result_type":"float",
+        "weight_support":True,
+        "additional_params":{"direction":"outgoing"},
+        "algo_type":"centrality"
+    },
+    "louvain": {
+        "function":"louvain",
+        "result_name":"community",
+        "result_type":"int",
+        "weight_support":True,
+        "additional_params": {},
+        "algo_type":"community"
+    },
+    "labelpropagation": {
+        "function":"labelPropagation",
+        "result_name":"label",
+        "result_type":"int",
+        "weight_support":True,
+        "additional_params": {},
+        "algo_type":"community"
+    },
+    "connectedcomponents": {
+        "function":"unionFind",
+        "result_name":"setId",
+        "result_type":"int",
+        "weight_support":True,
+        "additional_params": {},
+        "algo_type":"community"
+    }
+}
+
+class GraphAnalyticsParams(object):
+    def __init__(self, recipe_params):
+        self.node_label = recipe_params.get("node_label")
+        self.relationship = recipe_params.get("relationship")
+        self.computation_mode = recipe_params.get("computation_mode")        
+        self.node_properties = recipe_params.get("node_properties")
+        
+        if recipe_params.get("weight") is None or recipe_params.get("weight") == "":
+            self.is_weight = False
+        else:
+            self.is_weight = True
+            self.weight = recipe_params.get("weight")
+            
+        #Build the list of features to compute and retrieve custom parameters for each CALL function
+        if recipe_params.get("computation_mode") == "COMPUTE_ALL_FEATS":
+            self.list_features = ALGO_GENERAL_CONFIG.keys()
+        elif recipe_params.get("computation_mode") == "SELECT_FEATS":
+            self.list_features = [p.split("feat_")[1]
+                                  for p in recipe_params.keys()
+                                  if p.startswith('feat_') and recipe_params[p]== True
+                                 ]
+            custom_params = {}
+            for f in self.list_features:
+                custom_params[f] = recipe_params.get("params_" + f)
+            self.custom_params = custom_params
+                
+            
+    def check(self):
+        #TO-DO check if node_label, relationship, weight exist in neo4j 
+        if self.node_label is None or self.node_label == "":
+            raise ValueError('node_label not specified')
+            
+        if len(self.node_properties.keys()) == 0:
+            raise ValueError('No node property given, need at least one')
+            
+        for prop in self.node_properties.keys():
+            if prop in [None, "", "undefined"]:
+                raise ValueError('Undefined node property')
+            if self.node_properties[prop] in [None, "", "undefined"]:
+                self.node_properties[prop] = prop
+            
+        if self.relationship is None or self.relationship == "":
+            raise ValueError('relationship not specified')
+            
+        if self.computation_mode not in ["COMPUTE_ALL_FEATS", "SELECT_FEATS"]:
+            raise ValueError('Invalid computation_mode, should be COMPUTE_ALL_FEATS or SELECT_FEATS')
+            
+        if len(self.list_features) == 0:
+            raise ValueError('No algorithm selected')
+            
+        for f in self.list_features:
+            if f not in ALGO_GENERAL_CONFIG.keys():
+                raise ValueError('Algo %s not implemented'%f)
+                
+            
+        if self.computation_mode == "SELECT_FEATS":
+            
+            for f in self.list_features:
+                
+                algo_params = self.custom_params.get(f)
+                mandatory_params = ALGO_GENERAL_CONFIG.get(f).get("additional_params")
+                
+                for p in algo_params.keys():
+                    
+                    #check that no mandatory parameters defined in ALGO_GLOBAL_SETTINGS have been overrided. If yes, ignore custom params
+                    #print(mandatory_params.keys())
+                    if p in mandatory_params.keys():
+                        print("WARNING. Parameter %s is set to %s by design in the computation of %s, %s will be ignored"%(p, mandatory_params[p], f, algo_params[p]))
+                        self.custom_params[f][p] = mandatory_params[p]
+                    
+                    #check custom parameters value is not empty
+                    if algo_params[p] is None or algo_params[p] == "":
+                        raise ValueError('Parameter %s of %s is not specified')%(p, f)
+                        
+                #check that we don't have write = false and writeProperty set
+                if ("write" in algo_params.keys()) and (algo_params["write"] == "false") and (algo_params["writeProperty"] is not None):
+                    raise ValueError('Having write:false and writeProperty not empty is not compatible for %s')%f
+                
+                
+
+class AnalyticsQueryRecipe(object):
+    """
+    Object to generate a cypher query and get the DSS schema to be written in output 
+    """
+    def __init__(self, params, neo4jhandle):
+        self.algo_general_config = ALGO_GENERAL_CONFIG
+        self.params = params
+        self.ts = int(time.time())
+        self.neo4jhandle = neo4jhandle
+
+    def get_algo_call(self, feat_name):
+        """
+        Generate the cypher CALL function associated to the feature to compute feat_name
+        """
+        feature_settings = self.algo_general_config.get(feat_name)
+        config = feature_settings.get('additional_params')
+        
+        if self.params.is_weight and feature_settings.get("weight_support"):
+            config["weightProperty"] = self.params.weight
+        
+        if self.params.computation_mode == "SELECT_FEATS":
+            print("config before; %s" % (config,))
+            print("params.custom_params: %s" % (self.params.custom_params,))
+            config.update(self.params.custom_params[feat_name])
+            print("config after; %s" % (config,))
+            
+        #if writeProperty is set, the property won't be deleted at the end of the recipe
+        config["write"] = "true"
+        if config.get("writeProperty") is None:
+            wp = "DKU_TMP_%s_%s"%(self.ts, feat_name)
+            config["writeProperty"] = wp
+        else:
+            wp = config["writeProperty"]
+            
+        q = """CALL algo.%s('%s','%s', %s)"""%(
+            feature_settings.get('function'),
+            self.params.node_label,
+            self.params.relationship,
+            self.stringify_config(config)
+        )
+        
+        return q, wp
+    
+    def stringify_config(self, config):
+        """
+        Convert a dictionary of optional parameters into a string cypher compatible
+        """
+        list_str = []
+
+        for key in config.keys():  
+            try :
+                val = int(config[key])
+            except:
+                try :
+                    val = float(config[key])
+                except:
+                    if config[key] in ["true", "false"]:
+                        val = config[key]
+                    else:
+                        val = "'" + config[key] + "'"
+            list_str.append( "%s:%s"%(key, val))
+            
+        return '{' + (', ').join(list_str) + '}'
+    
+    def generate_queries(self):
+        """
+        Generate final cypher queries
+        """
+        
+        node_prop_query_part = (', ').join(
+            ["n.%s as %s"%(prop, self.params.node_properties[prop]) for prop in self.params.node_properties.keys()]
+        )
+        
+        algo_call_queries = {}
+        wp_to_delete = []
+        feat_query_part = ""
+        
+        for feat_name in self.params.list_features:
+            q, wp = self.get_algo_call(feat_name)
+            algo_call_queries[feat_name] = q
+            
+            feat_query_part = feat_query_part + ", n.%s as %s"%(wp, feat_name)
+            
+            if wp.startswith("DKU_TMP_"):
+                wp_to_delete.append(wp)
+                
+        main_query = """MATCH (n:%s) RETURN %s%s"""%(self.params.node_label, node_prop_query_part, feat_query_part)
+        
+        if len(wp_to_delete) == 0:
+            delete_query = None
+        else:
+            delete_query = """MATCH (n:%s) REMOVE %s"""%(
+                self.params.node_label,
+                (', ').join(["n.%s"%dku_wp for dku_wp in wp_to_delete])
+            )
+            
+        query_dict = {"algo_calls":algo_call_queries, "main":main_query, "delete":delete_query}
+        return query_dict
+
+            
+    def get_schema(self):
+        """
+        Return DSS output schema
+        """
+        schema = []
+          
+        #First infer properties type from 10000 first rows
+        type_query = """MATCH (n:%s) RETURN %s LIMIT 10000"""%(
+            self.params.node_label,
+            (', ').join(["apoc.meta.type(n.{0}) as {0}".format(prop) for prop in self.params.node_properties.keys()])
+        )
+        df_type = self.neo4jhandle.run(type_query).to_data_frame()
+        
+        
+        for prop in self.params.node_properties.keys():
+            
+            list_type = list(df_type[prop].unique())
+            list_type_no_null = [t for t in list_type if t != "NULL"]
+            
+            print(prop, list_type)
+            
+            #NULL only
+            if len(list_type_no_null) == 0:
+                print("WARNING : propery type %s has been infered from 10000 nodes and, all properies were empty. Will use type string"%(prop))
+                schema.append({"name": self.params.node_properties[prop], "type":"string"})
+            
+            #One single type
+            elif len(list_type_no_null) == 1:
+                if list_type_no_null[0] == "INTEGER":
+                    schema.append({"name": self.params.node_properties[prop], "type":"int"})
+                elif list_type_no_null[0] == "FLOAT":
+                    schema.append({"name": self.params.node_properties[prop], "type":"double"})
+                elif list_type_no_null[0] == "BOOLEAN":
+                    schema.append({"name": self.params.node_properties[prop], "type":"boolean"})
+                else:
+                    if list_type[0] != "STRING":
+                        print("WARNING : type %s not supported, property %s will be stored as string"%(list_type_no_null[0], prop))
+                    schema.append({"name": self.params.node_properties[prop], "type":"string"})
+                    
+            elif len(list_type_no_null) == 2 and "INTEGER" in list_type_no_null and "FLOAT" in list_type_no_null:
+                schema.append({"name": self.params.node_properties[prop], "type":"double"})
+                
+            else:
+                print("Type %s has been found in property %s, will be stored as string"%((', ').join(list_type_no_null), prop))
+                schema.append({"name": self.params.node_properties[prop], "type":"string"})
+        
+        #Then use predefined types for computed features
+        for f in self.params.list_features:
+            schema.append({"name": f, "type":self.algo_general_config.get(f).get("result_type")})
+        return schema
+    
+    
+    def run_queries(self, query_dict):
+                
+        #Compute algo calls
+        print("Start computing algo calls")
+        for f in query_dict["algo_calls"].keys():
+            print("Computing %s"%f)
+            print(query_dict["algo_calls"][f])
+            self.neo4jhandle.run(query_dict["algo_calls"][f])    
+        print("Done computing algo calls")
+        
+        #Run merge query
+        print("Start computing merge query")
+        print(query_dict["main"])
+        query_result = self.neo4jhandle.run(query_dict["main"])
+        print("Done computing merge query")
+        
+        #Remove computed scores for neo4j unless specified in custom params
+        if query_dict["delete"]:
+            print("Start deleting temporary properties")
+            print(query_dict["delete"])
+            self.neo4jhandle.run(query_dict["delete"])
+            print("Done deleting temporary properties")
+        else:
+            print("Nothing to delete")
+        
+        return query_result

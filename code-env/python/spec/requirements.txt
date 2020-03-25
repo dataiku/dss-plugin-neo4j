@@ -1,2 +1,5 @@
 py2neo==4.3.0
 prompt_toolkit==1.0.15
+ipython-cypher
+networkx
+version_information
