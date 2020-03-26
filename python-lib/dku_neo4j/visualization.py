@@ -49,4 +49,3 @@ def neovis_draw_query(query):
     file.close()
 
     return IFrame(filename, width="100%", height="400")
-
