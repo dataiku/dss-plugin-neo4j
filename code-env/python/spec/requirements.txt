@@ -1,6 +1,6 @@
 py2neo==4.3.0
-prompt_toolkit==1.0.15
+prompt-toolkit==2.0.7 
 ipython-cypher
-networkx
-version_information
 flask
+networkx
+matplotlib
