@@ -3,3 +3,4 @@ prompt_toolkit==1.0.15
 ipython-cypher
 networkx
 version_information
+flask

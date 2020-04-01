@@ -1,0 +1,79 @@
+{
+
+    "meta": {
+        "label": "Export relations to a dataset",
+        "description": "Create Neo4j nodes and relationships from a single Dataiku dataset.",
+        "icon": "icon-visual_export_recipe",
+        "iconColor": "green"
+    },
+
+    "kind": "PYTHON",
+    "selectableFromDataset": "input_dataset",
+
+    "inputRoles": [
+        {
+            "name": "input_dataset",
+            "label": "Input Dataset",
+            "description": "Dataiku Dataset holding the nodes and relationships",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsManagedFolder": false,
+            "acceptsDataset": true
+        }
+    ],
+    "outputRoles": [
+        {
+            "name": "output_dataset",
+            "label": "Output Dataset",
+            "description": "Dataset stored in the Neo4j server",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsManagedFolder": false,
+            "acceptsDataset": true
+        }
+    ],
+    "params": [
+        {
+            "label": "Nodes",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "node_label",
+            "label": "Node label",
+            "type": "STRING"
+        },
+        {
+            "name": "source_column",
+            "label": "Source column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset"
+        },
+        {
+            "name": "target_column",
+            "label": "Target column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset"
+        },
+        {
+            "name": "source_properties",
+            "label": "Properties of source",
+            "type": "COLUMNS",
+            "columnRole": "input_dataset"
+        },
+        {
+            "label": "Relations",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "relation_verb",
+            "label": "Relation verb",
+            "type": "STRING"
+        },
+        {
+            "name": "relation_properties",
+            "label": "Properties of relations",
+            "type": "COLUMNS",
+            "columnRole": "input_dataset"
+        }
+    ]
+}
