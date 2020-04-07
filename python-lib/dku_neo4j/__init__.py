@@ -67,6 +67,11 @@ MERGE (n:`%s` {`%s`: `%s`})
         self.run(const1)
         self.run(const2)
 
+    def add_unique_constraint_on_source_column_property(self, params):
+        constraint = "CREATE CONSTRAINT ON (n:`%s`) ASSERT n.`%s` IS UNIQUE" % (params.node_label, params.source_column)
+        logger.info("[+] Create constraints on nodes: \n\t" + constraint)
+        self.run(constraint)
+
     def load_relationships(self, csv_file_path, columns_list, params):
         definition = self._schema(columns_list)
         if params.properties_mode == 'SELECT_COLUMNS':
@@ -133,6 +138,38 @@ ON MATCH SET rel.weight = rel.weight + 1
         r = self.run(q)
         logger.info(r.stats())
 
+    def load_dataset(self, csv_file_path, columns_list, params):
+        #print(params.properties_map)
+        print("---- file is at: %s" % (csv_file_path,))
+        definition = self._schema(columns_list)
+        q = """
+USING PERIODIC COMMIT
+LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
+WITH %s
+MERGE (src:`%s` {`%s`: `%s`})
+%s
+ON CREATE SET src.count = 1
+ON MATCH SET src.count = src.count + 1
+MERGE (tgt:`%s` {`%s`: `%s`})
+ON CREATE SET tgt.count = 1
+ON MATCH SET tgt.count = tgt.count + 1
+MERGE (src)-[rel:`%s`]->(tgt)
+%s
+ON CREATE SET rel.weight = 1
+ON MATCH SET rel.weight = rel.weight + 1
+        """ % (
+            csv_file_path,
+            definition,
+            params.node_label, params.source_column, params.source_column,
+            self._properties_not_map(columns_list, params.source_properties, 'src'),
+            params.node_label, params.source_column, params.target_column,
+            params.relation_verb,
+            self._properties_not_map(columns_list, params.relation_properties, 'rel')
+        )
+        logger.info("[+] Import relationships and nodes into Neo4j: %s" % (q))
+        r = self.run(q)
+        logger.info(r.stats())
+
     def _build_nodes_definition(self, nodes_label, columns_list):
         definition = ':{}'.format(nodes_label)
         definition += ' {' + '\n'
@@ -153,7 +190,19 @@ ON MATCH SET rel.weight = rel.weight + 1
             properties_strings.append(propstr)
         return "\n".join(properties_strings)
 
+    def _properties_not_map(self, all_columns_list, properties_columns, identifier):
+        print("all_columns_list: %s, properties_columns: %s, identifier: %s" % (all_columns_list, properties_columns, identifier))
+        type_per_column = {}
+        for c in all_columns_list:
+            type_per_column[c['name']] = c['type']
+        properties_strings = []
+        for colname in properties_columns:
+            propstr = self._property(colname, colname, type_per_column[colname], identifier)
+            properties_strings.append(propstr)
+        return "\n".join(properties_strings)
+
     def _property(self, colname, prop, coltype, identifier):
+        print("colname: %s, prop: %s, coltype: %s, identifier: %s" % (colname, prop, coltype, identifier))
         if coltype in ['int', 'bigint', 'smallint', 'tinyint']:
             typedValue = "toInteger(`{}`)".format(colname)
         elif coltype in ['double', 'float']:
@@ -305,6 +354,66 @@ class CombinedExportParams(object):
         for colname in self.properties_map:
             if colname not in existing_colnames:
                 raise ValueError("properties_map. Column does not exist in input dataset: "+str(colname))
+
+
+class ExportDatasetParams(object):
+    def __init__(self,
+                node_label,
+                source_column,
+                target_column,
+                source_properties,
+                relation_verb,
+                relation_properties,
+                clear_before_run=True
+                ):
+
+        self.node_label = node_label
+        self.source_column = source_column
+        self.target_column = target_column
+        self.source_properties = source_properties or {}
+        self.relation_verb = relation_verb
+        self.relation_properties = relation_properties or {}
+        self.clear_before_run = clear_before_run
+
+
+        # if source_node_id_column in source_node_properties:
+        #     self.source_node_lookup_key = source_node_properties[source_node_id_column]
+        #     source_node_properties.pop(source_node_id_column)
+        # else:
+        #     self.source_node_lookup_key = source_node_id_column
+
+        # if target_node_id_column in target_node_properties:
+        #     self.target_node_lookup_key = target_node_properties[target_node_id_column]
+        #     target_node_properties.pop(target_node_id_column)
+        # else:
+        #     self.target_node_lookup_key = target_node_id_column
+
+
+    # def check(self, input_dataset_schema):
+    #     if self.source_node_label is None or self.source_node_label == "":
+    #         raise ValueError("source_node_label not specified")
+    #     if self.target_node_label is None or self.target_node_label == "":
+    #         raise ValueError("target_node_label not specified")
+    #     if self.source_node_id_column is None or self.source_node_id_column == "":
+    #         raise ValueError("source_node_id_column not specified")
+    #     if self.target_node_id_column is None or self.target_node_id_column == "":
+    #         raise ValueError("target_node_id_column not specified")
+    #     if self.relationships_verb is None or self.relationships_verb == "":
+    #         raise ValueError("relationships_verb not specified")
+    #     existing_colnames = [c["name"] for c in input_dataset_schema]
+    #     if self.source_node_id_column not in existing_colnames:
+    #         raise ValueError("source_node_id_column. Column does not exist in input dataset: "+str(self.source_node_id_column))
+    #     if self.target_node_id_column not in existing_colnames:
+    #         raise ValueError("target_node_id_column. Column does not exist in input dataset: "+str(self.target_node_id_column))
+    #     for colname in self.source_node_properties:
+    #         if colname not in existing_colnames:
+    #             raise ValueError("source_node_properties. Column does not exist in input dataset: "+str(colname))
+    #     for colname in self.target_node_properties:
+    #         if colname not in existing_colnames:
+    #             raise ValueError("target_node_properties. Column does not exist in input dataset: "+str(colname))
+    #     for colname in self.properties_map:
+    #         if colname not in existing_colnames:
+    #             raise ValueError("properties_map. Column does not exist in input dataset: "+str(colname))
 
 
 
@@ -634,4 +743,381 @@ class AnalyticsQueryRecipe(object):
         else:
             print("Nothing to delete")
         
+        return query_result
+
+
+
+class GraphAnalyticsParamsNew(object):
+    def __init__(self, recipe_params):
+        self.node_label = recipe_params.get("node_label")
+        self.relationship = recipe_params.get("relation_verb")
+        self.computation_mode = recipe_params.get("computation_mode")
+        self.source_column = recipe_params.get("source_column")
+        self.target_column = recipe_params.get("target_column")
+        self.node_properties = recipe_params.get("source_properties")
+        self.edge_properties = recipe_params.get("relation_properties")
+
+        if recipe_params.get("weight") is None or recipe_params.get("weight") == "":
+            self.is_weight = False
+        else:
+            self.is_weight = True
+            self.weight = recipe_params.get("weight")
+
+        # Build the list of features to compute and retrieve custom parameters for each CALL function
+        if recipe_params.get("computation_mode") == "COMPUTE_ALL_FEATS":
+            self.list_features = ALGO_GENERAL_CONFIG.keys()
+        elif recipe_params.get("computation_mode") == "SELECT_FEATS":
+            self.list_features = [p.split("feat_")[1]
+                                  for p in recipe_params.keys()
+                                  if p.startswith('feat_') and recipe_params[p] is True]
+            custom_params = {}
+            for f in self.list_features:
+                custom_params[f] = recipe_params.get("params_" + f)
+            self.custom_params = custom_params
+
+    def check(self):
+        # TO-DO check if node_label, relationship, weight exist in neo4j
+        if self.node_label is None or self.node_label == "":
+            raise ValueError('node_label not specified')
+
+        if len(self.node_properties) == 0:
+            raise ValueError('No node property given, need at least one')
+
+        for prop in self.node_properties:
+            if prop in [None, "", "undefined"]:
+                raise ValueError('Undefined node property')
+            if self.node_properties[prop] in [None, "", "undefined"]:
+                self.node_properties[prop] = prop
+
+        if self.relationship is None or self.relationship == "":
+            raise ValueError('relationship not specified')
+
+        if self.computation_mode not in ["COMPUTE_ALL_FEATS", "SELECT_FEATS"]:
+            raise ValueError('Invalid computation_mode, should be COMPUTE_ALL_FEATS or SELECT_FEATS')
+
+        if len(self.list_features) == 0:
+            raise ValueError('No algorithm selected')
+
+        for f in self.list_features:
+            if f not in ALGO_GENERAL_CONFIG.keys():
+                raise ValueError('Algo %s not implemented' % f)
+
+        if self.computation_mode == "SELECT_FEATS":
+
+            for f in self.list_features:
+
+                algo_params = self.custom_params.get(f)
+                mandatory_params = ALGO_GENERAL_CONFIG.get(f).get("additional_params")
+
+                for p in algo_params.keys():
+
+                    # check that no mandatory parameters defined in ALGO_GLOBAL_SETTINGS have been overrided. If yes, ignore custom params
+                    # print(mandatory_params.keys())
+                    if p in mandatory_params.keys():
+                        print("WARNING. Parameter %s is set to %s by design in the computation of\
+                             %s, %s will be ignored" % (p, mandatory_params[p], f, algo_params[p]))
+                        self.custom_params[f][p] = mandatory_params[p]
+
+                    # check custom parameters value is not empty
+                    if algo_params[p] is None or algo_params[p] == "":
+                        raise ValueError('Parameter %s of %s is not specified') % (p, f)
+
+                # check that we don't have write = false and writeProperty set
+                if ("write" in algo_params.keys()) and (algo_params["write"] == "false") and (algo_params["writeProperty"] is not None):
+                    raise ValueError('Having write:false and writeProperty not empty is not compatible for %s') % f
+
+
+class AnalyticsQueryRecipeNew(object):
+    """
+    Object to generate a cypher query and get the DSS schema to be written in output 
+    """
+    def __init__(self, params, neo4jhandle):
+        self.algo_general_config = ALGO_GENERAL_CONFIG
+        self.params = params
+        self.ts = int(time.time())
+        self.neo4jhandle = neo4jhandle
+
+    def get_algo_call(self, feat_name):
+        """
+        Generate the cypher CALL function associated to the feature to compute feat_name
+        """
+        feature_settings = self.algo_general_config.get(feat_name)
+        config = feature_settings.get('additional_params')
+
+        if self.params.is_weight and feature_settings.get("weight_support"):
+            config["weightProperty"] = self.params.weight
+
+        if self.params.computation_mode == "SELECT_FEATS":
+            print("config before; %s" % (config,))
+            print("params.custom_params: %s" % (self.params.custom_params,))
+            config.update(self.params.custom_params[feat_name])
+            print("config after; %s" % (config,))
+
+        # if writeProperty is set, the property won't be deleted at the end of the recipe
+        config["write"] = "true"
+        config["writeProperty"] = feat_name
+        if config.get("writeProperty") is None:
+            wp = "DKU_TMP_%s_%s"%(self.ts, feat_name)
+            config["writeProperty"] = wp
+        else:
+            wp = config["writeProperty"]
+
+        q = """CALL algo.%s('%s','%s', %s)""" % (
+            feature_settings.get('function'),
+            self.params.node_label,
+            self.params.relationship,
+            self.stringify_config(config)
+        )
+
+        return q, wp
+
+    def stringify_config(self, config):
+        """
+        Convert a dictionary of optional parameters into a string cypher compatible
+        """
+        list_str = []
+
+        for key in config.keys():  
+            try:
+                val = int(config[key])
+            except:
+                try:
+                    val = float(config[key])
+                except:
+                    if config[key] in ["true", "false"]:
+                        val = config[key]
+                    else:
+                        val = "'" + config[key] + "'"
+            list_str.append("%s:%s" % (key, val))
+
+        return '{' + (', ').join(list_str) + '}'
+
+    def generate_queries(self):
+        """
+        Generate final cypher queries
+        """
+
+        # node_prop_query_part = (', ').join(
+        #     [", src.%s as %s" % (prop, prop) for prop in self.params.node_properties]
+        # )
+
+        node_prop_query_part = ('').join([", src.{0} as {0}".format(prop) for prop in self.params.node_properties])
+
+        edge_prop_query_part = ('').join([", r.{0} as {0}".format(prop) for prop in self.params.edge_properties])
+
+        print("node_prop_query_part: ", node_prop_query_part)
+        print("edge_prop_query_part: ", edge_prop_query_part)
+
+
+        # edge_prop_query_part = (', ').join(
+        #     [", r.%s as %s" % (prop, prop) for prop in self.params.edge_properties]
+        # )
+
+        algo_call_queries = {}
+        wp_to_delete = []
+        feat_query_part = ""
+
+        for feat_name in self.params.list_features:
+            q, wp = self.get_algo_call(feat_name)
+            algo_call_queries[feat_name] = q
+
+            feat_query_part = feat_query_part + ", src.%s as %s" % (wp, feat_name)
+
+            if wp.startswith("DKU_TMP_"):
+                wp_to_delete.append(wp)
+
+        main_query = """MATCH (n:%s) RETURN %s%s""" % (self.params.node_label, node_prop_query_part, feat_query_part)
+
+        # main_new = """MATCH (src:{0})-[r:{1}]-(tgt:{0}) RETURN src.{3} as {3}, tgt.{4} as {5}{6}{7}{8}""".format(
+        #                             self.params.node_label,
+        #                             self.params.relationship,
+        #                             self.params.node_label,
+        #                             self.params.source_column,
+        #                             self.params.source_column,
+        #                             self.params.target_column,
+        #                             self.params.target_column,
+        #                             node_prop_query_part,
+        #                             edge_prop_query_part,
+        #                             feat_query_part
+        #                             )
+
+        main_new = """MATCH (src:{0})-[r:{1}]-(tgt:{0}) RETURN src.{2} as {2}, tgt.{2} as {3}{4}{5}{6}""".format(
+                                    self.params.node_label,
+                                    self.params.relationship,
+                                    self.params.source_column,
+                                    self.params.target_column,
+                                    node_prop_query_part,
+                                    edge_prop_query_part,
+                                    feat_query_part
+                                    )
+
+        print("main_new query: ", main_new)
+        
+        if len(wp_to_delete) == 0:
+            delete_query = None
+        else:
+            delete_query = """MATCH (n:%s) REMOVE %s""" % (
+                self.params.node_label,
+                (', ').join(["n.%s" % dku_wp for dku_wp in wp_to_delete])
+            )
+
+        query_dict = {"algo_calls": algo_call_queries, "main": main_query, "delete": delete_query, "main_new": main_new}
+        return query_dict
+
+    def get_schema(self):
+        """
+        Return DSS output schema
+        """
+        schema = []
+
+        # First infer properties type from 100 first rows
+        type_query = """MATCH (n:{})-[r:{}]-(m) RETURN {}{}{} LIMIT 100""".format(
+            self.params.node_label,
+            self.params.relationship,
+            "apoc.meta.type(n.{0}) as {0}".format(self.params.source_column),
+            ('').join([", apoc.meta.type(n.{0}) as {0}".format(prop) for prop in self.params.node_properties]),
+            ('').join([", apoc.meta.type(r.{0}) as {0}".format(prop) for prop in self.params.edge_properties]),
+        )
+
+        print("type_query: ", type_query)
+
+        df_type = self.neo4jhandle.run(type_query).to_data_frame()
+
+
+        for prop in [self.params.source_column]:
+
+            list_type = list(df_type[prop].unique())
+            list_type_no_null = [t for t in list_type if t != "NULL"]
+
+            print(prop, list_type)
+
+            # NULL only
+            if len(list_type_no_null) == 0:
+                print("WARNING : propery type %s has been infered from 10000 nodes and, all properies were empty. Will use type string" % (prop))
+                schema.append({"name": prop, "type": "string"})
+
+            # One single type
+            elif len(list_type_no_null) == 1:
+                if list_type_no_null[0] == "INTEGER":
+                    schema.append({"name": prop, "type": "int"})
+                elif list_type_no_null[0] == "FLOAT":
+                    schema.append({"name": prop, "type": "double"})
+                elif list_type_no_null[0] == "BOOLEAN":
+                    schema.append({"name": prop, "type": "boolean"})
+                else:
+                    if list_type[0] != "STRING":
+                        print("WARNING : type %s not supported, property %s will be stored as string" % (list_type_no_null[0], prop))
+                    schema.append({"name": prop, "type": "string"})
+
+            elif len(list_type_no_null) == 2 and "INTEGER" in list_type_no_null and "FLOAT" in list_type_no_null:
+                schema.append({"name": prop, "type": "double"})
+
+            else:
+                print("Type %s has been found in property %s, will be stored as string" % ((', ').join(list_type_no_null), prop))
+                schema.append({"name": prop, "type": "string"})
+
+        type_target = schema[-1]["type"]
+        schema.append({"name": self.params.target_column, "type": type_target})
+
+        for prop in self.params.node_properties:
+
+            list_type = list(df_type[prop].unique())
+            list_type_no_null = [t for t in list_type if t != "NULL"]
+
+            print(prop, list_type)
+
+            # NULL only
+            if len(list_type_no_null) == 0:
+                print("WARNING : propery type %s has been infered from 10000 nodes and, all properies were empty. Will use type string" % (prop))
+                schema.append({"name": prop, "type": "string"})
+
+            # One single type
+            elif len(list_type_no_null) == 1:
+                if list_type_no_null[0] == "INTEGER":
+                    schema.append({"name": prop, "type": "int"})
+                elif list_type_no_null[0] == "FLOAT":
+                    schema.append({"name": prop, "type": "double"})
+                elif list_type_no_null[0] == "BOOLEAN":
+                    schema.append({"name": prop, "type": "boolean"})
+                else:
+                    if list_type[0] != "STRING":
+                        print("WARNING : type %s not supported, property %s will be stored as string" % (list_type_no_null[0], prop))
+                    schema.append({"name": prop, "type": "string"})
+
+            elif len(list_type_no_null) == 2 and "INTEGER" in list_type_no_null and "FLOAT" in list_type_no_null:
+                schema.append({"name": prop, "type": "double"})
+
+            else:
+                print("Type %s has been found in property %s, will be stored as string" % ((', ').join(list_type_no_null), prop))
+                schema.append({"name": prop, "type": "string"})
+
+        for prop in self.params.edge_properties:
+
+            list_type = list(df_type[prop].unique())
+            list_type_no_null = [t for t in list_type if t != "NULL"]
+
+            print(prop, list_type)
+
+            # NULL only
+            if len(list_type_no_null) == 0:
+                print("WARNING : propery type %s has been infered from 10000 nodes and, all properies were empty. Will use type string" % (prop))
+                schema.append({"name": prop, "type": "string"})
+
+            # One single type
+            elif len(list_type_no_null) == 1:
+                if list_type_no_null[0] == "INTEGER":
+                    schema.append({"name": prop, "type": "int"})
+                elif list_type_no_null[0] == "FLOAT":
+                    schema.append({"name": prop, "type": "double"})
+                elif list_type_no_null[0] == "BOOLEAN":
+                    schema.append({"name": prop, "type": "boolean"})
+                else:
+                    if list_type[0] != "STRING":
+                        print("WARNING : type %s not supported, property %s will be stored as string" % (list_type_no_null[0], prop))
+                    schema.append({"name": prop, "type": "string"})
+
+            elif len(list_type_no_null) == 2 and "INTEGER" in list_type_no_null and "FLOAT" in list_type_no_null:
+                schema.append({"name": prop, "type": "double"})
+
+            else:
+                print("Type %s has been found in property %s, will be stored as string" % ((', ').join(list_type_no_null), prop))
+                schema.append({"name": prop, "type": "string"})
+
+        # Then use predefined types for computed features
+        for f in self.params.list_features:
+            schema.append({"name": f, "type": self.algo_general_config.get(f).get("result_type")})
+        print("schema: ", schema)
+        return schema
+
+    def run_queries(self, query_dict):
+
+        # Compute algo calls
+        print("Start computing algo calls")
+        for f in query_dict["algo_calls"].keys():
+            print("Computing %s" % f)
+            print(query_dict["algo_calls"][f])
+            self.neo4jhandle.run(query_dict["algo_calls"][f])
+        print("Done computing algo calls")
+
+        # # Run merge query
+        # print("Start computing merge query")
+        # print(query_dict["main"])
+        # query_result = self.neo4jhandle.run(query_dict["main"])
+        # print("Done computing merge query")
+
+        # Run New merge query
+        print("Start computing NEW merge query")
+        print(query_dict["main_new"])
+        query_result = self.neo4jhandle.run(query_dict["main_new"])
+        print("Done computing merge query")
+
+        # Remove computed scores for neo4j unless specified in custom params
+        if query_dict["delete"]:
+            print("Start deleting temporary properties")
+            print(query_dict["delete"])
+            self.neo4jhandle.run(query_dict["delete"])
+            print("Done deleting temporary properties")
+        else:
+            print("Nothing to delete")
+
         return query_result

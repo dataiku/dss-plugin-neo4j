@@ -56,6 +56,12 @@ def get_export_file_path_in_folder():
     return os.path.join(output_folder.project_key, output_folder.short_name)
 
 
+def get_export_file_path_in_dataset(output_dataset):
+    dir_path = os.path.join(output_dataset.project_key, output_dataset.short_name)
+    logger.info("dir_path is {}".format(dir_path))
+    return dir_path + output_dataset.get_files_info()['globalPaths'][0]['path']
+
+
 def export_dataset(dataset, output_folder, format="tsv-excel-noheader"):
     if not isinstance(output_folder, dataiku.Folder):
         raise ValueError("Invalid type for output_folder: {}, \
@@ -66,6 +72,15 @@ def export_dataset(dataset, output_folder, format="tsv-excel-noheader"):
 
     with dataset.raw_formatted_data(format="tsv-excel-noheader") as i:
         output_folder.upload_stream(export_file_name, i)
+
+
+def export_to_dataset(input_dataset, output_dataset):
+    if not isinstance(output_dataset, dataiku.Dataset):
+        raise ValueError("Invalid type for output_dataset: {}, \
+            must be dataiku.Dataset".format(type(output_dataset)))
+
+    input_dataset_df = input_dataset.get_dataframe()
+    output_dataset.write_with_schema(input_dataset_df)
 
 
 BATCH_SIZE = 32000

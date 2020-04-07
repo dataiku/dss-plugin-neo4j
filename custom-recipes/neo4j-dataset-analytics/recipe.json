@@ -1,0 +1,270 @@
+{
+
+    "meta": {
+        "label": "Compute Graph Analytics On Dataset",
+        "description": "Compute centrality measurements and community detection.\nInput a folder",
+        "icon": "icon-cogs"
+    },
+
+    "kind": "PYTHON",
+    "selectableFromDataset": "input_dataset",
+
+    "inputRoles": [
+        {
+            "name": "input_dataset",
+            "label": "Input Dataset",
+            "description": "Dataset holding the nodes and relationships",
+            "arity": "UNARY",
+            "required": false,
+            "acceptsManagedFolder": false,
+            "acceptsDataset": true
+        }
+    ],
+    "outputRoles": [
+        {
+            "name": "output_dataset",
+            "label": "Output Dataset",
+            "description": "Dataiku Dataset storing the computed features",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsDataset": true
+        }
+    ],
+    "params": [
+        {
+            "label": "Nodes",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "node_label",
+            "label": "Node label",
+            "type": "STRING",
+            "description": "Node label in neo4j",
+            "mandatory": true
+        },
+        {
+            "name": "source_column",
+            "label": "Source node column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset"
+        },
+        {
+            "name": "target_column",
+            "label": "Target node column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset"
+        },
+        {
+            "name": "source_properties",
+            "label": "Source node properties",
+            "type": "COLUMNS",
+            "columnRole": "input_dataset",
+            "description": "Node properties of source node to keep in the output dataset"
+        },
+        {
+            "label": "Relations",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "relation_verb",
+            "label": "Relation verb",
+            "type": "STRING",
+            "description": "Usually a verb defining the relationship between two nodes",
+            "mandatory": true
+        },
+        {
+            "name": "relation_properties",
+            "label": "Relation properties",
+            "type": "COLUMNS",
+            "columnRole": "input_dataset",
+            "description": "Relation properties to keep in the output dataset"
+        },
+        {
+            "label": "Computation mode",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "weight",
+            "label": "Weight of relations",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "description": "Relation property to use as weight in algorithms",
+            "mandatory": false
+        },
+        {
+            "name": "computation_mode",
+            "label": "Features to compute",
+            "type": "SELECT",
+            "selectChoices": [
+                {"value": "COMPUTE_ALL_FEATS", "label": "Compute all features"},
+                {"value": "SELECT_FEATS", "label": "Select algorithms"}
+            ],
+            "defaultValue": "COMPUTE_ALL_FEATS"
+        },
+        {
+            "label": "Algorithm selection",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "feat_pagerank",
+            "label": "Pagerank",
+            "type": "BOOLEAN",
+            "description": "Measures nodes connectivity. https://neo4j.com/docs/graph-algorithms/current/algorithms/page-rank/",
+            "defaultValue": false,
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "params_pagerank",
+            "label": "Custom parameters",
+            "type": "MAP",
+            "description": "Algo setting → value",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS' && model.feat_pagerank == true"
+        },
+        {
+            "label": "",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "feat_betweenness",
+            "label": "Betweenness",
+            "type": "BOOLEAN",
+            "description": "Betweenness centrality is a way of detecting the amount of influence a node has over the flow of information in a graph. It is often used to find nodes that serve as a bridge from one part of a graph to another. https://neo4j.com/docs/graph-algorithms/current/algorithms/betweenness-centrality/",
+            "defaultValue": false,
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "params_betweenness",
+            "label": "Custom parameters",
+            "type": "MAP",
+            "description": "Algo setting → value",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS' && model.feat_betweenness == true"
+        },
+        {
+            "label": "",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },        
+        {
+            "name": "feat_closeness",
+            "label": "Closeness",
+            "type": "BOOLEAN",
+            "description": "https://neo4j.com/docs/graph-algorithms/current/algorithms/closeness-centrality/",
+            "defaultValue": false,
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "params_closeness",
+            "label": "Custom parameters",
+            "type": "MAP",
+            "description": "Algo setting → value",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS' && model.feat_closeness == true"
+        },
+        {
+            "label": "",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "feat_indegree",
+            "label": "In-Degree",
+            "type": "BOOLEAN",
+            "description": "https://neo4j.com/docs/graph-algorithms/current/algorithms/degree-centrality/",
+            "defaultValue": false,
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "params_indegree",
+            "label": "Custom parameters",
+            "type": "MAP",
+            "description": "Algo setting → value",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS' && model.feat_indegree == true"
+        },
+        {
+            "label": "",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "feat_outdegree",
+            "label": "Out-Degree",
+            "type": "BOOLEAN",
+            "description": "https://neo4j.com/docs/graph-algorithms/current/algorithms/degree-centrality/",
+            "defaultValue": false,
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "params_outdegree",
+            "label": "Custom parameters",
+            "type": "MAP",
+            "description": "Algo setting → value",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS' && model.feat_outdegree == true"
+        },
+        {
+            "label": "",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "feat_louvain",
+            "label": "Louvain",
+            "type": "BOOLEAN",
+            "description": "https://neo4j.com/docs/graph-algorithms/current/algorithms/louvain/",
+            "defaultValue": false,
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "params_louvain",
+            "label": "Custom parameters",
+            "type": "MAP",
+            "description": "Algo setting → value",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS' && model.feat_louvain == true"
+        },
+        {
+            "label": "",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "feat_labelpropagation",
+            "label": "Label Propagation",
+            "type": "BOOLEAN",
+            "description": "https://neo4j.com/docs/graph-algorithms/current/algorithms/label-propagation/",
+            "defaultValue": false,
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "params_labelpropagation",
+            "label": "Custom parameters",
+            "type": "MAP",
+            "description": "Algo setting → value",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS' && model.feat_labelpropagation == true"
+        },
+        {
+            "label": "",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "feat_connectedcomponents",
+            "label": "Connected components",
+            "type": "BOOLEAN",
+            "description": "https://neo4j.com/docs/graph-algorithms/current/algorithms/connected-components/",
+            "defaultValue": false,
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        },
+        {
+            "name": "params_connectedcomponents",
+            "label": "Custom parameters",
+            "type": "MAP",
+            "description": "Algo setting → value",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS' && model.feat_connectedcomponents == true"
+        },
+        {
+            "label": "",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.computation_mode == 'SELECT_FEATS'"
+        }
+    ]
+}

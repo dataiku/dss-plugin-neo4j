@@ -25,7 +25,7 @@
         {
             "name": "output_dataset",
             "label": "Output Dataset",
-            "description": "Dataset stored in the Neo4j server",
+            "description": "Dataset stored on the Neo4j server",
             "arity": "UNARY",
             "required": true,
             "acceptsManagedFolder": false,
@@ -40,23 +40,26 @@
         {
             "name": "node_label",
             "label": "Node label",
-            "type": "STRING"
+            "type": "STRING",
+            "mandatory": true
         },
         {
             "name": "source_column",
-            "label": "Source column",
+            "label": "Source node column",
             "type": "COLUMN",
-            "columnRole": "input_dataset"
+            "columnRole": "input_dataset",
+            "mandatory": true
         },
         {
             "name": "target_column",
-            "label": "Target column",
+            "label": "Target node column",
             "type": "COLUMN",
-            "columnRole": "input_dataset"
+            "columnRole": "input_dataset",
+            "mandatory": true
         },
         {
             "name": "source_properties",
-            "label": "Properties of source",
+            "label": "Source node properties",
             "type": "COLUMNS",
             "columnRole": "input_dataset"
         },
@@ -67,13 +70,21 @@
         {
             "name": "relation_verb",
             "label": "Relation verb",
-            "type": "STRING"
+            "type": "STRING",
+            "mandatory": true
         },
         {
             "name": "relation_properties",
             "label": "Properties of relations",
             "type": "COLUMNS",
             "columnRole": "input_dataset"
+        },
+        {
+            "name": "clear_before_run",
+            "label": "Clear before run",
+            "type": "BOOLEAN",
+            "description": "Nodes with this label (and attached relationships) will be deleted before run",
+            "defaultValue": true
         }
     ]
 }

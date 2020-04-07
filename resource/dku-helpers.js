@@ -8,7 +8,7 @@ function checkWebAppParameters(webAppConfig, webAppDesc) {
             if (p.mandatory) {
                 var val = webAppConfig[p.name];
                 if (val == undefined || val == "") {
-                    throw new Error("Mandatory column '" + p.name + "' not specified.");
+                    throw new Error("Mandatory parameter '" + p.label + "' not specified.");
                 }
             }
         });
@@ -18,7 +18,7 @@ function checkWebAppParameters(webAppConfig, webAppDesc) {
             if (p.mandatory) {
                 var val = webAppConfig[p.name];
                 if (val == undefined || val == "") {
-                    throw new Error("Mandatory column '" + p.name + "' not specified.");
+                    throw new Error("Mandatory parameter '" + p.label + "' not specified.");
                 }
             }
         });
@@ -46,6 +46,9 @@ dataiku.webappBackend = (function() {
         .then(response => {
             if (response.status == 502) {
                 throw Error("Webapp backend not started");
+            } else if (response.status == 505) {
+                response.text().then(text => dataiku.webappMessages.displayFatalError(`Graph query error:\n${text}.`))
+                throw Error("Response not ok!")
             } else if (!response.ok) {
                 response.text().then(text => dataiku.webappMessages.displayFatalError(`Backend error:\n${text}.\nCheck backend log for more information.`))
                 throw Error("Response not ok!")

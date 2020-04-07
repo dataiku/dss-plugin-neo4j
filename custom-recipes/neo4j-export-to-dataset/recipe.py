@@ -16,28 +16,21 @@ params = ExportDatasetParams(
     get_recipe_config().get('clear_before_run', True)
     )
 
-# (input_dataset, output_folder) = get_input_output()
 input_dataset_name = get_input_names_for_role('input_dataset')[0]
 input_dataset = dataiku.Dataset(input_dataset_name)
 
 output_dataset_name = get_output_names_for_role('output_dataset')[0]
 output_dataset = dataiku.Dataset(output_dataset_name)
 
-# logger = setup_logging(output_folder)
-
 input_dataset_schema = input_dataset.read_schema()
 # params.check(input_dataset_schema)
 
 export_to_dataset(input_dataset, output_dataset)
 
-# export_file_fullname = os.path.join(get_export_file_path_in_folder(), get_export_file_name())
-
-
-# neo4jhandle.add_unique_constraint_on_relationship_nodes(params)
+neo4jhandle.add_unique_constraint_on_source_column_property(params)
 if params.clear_before_run:
     neo4jhandle.delete_nodes(params.node_label)
 
-# export_file_fullname = output_dataset.get_location_info()['info']['path']+'.csv'
 export_file_fullname = get_export_file_path_in_dataset(output_dataset)
 
 neo4jhandle.load_dataset(export_file_fullname, input_dataset_schema, params)

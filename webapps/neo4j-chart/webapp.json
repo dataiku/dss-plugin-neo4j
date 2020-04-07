@@ -1,0 +1,83 @@
+{
+    "meta": {
+        "label": "Graph visualization (neovis)",
+        "description": "",
+        "icon": "icon-bar-chart"
+    },
+
+    "baseType": "STANDARD",
+    "hasBackend": "true",
+
+    "chart" : {
+        "datasetParamName": "dataset",
+        "leftBarLabel": "Graph visualization parameters",
+        "leftBarParams": [
+            {
+                "name": "node_caption",
+                "type": "DATASET_COLUMN",
+                "datasetParamName": "dataset",
+                "label": "Node caption",
+                "description": "",
+                "mandatory": false
+            },
+            {
+                "name": "node_size",
+                "type": "DATASET_COLUMN",
+                "datasetParamName": "dataset",
+                "label": "Node size",
+                "description": "Must be numerical values",
+                "mandatory": false
+            },
+            {
+                "name": "node_color",
+                "type": "DATASET_COLUMN",
+                "datasetParamName": "dataset",
+                "label": "Node color",
+                "description": "Must be numerical values",
+                "mandatory": false
+            },
+            {
+                "name": "edge_thickness",
+                "type": "DATASET_COLUMN",
+                "datasetParamName": "dataset",
+                "label": "Relation thickness",
+                "description": "Must be numerical values",
+                "mandatory": false
+            },
+            {
+                "name": "edge_caption",
+                "type": "BOOLEAN",
+                "label": "Display relation verb",
+                "description": "",
+                "defaultValue": true
+            },
+            {
+                "name": "query_limit",
+                "type": "INT",
+                "label": "LIMIT",
+                "description": "Maximum number of nodes displayed (max 300)",
+                "mandatory": true,
+                "defaultValue": 30
+            }
+        ],
+        "topBar": "STD_FORM",
+        "topBarParams": [
+            {
+                "name": "node_label",
+                "type": "STRING",
+                "label": "Node label",
+                "description": "",
+                "mandatory": true
+            },
+            {
+                "name": "edge_label",
+                "type": "STRING",
+                "label": "Relation verb",
+                "description": "",
+                "mandatory": true
+            }
+        ],
+        "canFilter": true,
+        "canFacet": false
+    }
+}
