@@ -4,7 +4,7 @@
     "meta": {
         "label": "Neo4j",
         "description": "Read and query the Neo4j graph database",
-        "author": "Dataiku (Thomas Cabrol and Kiel Guedec)",
+        "author": "Dataiku",
         "icon": "icon-folder-close",
         "iconColor": "green",
         "licenseInfo": "Apache Software License",
