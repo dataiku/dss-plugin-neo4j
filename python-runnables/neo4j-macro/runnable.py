@@ -35,7 +35,7 @@ class MyRunnable(Runnable):
         try:
             df = r.to_data_frame()
             html = html + df.to_html(index=False, max_rows=50)
-        except Exception, e:
+        except Exception as e:
             html = html + "<pre>No result to display.</pre>"
             
         return html
