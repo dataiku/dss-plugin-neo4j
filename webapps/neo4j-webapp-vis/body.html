@@ -1,0 +1,180 @@
+<!doctype html>
+<link rel="stylesheet" href="/static/public/styles/1.0.0/dku-styles.css" />
+
+<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+<div class="flex-container">
+    
+    <section class="graph-parameters">
+        <h3>Graph parameters</h3>
+        Choose the right parameters for display
+        <form id="form-sample" novalidate>
+            <div class="multiple-fields-container">
+                <div class="multiple-fields-child" style="width: calc(100%/2);">
+                    <div class="field">
+                        <label for="chooseNodeLabel">Node label</label>
+                        <div class="select">
+                            <select id="chooseNodeLabel">
+                                <option value="" disabled selected hidden>Pick a node label...</option>
+                            </select>
+                        </div >
+                    </div>
+                </div>
+                <div class="multiple-fields-child" style="width: calc(100%/2);">
+                    <div class="field">
+                        <label for="chooseRelationshipType">Relationship type</label>
+                        <div class="select">
+                            <select class="form-control" id="chooseRelationshipType">
+                                <option value="" disabled selected hidden>Pick a relationship type...</option>
+                            </select>
+                        </div >
+                    </div>
+                </div>
+            </div>
+            <div class="multiple-fields-container">
+                <div class="multiple-fields-child" style="width: calc(100%/3);">
+                    <div class="field">
+                        <label for="chooseNodeCaption">Node caption</label>
+                        <div class="select">
+                            <select class="form-control" id="chooseNodeCaption">
+                                <option value="" disabled selected hidden>Pick a node property...</option>
+                            </select>
+                        </div >
+                    </div>
+                </div>
+                <div class="multiple-fields-child" style="width: calc(100%/3);">
+                    <div class="field">
+                        <label for="chooseNodeSize">Node size</label>
+                        <div class="select">
+                            <select class="form-control" id="chooseNodeSize">
+                                <option value="" disabled selected hidden>Pick a node property...</option>
+                            </select>
+                        </div >
+                    </div>
+                </div>
+                <div class="multiple-fields-child" style="width: calc(100%/3);">
+                    <div class="field">
+                        <label for="chooseNodeColor">Node color</label>
+                        <div class="select">
+                            <select class="form-control" id="chooseNodeColor">
+                                <option value="" disabled selected hidden>Pick a node property...</option>
+                            </select>
+                        </div >
+                    </div>
+                </div>
+            </div>
+            <div class="multiple-fields-container">
+                <div class="multiple-fields-child" style="width: calc(100%/2);">
+                    <div class="field">
+                        <label for="chooseRelCaption">Relationship caption</label>
+                        <div class="select">
+                            <select class="form-control" id="chooseRelCaption">
+                                <option value="" disabled selected hidden>Pick a relationship property...</option>
+                            </select>
+                        </div >
+                    </div>
+                </div>
+                <div class="multiple-fields-child" style="width: calc(100%/2);">
+                    <div class="field">
+                        <label for="chooseRelSize">Relationship size</label>
+                        <div class="select">
+                            <select class="form-control" id="chooseRelSize">
+                                <option value="" disabled selected hidden>Pick a relationship property...</option>
+                            </select>
+                        </div >
+                    </div>
+                </div>
+<!--                 <div class="multiple-fields-child" style="width: calc(100%/3);">
+                    <div class="field">
+                        <label for="chooseRelColor">Relationship color</label>
+                        <div class="select">
+                            <select class="form-control" id="chooseRelColor">
+                                <option value="" disabled selected hidden>Pick a relationship property...</option>
+                            </select>
+                        </div >
+                    </div>
+                </div> -->
+            </div>
+            <div class="field">
+                <label for="queryLimit">Cypher query limit</label>
+                <input type="number" value="100" id="queryLimit" />
+            </div>
+
+            <button type="button" class="text-button" id="reset-button">Reset</button>
+            <button type="button" class="main-blue-button" id="draw-button">Draw</button>
+        </form>
+    </section>
+
+    
+    <section class="graph-visualization">
+        <h3>Graph Visualization</h3>
+        <div id="graph-container" class="graph"></div>
+    </section>
+    
+</div>
+
+
+
+<!-- <div class="container">
+    <h3>Graph Visualization</h3>
+    
+    <label for="chooseDatasetDiv">Choose Dataset</label>
+    <div id="chooseDatasetDiv"></div >
+    
+    <input type="number" placeholder="Select sim" id="similarityInput" value="2"/>
+    <button type="button" class="btn btn-primary" id="btn"> Go </button> 
+    
+    <br/>
+    <div id="graph-container">
+    </div>
+</div> -->
+
+
+<!-- 
+<!doctype html>
+<html>
+<head>
+  <title>Network</title>
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <style type="text/css">
+    #mynetwork {
+      width: 600px;
+      height: 400px;
+      border: 1px solid lightgray;
+    }
+  </style>
+</head>
+<body>
+<div id="mynetwork"></div>
+<script type="text/javascript">
+  // create an array with nodes
+  var nodes = new vis.DataSet([
+    {id: 1, label: 'Node 1'},
+    {id: 2, label: 'Node 2'},
+    {id: 3, label: 'Node 3'},
+    {id: 4, label: 'Node 4'},
+    {id: 5, label: 'Node 5'}
+  ]);
+
+  // create an array with edges
+  var edges = new vis.DataSet([
+    {from: 1, to: 3},
+    {from: 1, to: 2},
+    {from: 2, to: 4},
+    {from: 2, to: 5},
+    {from: 3, to: 3}
+  ]);
+
+  // create a network
+  var container = document.getElementById('mynetwork');
+  var data = {
+    nodes: nodes,
+    edges: edges
+  };
+  var options = {};
+  var network = new vis.Network(container, data, options);
+</script>
+</body>
+</html>
+ -->
+

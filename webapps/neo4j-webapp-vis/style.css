@@ -1,0 +1,56 @@
+/*
+    This imports default colors, you can use them with the syntax `var(--variable-name)`.
+    Example:
+        border: 3px solid var(--border-color);
+*/
+@import '/static/public/styles/1.0.0/variables.css';
+
+
+.flex-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.flex-container section, .flex-container form {
+    height: 100%;
+    overflow: auto;
+}
+
+.error-message {
+    color: var(--error-red);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.graph-parameters {
+    min-width: 600px;
+    max-width: 800px;
+}
+
+.graph-visualization {
+    width: 100%;
+/*     min-height: 300px; */
+}
+
+.graph {
+      width: 100%;
+      height: 90%;
+      border: 1px solid lightgray;
+    }
+
+.multiple-fields-container {
+}  
+
+.multiple-fields-child {
+    float: left;
+    margin-top: 0em;
+    margin-right: 0em;
+    margin-bottom: 1em;
+    margin-left: 0em;
+}  
+
+
+#message{
+    white-space: pre-wrap;
+}

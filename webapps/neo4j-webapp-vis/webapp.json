@@ -1,0 +1,45 @@
+// This file is the descriptor for webapp neo4j-webapp-vis
+{
+    "meta": {
+        // label: name of the webapp as displayed, should be short
+        "label": "Neo4j webapp vis",
+        // description: longer string to help end users understand what this webapp does
+        "description": "",
+        // icon: must be one of the FontAwesome 3.2.1 icons, complete list here at https://fontawesome.com/v3.2.1/icons/
+        "icon": "icon-puzzle-piece"
+    },
+
+    "baseType": "STANDARD", // WARNING: do not change
+    "hasBackend": "true",
+    "noJSSecurity": "false",
+    "standardWebAppLibraries": ["jquery","dataiku"],
+
+    /* The field "params" holds a list of all the params
+       for wich the user will be prompted for values in the Settings tab of the webapp.
+
+       The available parameter types include:
+       STRING, STRINGS, INT, DOUBLE, BOOLEAN, SELECT, MULTISELECT, MAP, TEXTAREA, PRESET, DATASET, DATASET_COLUMN, MANAGED_FOLDER
+
+       For the full list and for more details, see the documentation: https://doc.dataiku.com/dss/latest/plugins/reference/params.html
+    */
+    "params": [
+        {
+            "name": "connection_info",
+            "label": "Neo4j Connection",
+            "type": "PRESET",
+            "parameterSetId" : "neo4j-connection",
+            "mandatory" : true
+        }
+    ],
+
+    /* roles define where this webapp will appear in DSS GUI. They are used to pre-fill a macro parameter with context.
+
+       Each role consists of:
+        - type: where the macro will be shown
+            * DATASET, DATASETS, SAVED_MODEL, MANAGED_FOLDER (a button to create webapps will be shown in the corresponding "action" menu)
+        - targetParamsKey(s): name of the parameter(s) that will be filled with the selected object
+    */
+    "roles": [
+        /* {"type": "DATASET", "targetParamsKey": "input_dataset"} */
+    ]
+}
