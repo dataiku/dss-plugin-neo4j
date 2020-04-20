@@ -123,7 +123,7 @@ ON MATCH SET rel.weight = rel.weight + 1
             params.source_node_label, params.source_node_lookup_key, params.source_node_id_column,
             self._properties(columns_list, params.source_node_properties, 'src'),
             params.target_node_label, params.target_node_lookup_key, params.target_node_id_column,
-            self._properties(columns_list, params.source_node_properties, 'tgt'),
+            self._properties(columns_list, params.target_node_properties, 'tgt'),
             params.relationships_verb,
             self._properties(columns_list, params.properties_map, 'rel')
         )
