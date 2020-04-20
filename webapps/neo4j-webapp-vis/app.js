@@ -134,6 +134,14 @@ document.getElementById('draw-button').addEventListener('click', function (event
     var relType = chooseRelTypeElement.value;
 //     TODO test that nodeLabel and relType are not empty else display error message
     
+    if (nodeLabel.length == 0 || relType.length == 0) {
+        var err = "You must select a Node label and a Relationship type"
+        const errElt = $('<div class="fatal-error" style="margin: 100px auto; text-align: center; color: var(--error-red)"></div>')
+        errElt.text(err);
+        $('#graph-container').html(errElt);
+        return;
+    }    
+
     var nodeCaption = chooseNodeCaptionElement.value;
     var nodeSize = chooseNodeSizeElement.value;
     var nodeColor = chooseNodeColorElement.value;
