@@ -158,6 +158,8 @@ ON MATCH SET rel.weight = rel.weight + 1
             typedValue = "toFloat(`{}`)".format(colname)
         elif coltype == 'boolean':
             typedValue = "toBoolean(`{}`)".format(colname)
+        elif coltype == 'date':
+            typedValue = "datetime(`{}`)".format(colname)
         else:
             typedValue = "`{}`".format(colname)
         oncreate = "ON CREATE SET `{}`.`{}` = {}".format(identifier, prop, typedValue)
