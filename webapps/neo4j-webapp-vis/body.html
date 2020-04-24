@@ -3,115 +3,173 @@
 
 <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 
+
+<!-- <div class="flex-container-relations">
+    <section class="graph-relations">
+        <h3>Graph Relations</h3>
+    </section>
+</div>   -->
 <div class="flex-container">
-    
     <section class="graph-parameters">
+        
+        <div class="remove-add-buttons">
+            <button type="button" class="text-button" id="remove-relation-button">- relationship</button>
+            <button type="button" class="text-button" id="add-relation-button">+ relationship</button>
+        </div>
+        <div class="graph-relations">
+            <form id="form-relation">
+         
+            </form>
+        </div>
+        <div class="remove-add-buttons">
+            <button type="button" class="text-button" id="remove-node-params-button">- node</button>
+            <button type="button" class="text-button" id="add-node-params-button">+ node</button>
+        </div>
+        <div class="graph-node-params">
+            <form id="form-node-params">
+             
+            </form>
+        </div>
+        <div class="remove-add-buttons">
+            <button type="button" class="text-button" id="remove-relation-params-button">- edge</button>
+            <button type="button" class="text-button" id="add-relation-params-button">+ edge</button>
+        </div>
+        <div class="graph-relation-params">
+            <form id="form-relation-params">
+             
+            </form>
+        </div>
+        <div class="graph-draw-params">
+            <form id="form-button" style="width: 40%">                
+                <div class="field">
+                    <label for="queryLimit">Cypher query limit</label>
+                    <input type="number" value="20" id="queryLimit" />
+                </div>
+            </form>
+            <div class="remove-add-buttons">
+                <button type="button" class="text-button" id="reset-button">Reset</button>
+                <button type="button" class="main-blue-button" id="draw-button">Draw</button>
+            </div>
+        </div>
+        
+    </section>     
+    
+    <section class="graph-visualization">
+        <div id="graph-container" class="graph"></div>
+    </section>
+</div> 
+<!--     <section class="graph-parameters">
         <h3>Graph parameters</h3>
         Choose the right parameters for display
         <form id="form-sample" novalidate>
-            <div class="multiple-fields-container">
-                <div class="multiple-fields-child" style="width: calc(100%/2);">
-                    <div class="field">
-                        <label for="chooseNodeLabel">Node label</label>
-                        <div class="select">
-                            <select id="chooseNodeLabel">
-                                <option value="" disabled selected hidden>Pick a node label...</option>
-                            </select>
-                        </div >
-                    </div>
-                </div>
-                <div class="multiple-fields-child" style="width: calc(100%/2);">
-                    <div class="field">
-                        <label for="chooseRelationshipType">Relationship type</label>
-                        <div class="select">
-                            <select class="form-control" id="chooseRelationshipType">
-                                <option value="" disabled selected hidden>Pick a relationship type...</option>
-                            </select>
-                        </div >
-                    </div>
-                </div>
+            
+            <div id="relation-0">
+                <label for="relation-0"><h4>Relation 1</h4></label>
+                
             </div>
-            <div class="multiple-fields-container">
-                <div class="multiple-fields-child" style="width: calc(100%/3);">
-                    <div class="field">
-                        <label for="chooseNodeCaption">Node caption</label>
-                        <div class="select">
-                            <select class="form-control" id="chooseNodeCaption">
-                                <option value="" disabled selected hidden>Pick a node property...</option>
-                            </select>
-                        </div >
-                    </div>
-                </div>
-                <div class="multiple-fields-child" style="width: calc(100%/3);">
-                    <div class="field">
-                        <label for="chooseNodeSize">Node size</label>
-                        <div class="select">
-                            <select class="form-control" id="chooseNodeSize">
-                                <option value="" disabled selected hidden>Pick a node property...</option>
-                            </select>
-                        </div >
-                    </div>
-                </div>
-                <div class="multiple-fields-child" style="width: calc(100%/3);">
-                    <div class="field">
-                        <label for="chooseNodeColor">Node color</label>
-                        <div class="select">
-                            <select class="form-control" id="chooseNodeColor">
-                                <option value="" disabled selected hidden>Pick a node property...</option>
-                            </select>
-                        </div >
-                    </div>
-                </div>
-            </div>
-            <div class="multiple-fields-container">
-                <div class="multiple-fields-child" style="width: calc(100%/2);">
-                    <div class="field">
-                        <label for="chooseRelCaption">Relationship caption</label>
-                        <div class="select">
-                            <select class="form-control" id="chooseRelCaption">
-                                <option value="" disabled selected hidden>Pick a relationship property...</option>
-                            </select>
-                        </div >
-                    </div>
-                </div>
-                <div class="multiple-fields-child" style="width: calc(100%/2);">
-                    <div class="field">
-                        <label for="chooseRelSize">Relationship size</label>
-                        <div class="select">
-                            <select class="form-control" id="chooseRelSize">
-                                <option value="" disabled selected hidden>Pick a relationship property...</option>
-                            </select>
-                        </div >
-                    </div>
-                </div>
-<!--                 <div class="multiple-fields-child" style="width: calc(100%/3);">
-                    <div class="field">
-                        <label for="chooseRelColor">Relationship color</label>
-                        <div class="select">
-                            <select class="form-control" id="chooseRelColor">
-                                <option value="" disabled selected hidden>Pick a relationship property...</option>
-                            </select>
-                        </div >
-                    </div>
-                </div> -->
-            </div>
-            <div class="field">
-                <label for="queryLimit">Cypher query limit</label>
-                <input type="number" value="100" id="queryLimit" />
-            </div>
-
+        
             <button type="button" class="text-button" id="reset-button">Reset</button>
             <button type="button" class="main-blue-button" id="draw-button">Draw</button>
         </form>
     </section>
-
     
     <section class="graph-visualization">
         <h3>Graph Visualization</h3>
         <div id="graph-container" class="graph"></div>
-    </section>
+    </section> -->
     
-</div>
+  
+
+<!--                 <div class="multiple-fields-container">
+                    <div class="multiple-fields-child" style="width: calc(100%/2);">
+                        <div class="field">
+                            <label for="chooseNodeLabel">Node label</label>
+                            <div class="select">
+                                <select id="chooseNodeLabel">
+                                    <option value="" disabled selected hidden>Pick a node label...</option>
+                                </select>
+                            </div >
+                        </div>
+                    </div>
+                    <div class="multiple-fields-child" style="width: calc(100%/2);">
+                        <div class="field">
+                            <label for="chooseRelationshipType">Relationship type</label>
+                            <div class="select">
+                                <select class="form-control" id="chooseRelationshipType">
+                                    <option value="" disabled selected hidden>Pick a relationship type...</option>
+                                </select>
+                            </div >
+                        </div>
+                    </div>
+                </div>
+                <div class="multiple-fields-container">
+                    <div class="multiple-fields-child" style="width: calc(100%/3);">
+                        <div class="field">
+                            <label for="chooseNodeCaption">Node caption</label>
+                            <div class="select">
+                                <select class="form-control" id="chooseNodeCaption">
+                                    <option value="" disabled selected hidden>Pick a node property...</option>
+                                </select>
+                            </div >
+                        </div>
+                    </div>
+                    <div class="multiple-fields-child" style="width: calc(100%/3);">
+                        <div class="field">
+                            <label for="chooseNodeSize">Node size</label>
+                            <div class="select">
+                                <select class="form-control" id="chooseNodeSize">
+                                    <option value="" disabled selected hidden>Pick a node property...</option>
+                                </select>
+                            </div >
+                        </div>
+                    </div>
+                    <div class="multiple-fields-child" style="width: calc(100%/3);">
+                        <div class="field">
+                            <label for="chooseNodeColor">Node color</label>
+                            <div class="select">
+                                <select class="form-control" id="chooseNodeColor">
+                                    <option value="" disabled selected hidden>Pick a node property...</option>
+                                </select>
+                            </div >
+                        </div>
+                    </div>
+                </div>
+                <div class="multiple-fields-container">
+                    <div class="multiple-fields-child" style="width: calc(100%/3);">
+                        <div class="field">
+                            <label for="chooseRelCaption">Relationship caption</label>
+                            <div class="select">
+                                <select class="form-control" id="chooseRelCaption">
+                                    <option value="" disabled selected hidden>Pick a relationship property...</option>
+                                </select>
+                            </div >
+                        </div>
+                    </div>
+                    <div class="multiple-fields-child" style="width: calc(100%/3);">
+                        <div class="field">
+                            <label for="chooseRelSize">Relationship size</label>
+                            <div class="select">
+                                <select class="form-control" id="chooseRelSize">
+                                    <option value="" disabled selected hidden>Pick a relationship property...</option>
+                                </select>
+                            </div >
+                        </div>
+                    </div>
+                    <div class="multiple-fields-child" style="width: calc(100%/3);">
+                        <div class="field">
+                            <label for="queryLimit">Cypher query limit</label>
+                            <input type="number" value="100" id="queryLimit" />
+                        </div>
+                    </div>
+                </div> -->
+<!--                 <div class="field">
+                    <label for="queryLimit">Cypher query limit</label>
+                    <input type="number" value="100" id="queryLimit" />
+                </div> -->
+
+
+    
+
 
 
 
@@ -177,4 +235,6 @@
 </body>
 </html>
  -->
+
+
 
