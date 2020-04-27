@@ -10,6 +10,7 @@ from flask import request
 import json
 from py2neo import Graph
 import re
+import logging
 
 
 # Example:
@@ -19,12 +20,15 @@ import re
 # From JavaScript, you can access the defined endpoints using
 # getWebAppBackendUrl('first_api_call')
 
+logger = logging.getLogger()
+
 connection_info = get_webapp_config().get('connection_info')
 print("connection_info: ", connection_info)
 try:
     graph = Graph(connection_info.get("neo4j_uri"), auth=(connection_info.get("neo4j_username"), connection_info.get("neo4j_password")))
 except Exception:
     raise ValueError("Fail to connect to neo4j server !")
+
 
 
 class GraphError(Exception):
@@ -48,19 +52,9 @@ def draw_graph():
         node_params = config['node_params']
         rel_params = config['rel_params']
 
-        relations_list = []
-        unique_nodes_labels = set()
-        unique_edges_types = set()
-        for i, rel in enumerate(relations):
-            if rel['source'] not in unique_nodes_labels:
-                unique_nodes_labels.add(rel['source'])
-            if rel['target'] not in unique_nodes_labels:
-                unique_nodes_labels.add(rel['target'])
-            if rel['relation'] not in unique_edges_types:
-                unique_edges_types.add(rel['relation'])
-
         print("relations: ", relations)
         query, unique_nodes_id, unique_edges_id = multiple_relation_query(relations)
+        unique_nodes_labels, unique_edges_types = get_unique_nodes_edges(relations)
         query += "\nLIMIT {}".format(query_limit)
 
         print("query: ", query)
@@ -85,14 +79,7 @@ def draw_graph():
                 node = row_dict[n]
                 node_id = row_dict["{}_id".format(n)]
 
-                # can sometimes have multiple labels (get first label in list that is in node_params)
-                node_labels = list(node.labels)
-                if len(node_labels) == 1:
-                    node_label = node_labels[0]
-                else:
-                    node_label = next((label for label in node_labels if label in unique_nodes_labels), None)
-                    if node_label is None:
-                        raise ValueError("Cypher error with a node with multiple labels {}".format(node_labels))
+                node_label = get_node_label(node, unique_nodes_labels)
 
                 if node_id not in seen_nodes:
                     seen_nodes.add(node_id)
@@ -118,10 +105,10 @@ def draw_graph():
         return json.dumps(results)
 
     except GraphError as ge:
-#         logger.error(traceback.format_exc())
+        logger.error(traceback.format_exc())
         return str(ge), 505
     except Exception as e:
-#         logger.error(traceback.format_exc())
+        logger.error(traceback.format_exc())
         return "Backend error: {}".format(str(e)), 500
 
 
@@ -186,6 +173,17 @@ def multiple_relation_query(relations):
     return match_statement + return_statement, unique_nodes_id, unique_edges_id
 
 
+def get_unique_nodes_edges(relations):
+    unique_nodes_labels = set()
+    unique_edges_types = set()
+    for rel in relations:
+        if rel['source'] not in unique_nodes_labels:
+            unique_nodes_labels.add(rel['source'])
+        if rel['target'] not in unique_nodes_labels:
+            unique_nodes_labels.add(rel['target'])
+        if rel['relation'] not in unique_edges_types:
+            unique_edges_types.add(rel['relation'])
+    return unique_nodes_labels, unique_edges_types
 
 
 @app.route('/get_node_labels')
@@ -326,64 +324,128 @@ def str_or_none(value):
 
 @app.route('/draw_subgraph')
 def draw_subgraph():
-    node_label = request.args.get('node_label', None)
-    rel_type = request.args.get('rel_type', None)
-    node_caption = request.args.get('node_caption', None)
-    node_color = request.args.get('node_color', None)
-    node_size = request.args.get('node_size', None)
-    rel_caption = request.args.get('rel_caption', None)
-    rel_size = request.args.get('rel_size', None)
-    query_limit = request.args.get('query_limit', 0)
-    selected_node_id = int(request.args.get('selected_node_id', None))
-    
-    query = """
-    MATCH (n:{0})
-    WHERE id(n) = {1}
-    CALL apoc.path.subgraphAll(n, {{
-        relationshipFilter: '{2}',
-        labelFilter: '+{0}',
-        minLevel: 0,
-        maxLevel: 2,
-        limit: {3}
-    }})
-    YIELD nodes, relationships
-    RETURN nodes, relationships
-    """.format(node_label, selected_node_id, rel_type, query_limit)
+    try:
+        print("starting draw_subgraph backend function !")
 
-    print("query subgraph: ", query)
-    
-    params = {
-        "node_label": node_label,
-        "rel_type": rel_type,
-        "node_caption": node_caption,
-        "node_color": node_color,
-        "node_size": node_size,
-        "rel_caption": rel_caption,
-        "rel_size": rel_size,
-        "query_limit": query_limit
-    }    
+        config = json.loads(request.args.get('config', None))
 
-    data = graph.run(query).data()
+        print('config: ', config)
 
-    nodes_data = data[0]["nodes"]
-    edges_data = data[0]["relationships"]
+        query_limit = config['query_limit']
+        relations = config['relations']
+        node_params = config['node_params']
+        rel_params = config['rel_params']
+        selected_node_id = config['selected_node_id']
 
-    nodes = []
-    edges = []
+        print("relations: ", relations)
+        unique_nodes_labels, unique_edges_types = get_unique_nodes_edges(relations)
+        relations_set = get_relations_set(relations)
 
-    for node in nodes_data:
-        node_id = node.identity
-        node_info = get_node_info(node, node_id, params)
-        if node_id == selected_node_id:
-            node_info["physics"] = False
-            print(node_info)
-        nodes.append(node_info)
+        relationshipFilter = get_relationship_filter(unique_edges_types)
+        labelFilter = get_label_filter(unique_nodes_labels)
 
-    for rel in edges_data:
-        rel_info = get_rel_info(rel, rel.start_node.identity, rel.end_node.identity, params)
-        edges.append(rel_info)
+        query = """
+        MATCH (n)
+        WHERE id(n) = {0}
+        CALL apoc.path.subgraphAll(n, {{
+            relationshipFilter: '{1}',
+            labelFilter: '+{2}',
+            bfs: true,
+            minLevel: 0,
+            maxLevel: 10,
+            limit: {3}
+        }})
+        YIELD relationships
+        RETURN relationships
+        """.format(selected_node_id, relationshipFilter, labelFilter, query_limit)
 
-    results = {"nodes": nodes, "edges": edges}
+        print("query: ", query)
 
-    return json.dumps(results)
+        try:
+            data = graph.run(query).data()
+        except Exception as e:
+            raise GraphError("Graph error: {}".format(e))
 
+        # nodes_data = data[0]["nodes"]
+        edges_data = data[0]["relationships"]
+
+        nodes_list = []
+        edges_list = []
+        seen_nodes = set()
+
+        compt = 0    # check if query result is empty
+        for rel in edges_data:
+            start_node = rel.start_node
+            end_node = rel.end_node
+
+            start_label = get_node_label(start_node, unique_nodes_labels)
+            end_label = get_node_label(end_node, unique_nodes_labels)
+            rel_type = type(rel).__name__
+
+            if (start_label, rel_type, end_label) in relations_set:
+                compt += 1
+
+                start_node_id = start_node.identity
+                if start_node_id not in seen_nodes:
+                    seen_nodes.add(start_node_id)
+                    node_info = get_node_info(start_node, start_node_id, node_params.get(start_label, None))
+                    if start_node_id == selected_node_id:
+                        node_info["physics"] = False
+                    nodes_list.append(node_info)
+
+                end_node_id = end_node.identity
+                if end_node_id not in seen_nodes:
+                    seen_nodes.add(end_node_id)
+                    node_info = get_node_info(end_node, end_node_id, node_params.get(end_label, None))
+                    if end_node_id == selected_node_id:
+                        node_info["physics"] = False
+                    nodes_list.append(node_info)
+
+                rel_info = get_rel_info(rel, start_node_id, end_node_id, rel_params.get(rel_type, None))
+                edges_list.append(rel_info)
+
+        if compt == 0:
+            raise GraphError("Graph error: {}".format("Cypher query result is empty !"))
+
+        results = {"nodes": nodes_list, "edges": edges_list}
+    #     print("results: ", results)
+
+        return json.dumps(results)
+
+    except GraphError as ge:
+        logger.error(traceback.format_exc())
+        return str(ge), 505
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        return "Backend error: {}".format(str(e)), 500
+
+def get_relations_set(relations):
+    relations_set = set()
+    for rel in relations:
+        relations_set.add((rel['source'], rel['relation'], rel['target']))
+    return relations_set
+
+def get_relationship_filter(unique_edges_types):
+    filters_list = []
+    for edge in unique_edges_types:
+        filters_list += ["{}".format(edge)]
+    return "|".join(filters_list)
+
+
+def get_label_filter(unique_nodes_labels):
+    filters_list = []
+    for node in unique_nodes_labels:
+        filters_list += ["{}".format(node)]
+    return "|".join(filters_list)
+
+
+def get_node_label(node, unique_nodes_labels):
+    # can sometimes have multiple labels (get first label in list that is in node_params)
+    node_labels = list(node.labels)
+    if len(node_labels) == 1:
+        node_label = node_labels[0]
+    else:
+        node_label = next((label for label in node_labels if label in unique_nodes_labels), None)
+        if node_label is None:
+            raise ValueError("Cypher error with a node with multiple labels {}".format(node_labels))
+    return node_label

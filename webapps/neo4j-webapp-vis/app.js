@@ -375,18 +375,19 @@ document.getElementById('draw-button').addEventListener('click', function (event
                 label: false
             }
         },
-        physics: {
-            forceAtlas2Based: {
-                gravitationalConstant: -26,
-                centralGravity: 0.005,
-                springLength: 230,
-                springConstant: 0.18
-            },
-            maxVelocity: 146,
-            solver: 'forceAtlas2Based',
-            timestep: 0.35,
-            stabilization: {iterations: 150}
-        }
+        physics: true
+        // {
+        //     forceAtlas2Based: {
+        //         gravitationalConstant: -26,
+        //         centralGravity: 0.005,
+        //         springLength: 230,
+        //         springConstant: 0.18
+        //     },
+        //     maxVelocity: 146,
+        //     solver: 'forceAtlas2Based',
+        //     timestep: 0.35,
+        //     stabilization: {iterations: 150}
+        // }
     };
     
 //     var config = {
@@ -418,7 +419,7 @@ document.getElementById('draw-button').addEventListener('click', function (event
         rel_params: rel_params
     };
 
-    console.warn("about to call backend with params: ", config)
+    console.warn("about to call backend with config: ", config)
     $.getJSON(getWebAppBackendUrl('/draw_graph'), {config: JSON.stringify(config)}, function(results){
        
         console.warn("results: ", results)
@@ -430,37 +431,40 @@ document.getElementById('draw-button').addEventListener('click', function (event
         
         var network = new vis.Network(container, data, options);
         
-//         network.on("doubleClick", function (params) {
+        network.on("doubleClick", function (params) {
             
-//             var selectedNodeID = this.getSelectedNodes()[0];
-//             console.warn("doubleclick: ", params.pointer.DOM)
+            var selectedNodeID = this.getSelectedNodes()[0];
+            console.warn("doubleclick: ", params.pointer.DOM)
             
-//             if (selectedNodeID != null) {
+            if (selectedNodeID != null) {
                 
-//                 config["selected_node_id"] = selectedNodeID;
+                config["selected_node_id"] = selectedNodeID;
                 
-//                 console.log("selectedNodeID: ", selectedNodeID);
-//                 $.getJSON(getWebAppBackendUrl('/draw_subgraph'), config, function(results){
+                console.log("selectedNodeID: ", selectedNodeID);
+                console.log("about to call draw_subgraph with: ", config)
+                $.getJSON(getWebAppBackendUrl('/draw_subgraph'), {config: JSON.stringify(config)}, function(results){
        
-//                     console.warn("results: ", results)
-//                     data = {
-//                         nodes: results["nodes"],
-//                         edges: results["edges"],
-//                     };
-//                     network.setData(data);
-//                 });
+                    console.warn("results: ", results)
+                    data = {
+                        nodes: results["nodes"],
+                        edges: results["edges"],
+                    };
+                    network.setData(data);
+                    network.focus(selectedNodeID);
+                    console.warn("focus on: ", selectedNodeID)
+                });
                 
                 
-// //                 var details = {
-// //                     selectedNodeID: params.nodes[0],
-// //                     config: config,
-// //                     container: container,
-// //                     options: options
-// //                 }
-// //                 var evt = new CustomEvent("selectNodeEvent", {detail: details});
-// //                 window.dispatchEvent(evt);
-//             }
-//         });
+//                 var details = {
+//                     selectedNodeID: params.nodes[0],
+//                     config: config,
+//                     container: container,
+//                     options: options
+//                 }
+//                 var evt = new CustomEvent("selectNodeEvent", {detail: details});
+//                 window.dispatchEvent(evt);
+            }
+        });
     }).error(function(jqXHR, textStatus, errorThrown) {
         var errorElement = $('<div class="fatal-error" style="margin: 100px auto; text-align: center; color: var(--error-red)"></div>')
         var error = jqXHR.responseText;
