@@ -316,7 +316,7 @@ def get_rel_properties():
 
 
 def dict_to_nice_str(dic):
-    return ", ".join(["{}: {}".format(key, value) for key, value in dic.items()])
+    return ", ".join(["{}: {}".format(key, str(value)) for key, value in dic.items()])
 
 def str_or_none(value):
     return str(value) if value is not None else None
