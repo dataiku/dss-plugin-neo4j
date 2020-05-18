@@ -1,6 +1,6 @@
 # Neo4j Plugin
 
-The purpose of this Dataiku Plugin is to allow DSS users to read and write from/to the [Neo4j](https://neo4j.com/) graph platform.
+The purpose of this Dataiku Plugin is to allow DSS users to read from the [Neo4j](https://neo4j.com/) graph platform.
 Neo4j offers a popular database and language (Cypher), which lets users query and analyze graph data structures.
 
 
@@ -9,7 +9,7 @@ Neo4j offers a popular database and language (Cypher), which lets users query an
 The Plugin is made of the following components:
 
 * a **Dataset** type to get data out of Neo4j, either entire groups of nodes, or using a custom Cypher query
-* 3 **Recipes** to export a Dataiku datasets into Neo4j
+* a **Recipes** to export a Dataiku datasets into Neo4j
 * a **Macro** to run arbitrary Cypher statements against the Neo4j database, to be used when there is no need to output a Dataiku dataset
 
 ## Using the Plugin
@@ -17,14 +17,6 @@ The Plugin is made of the following components:
 ### Prerequisites
 
 - The main prerequisite to use this Plugin is to know the credentials to connect to the Neo4j database (URI, username, password) These parameters need to be entered in the Plugin global settings (available from the *Plugins > Neo4j > Settings* pane), possibly by a DSS admin.
-
-- You must know where the Neo4j "import directory" is located** (cf. [documentation](https://neo4j.com/docs/operations-manual/current/configuration/file-locations/)), otherwise check with your administrators. The **Linux account used by Dataiku must have write permissions on the Neo4j import directory**, owned by default by the Neo4j Linux service account.  
-For instance, if *dataiku* is the DSS service account, and */var/lib/neo4j/import/* the Neo4j import directory, the following command can be used:  
-```bash
-setfacl -m u:dataiku:rwx /var/lib/neo4j/import/
-```
-
-* If Neo4j runs on a separate server than DSS, the servers need to be able to communicate through SSH. Dataiku linux user should have password-less SSH access to the machine hosting Neo4j.
 
 ### Usage scenario
 The different components allow for different use cases:
@@ -51,7 +43,6 @@ and investigations on the resulting graph. These recipes need to be used as foll
 
 ## Plugin limitations and improvements
 
-* Dates are exported to Neo4j as strings
 * Only simple relationships are handled, in the form of (a)-(rel:REL)->(b)
 * Only URI's in the form of "bolt://" have been tested, with a username / password based authentication
 
