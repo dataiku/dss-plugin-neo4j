@@ -1,0 +1,15 @@
+{
+  "actions": [
+    {
+      "ts": 1591369309982,
+      "action": "INSTALL",
+      "user": "admin"
+    }
+  ],
+  "gitState": {
+    "enabled": true,
+    "repository": "git@github.com:dataiku/dss-plugin-neo4j.git",
+    "path": "",
+    "checkout": "refs/heads/master"
+  }
+}
