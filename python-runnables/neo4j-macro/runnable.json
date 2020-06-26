@@ -31,6 +31,5 @@
             "label": "Choose which account to use",
             "parameterSetId": "aws_accounts"
         }
-}
     ]
 }
