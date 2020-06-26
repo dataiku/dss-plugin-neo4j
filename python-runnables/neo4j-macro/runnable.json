@@ -27,9 +27,9 @@
         },
         { 
             "type": "PRESET",
-            "name": "neo4jUri",
+            "name": "neo4j connection",
             "label": "Choose which account to use",
-            "parameterSetId": "neo4jUri"
+            "parameterSetId": "connection"
         }
     ]
 }
