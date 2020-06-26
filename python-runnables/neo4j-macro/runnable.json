@@ -28,7 +28,7 @@
         { 
             "type": "PRESET",
             "name": "neo4j connection",
-            "label": "Choose which account to use",
+            "label": "Choose which neo4j connection to use",
             "parameterSetId": "connection"
         }
     ]
