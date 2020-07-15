@@ -75,17 +75,7 @@
       border: 1px solid lightgray;
     }
 
-.multiple-fields-container {
-    display: flex;
-}  
 
-.multiple-fields-child {
-    float: left;
-    margin-top: 0em;
-    margin-right: 0em;
-    margin-bottom: 1em;
-    margin-left: 0em;
-}  
 
 
 #message{

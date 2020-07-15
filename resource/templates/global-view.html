@@ -1,0 +1,46 @@
+<div class="template">
+    <table class="parameters-table">
+        <tr>
+            <th>Source label</th>
+            <th>Relation type</th>
+            <th>Target label</th>
+            <th></th>
+        </tr>
+        <tbody ng-repeat="rel in relationships">
+            <tr>
+                <td>{{rel.source}}</td>
+                <td>{{rel.relation}}</td>
+                <td>{{rel.target}}</td>
+                <td><button type="button" class="text-button" ng-if="$index < relationships.length" ng-click="removeRelation($index)">REMOVE</button></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td><select ng-model="selectedRelationship.source" ng-options="node for node in sourceNodeLabels" ng-change="nodeChange('Source')"></select></td>
+                <td><select ng-model="selectedRelationship.relation" ng-options="rel for rel in relationTypes" ng-change="relationChange()"></select></td>
+                <td><select ng-model="selectedRelationship.target" ng-options="node for node in targetNodeLabels" ng-change="nodeChange('Target')"></select></td>
+                <td><button type="button" class="text-button" ng-click="addRelation()">ADD</button></td>
+            </tr>
+        </tfoot>
+
+    </table>
+
+    <table class="nodes-table" ng-if="(nodeProperties | json) != '{}'">
+        <tr>
+            <th>Node</th>
+            <th>Label</th>
+            <th>Size</th>
+        </tr>
+        <tbody ng-repeat="(node, values) in nodeProperties">
+            <tr>
+                <td>{{node}}</td>
+                <td><select ng-model="nodeParams[node].caption" ng-options="property for property in nodeProperties[node].all" ng-init="nodeParams[node] = {}" >
+                    <option value=""></option>
+                </select></td>
+                <td><select ng-model="nodeParams[node].size" ng-options="numProperty for numProperty in nodeProperties[node].num">
+                    <option value=""></option>
+                </select></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

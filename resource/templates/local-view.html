@@ -1,0 +1,15 @@
+<div class="template">
+    <table class="parameters-table">
+        <tr>
+            <th>Selected Node ID</th>
+            <th>Node labels</th>
+            <th>Relation types</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td><input ng-model="localSelection.nodeId" ng-change="logScope()"></select></td>
+            <td><select multiple ng-model="localSelection.nodes" ng-options="node for node in nodeLabels"></select></td>
+            <td><select multiple ng-model="localSelection.relations" ng-options="rel for rel in relationTypes"></select></td>
+        </tr>
+    </table>
+</div>
