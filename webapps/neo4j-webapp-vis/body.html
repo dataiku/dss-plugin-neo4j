@@ -29,6 +29,53 @@
             <div ng-if="error.msg" class="fatal-error" style="margin: 100px auto; text-align: center; color: var(--error-red)">
                 {{error.msg}}
             </div>
+
+            <div id="node-popUp">
+                <span id="node-operation">node</span> <br />
+
+                <!-- <button type="button" class="text-button" ng-click="testClick()">Test</button>
+                <input type="number" id="test-input" ng-model="test.input"/>
+                <button type="button" class="text-button" ng-click="incrementTest()">++</button> -->
+
+                <table style="margin:auto;">
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                    </tr>
+                    <tbody ng-repeat="(key, value) in manipulation.editNodeProperties">
+                        <tr>
+                            <td>{{key}}</td>
+                            <td><input ng-model="value"/></td>
+                        </tr>
+                    </tbody>
+                  <!-- <tbody>
+                    <tr>
+                      <td>label</td>
+                      <td><input id="node-label" value="new value" /></td>
+                        <td><input id="node-label" ng-model="manipulation.nodeLabel"/></td>
+                    </tr>
+                  </tbody> -->
+
+                </table>
+                <button type="button" class="text-button" id="node-saveButton">Save</button>
+                <button type="button" class="text-button" id="node-cancelButton">Cancel</button>
+                <!-- <input type="button" value="save" id="node-saveButton" /> -->
+                <!-- <input type="button" value="cancel" id="node-cancelButton" /> -->
+            </div>
+
+            <div id="edge-popUp">
+                <span id="edge-operation">edge</span> <br />
+                <table style="margin:auto;">
+                  <tbody>
+                    <tr>
+                      <td>label</td>
+                      <td><input id="edge-label" value="new value" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <input type="button" value="save" id="edge-saveButton" />
+                <input type="button" value="cancel" id="edge-cancelButton" />
+            </div>
             
             <div id="graph-container" ></div>
         </div>

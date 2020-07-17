@@ -19,7 +19,16 @@ app.controller("GraphController", function($scope, $http) {
     $scope.usedNodeIndex = {}
     
     // params for local view
-    $scope.localSelection = {
+    $scope.localSelection = {}
+
+    $scope.manipulation = {}
+    $scope.test = {}
+
+    $scope.testClick = function () {
+        console.log("test input is : ", $scope.test.input)
+    }
+    $scope.incrementTest = function () {
+        $scope.test.input += 1
     }
 
     console.warn("$scope.selectedRelationship: ", $scope.selectedRelationship)
@@ -28,8 +37,6 @@ app.controller("GraphController", function($scope, $http) {
         if ($scope.template != template) {
             $scope.template = template
         }
-        // console.log("Child $scope: ", $scope)
-        // console.log("selectedRelationship: ", $scope.selectedRelationship)
     }
 
     function initUsedNodeIndex(nodeLabels) {
@@ -105,6 +112,7 @@ app.controller("GraphController", function($scope, $http) {
     });
     
     $scope.nodeChange = function (currentNode) {
+        // when the user selects a node in a relation, it updates the node label indexes of the other node (source or target)
        console.log("currentNode: ", currentNode)
        if (currentNode == 'Source') {
            var src = $scope.selectedRelationship.source.split(" - ")[0]
@@ -164,12 +172,6 @@ app.controller("GraphController", function($scope, $http) {
                     $scope.error.msg = e.data;
                 });
             }
-
-            // $scope.selectedRelationship = {
-            //     source: "",
-            //     relation: "",
-            //     target: ""
-            // }
             $scope.selectedRelationship.source = ""
             $scope.selectedRelationship.relation = ""
             $scope.selectedRelationship.target = ""
@@ -202,6 +204,97 @@ app.controller("GraphController", function($scope, $http) {
     $scope.reset = function() {
        document.location.reload(true);
     }
+
+    $scope.editNode = function(data, cancelAction, callback) {
+        console.log("editNode data is: ", data)
+        console.log("$scope: ", $scope)
+
+        // document.getElementById("node-label").value = data.label;
+        console.log("data.label: ", data.label)
+        $scope.manipulation.nodeLabel = data.label
+
+
+        //  TODO: call backend to get node properties
+        // $http.get(getWebAppBackendUrl("/get_"))
+        // .then(function(response) {
+        //     $scope.relationTypes = response.data.relation_types
+        // }, function(e) {
+        //     $scope.error.msg = e.data;
+        // });
+
+        $scope.manipulation.editNodeProperties = {
+            name: "Jean",
+            age: 32,
+            city: "Lille"
+        }
+
+        
+        document.getElementById("node-saveButton").onclick = saveNodeData.bind(
+          this,
+          data,
+          callback
+        );
+        document.getElementById("node-cancelButton").onclick = cancelAction.bind(
+          this,
+          callback
+        );
+        document.getElementById("node-popUp").style.display = "block";
+        // force angularjs to refresh to bind ng-model 
+        $scope.$apply()
+    }
+
+    function clearNodePopUp() {
+        document.getElementById("node-saveButton").onclick = null;
+        document.getElementById("node-cancelButton").onclick = null;
+        document.getElementById("node-popUp").style.display = "none";
+    }
+
+    function cancelNodeEdit(callback) {
+        clearNodePopUp();
+        callback(null);
+    }
+      
+    function saveNodeData(data, callback) {
+        // data.label = document.getElementById("node-label").value;
+        data.label = $scope.manipulation.nodeLabel
+        // data.title = document.getElementById("node-id").value;
+        clearNodePopUp();
+        callback(data);
+    }
+    
+    function editEdgeWithoutDrag(data, callback) {
+        // filling in the popup DOM elements
+        document.getElementById("edge-label").value = data.label;
+        document.getElementById("edge-saveButton").onclick = saveEdgeData.bind(
+          this,
+          data,
+          callback
+        );
+        document.getElementById("edge-cancelButton").onclick = cancelEdgeEdit.bind(
+          this,
+          callback
+        );
+        document.getElementById("edge-popUp").style.display = "block";
+    }
+      
+    function clearEdgePopUp() {
+        document.getElementById("edge-saveButton").onclick = null;
+        document.getElementById("edge-cancelButton").onclick = null;
+        document.getElementById("edge-popUp").style.display = "none";
+    }
+
+    function cancelEdgeEdit(callback) {
+        clearEdgePopUp();
+        callback(null);
+    }
+
+    function saveEdgeData(data, callback) {
+        if (typeof data.to === "object") data.to = data.to.id;
+        if (typeof data.from === "object") data.from = data.from.id;
+        data.label = document.getElementById("edge-label").value;
+        clearEdgePopUp();
+        callback(data);
+    }
     
     $scope.draw = function() {
         if ($scope.template == 'globalView' && $scope.relationships.length == 0) {
@@ -213,6 +306,9 @@ app.controller("GraphController", function($scope, $http) {
                 return;
             }
         }
+
+        console.log("scope before: ", $scope)
+
         $scope.error = {}
         document.getElementById('graph-container').innerHTML = ""
         console.log("$scope.error: ", $scope.error)
@@ -264,6 +360,48 @@ app.controller("GraphController", function($scope, $http) {
                 }
             },
 
+            manipulation: {
+                addNode: function(data, callback) {
+                  // filling in the popup DOM elements
+                  console.warn("addNode data: ", data)
+                  document.getElementById("node-operation").innerHTML = "Add Node";
+                  $scope.editNode(data, clearNodePopUp, callback);
+                },
+                editNode: function(data, callback) {
+                  // filling in the popup DOM elements
+                  console.warn("editNode data: ", data)
+                  document.getElementById("node-operation").innerHTML = "Edit Node";
+                  $scope.editNode(data, cancelNodeEdit, callback);
+                },
+
+                addEdge: function(data, callback) {
+                  if (data.from == data.to) {
+                    var r = confirm("Do you want to connect the node to itself?");
+                    if (r != true) {
+                      callback(null);
+                      return;
+                    }
+                  }
+                  console.warn("addEdge data: ", data)
+                  document.getElementById("edge-operation").innerHTML = "Add Edge";
+                  editEdgeWithoutDrag(data, callback);
+                },
+                editEdge: {
+                  editWithoutDrag: function(data, callback) {
+                    console.warn("editEdge data: ", data)
+                    document.getElementById("edge-operation").innerHTML = "Edit Edge";
+                    editEdgeWithoutDrag(data, callback);
+                  }
+                },
+                deleteNode: function(data, callback) {
+                    console.warn("deleteNode data: ", data)
+                    callback(data)
+                }
+                // deleteNode: {
+                //     enabled: false
+                // }
+            },
+
             physics: {
                 forceAtlas2Based: {
                     gravitationalConstant: -26,
@@ -279,6 +417,16 @@ app.controller("GraphController", function($scope, $http) {
                     fit: true
                 }
             },
+            // manipulation: {
+            //     editEdge: {
+            //       editWithoutDrag: function(data, callback) {
+            //         console.info(data);
+            //         // alert("The callback data has been logged to the console.");
+            //         // you can do something with the data here
+            //         callback(data);
+            //       }
+            //     }
+            // }
             // groups: {
             //     useDefaultGroups: true
             // }
@@ -344,6 +492,7 @@ app.controller("GraphController", function($scope, $http) {
             $scope.network = new vis.Network($scope.container, $scope.data, $scope.options);
             stopStabilization($scope.network, 5000);
             console.log("finsih timeout")
+
             $scope.network.on('doubleClick', function(data) {
                 console.log("this: ", this)
                 console.log('clicked data:', data);

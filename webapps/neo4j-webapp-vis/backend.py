@@ -11,9 +11,10 @@ import logging
 logger = logging.getLogger()
 
 connection_info = get_webapp_config().get('connection_info')
-# print("connection_info: ", connection_info)
+print("connection_info: ", connection_info)
 try:
     graph_neo4j = Graph(connection_info.get("neo4j_uri"), auth=(connection_info.get("neo4j_username"), connection_info.get("neo4j_password")))
+    print("connected to neo4j !")
     # graph_neo4j = Graph("bolt://52.143.188.126:7687", auth=("neo4j", "test"))
 except Exception:
     raise ValueError("Fail to connect to neo4j server !")
