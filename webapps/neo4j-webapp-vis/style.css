@@ -34,35 +34,35 @@
 }
 
 
-#node-popUp {
+.node-popUp {
     display: none;
     position: absolute;
-    top: 350px;
+    top: 100px;
     right: 300px;
     z-index: 299;
-    width: 250px;
-    height: 150px;
-    background-color: #f9f9f9;
-    border-style: solid;
+    /* width: 250px;
+    height: 150px; */
+    /* background-color: #f9f9f9; */
+    /* border-style: solid;
     border-width: 3px;
-    border-color: #5394ed;
-    padding: 10px;
+    border-color: #5394ed; */
+    /* padding: 10px; */
     text-align: center;
 }
 
-#edge-popUp {
+.edge-popUp {
     display: none;
     position: absolute;
     top: 350px;
     right: 300px;
     z-index: 299;
-    width: 250px;
+    /* width: 250px;
     height: 150px;
     background-color: #f9f9f9;
     border-style: solid;
     border-width: 3px;
     border-color: #5394ed;
-    padding: 10px;
+    padding: 10px; */
     text-align: center;
 }
 

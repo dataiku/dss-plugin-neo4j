@@ -5,14 +5,14 @@ app.controller("GraphController", function($scope, $http) {
     // initialize first row of select
     $scope.error = {}
     $scope.relationships = []
-    $scope.nodeProperties = {}
+    $scope.nodeProperties = []
     $scope.nodeParams = {}
     
     $scope.uniqueRelations = new Set()
     $scope.selectedRelationship = {
-        source: "Transfer",
-        relation: "OF_PLAYER",
-        target: "Player"
+        source: "",
+        relation: "",
+        target: ""
     }
     $scope.queryLimit = 20
     $scope.nodeLabels = [] 
@@ -24,12 +24,6 @@ app.controller("GraphController", function($scope, $http) {
     $scope.manipulation = {}
     $scope.test = {}
 
-    $scope.testClick = function () {
-        console.log("test input is : ", $scope.test.input)
-    }
-    $scope.incrementTest = function () {
-        $scope.test.input += 1
-    }
 
     console.warn("$scope.selectedRelationship: ", $scope.selectedRelationship)
 
@@ -149,24 +143,32 @@ app.controller("GraphController", function($scope, $http) {
             $scope.targetNodeLabels = nodeLabelsIndex
             
             var source_label = relationship.source.split(" - ")[0]
-            if (!(source_label in $scope.nodeProperties)) {
+            if (!($scope.nodeProperties.map(a=>a.label).includes(source_label))) {
                 $http.post(getWebAppBackendUrl("/get_node_properties"), {node_label: source_label})
                 .then(function(response) {
-                    $scope.nodeProperties[source_label] = {
-                        all: response.data.node_properties_all,
-                        num: response.data.node_properties_num
-                    }
+                    $scope.nodeProperties.push(
+                        {
+                            label: source_label,
+                            all: response.data.node_properties_all,
+                            num: response.data.node_properties_num
+                        }
+                    )
                 }, function(e) {
                     $scope.error.msg = e.data;
                 });
             }
             var target_label = relationship.target.split(" - ")[0]
-            if (!(target_label in $scope.nodeProperties)) {
+            if (!($scope.nodeProperties.map(a=>a.label).includes(target_label))) {
                 $http.post(getWebAppBackendUrl("/get_node_properties"), {node_label: target_label})
                 .then(function(response) {
-                    $scope.nodeProperties[target_label] = {
-                        all: response.data.node_properties_all,
-                        num: response.data.node_properties_num
+                    if (!($scope.nodeProperties.map(a=>a.label).includes(target_label))) {
+                        $scope.nodeProperties.push(
+                            {
+                                label: target_label,
+                                all: response.data.node_properties_all,
+                                num: response.data.node_properties_num
+                            }
+                        )
                     }
                 }, function(e) {
                     $scope.error.msg = e.data;
@@ -193,10 +195,10 @@ app.controller("GraphController", function($scope, $http) {
         $scope.targetNodeLabels = nodeLabelsIndex
         
         if ($scope.usedNodeIndex[source_label] == 0) {
-            delete $scope.nodeProperties[source_label]
+            $scope.nodeProperties = $scope.nodeProperties.filter(item => item.label != source_label);
         }
         if ($scope.usedNodeIndex[target_label] == 0) {
-            delete $scope.nodeProperties[target_label]
+            $scope.nodeProperties = $scope.nodeProperties.filter(item => item.label != target_label);
         }
         console.log("$scope.nodeProperties: ", $scope.nodeProperties)
     }
@@ -205,95 +207,196 @@ app.controller("GraphController", function($scope, $http) {
        document.location.reload(true);
     }
 
-    $scope.editNode = function(data, cancelAction, callback) {
-        console.log("editNode data is: ", data)
-        console.log("$scope: ", $scope)
+    $scope.addProperty = function (mode) {
+        if (mode == 'editNode') {
+            $scope.manipulation.editNodeProperties.push({key: "", value: ""})
+        } else if (mode == 'addNode') {
+            $scope.manipulation.addNodeProperties.push({key: "", value: ""})
+        } else {
+            $scope.manipulation.edgeProperties.push({key: "", value: ""})
+        } 
+        // else if (mode == 'addEdge') {
+        //     $scope.manipulation.addEdgeProperties.push({key: "", value: ""})
+        // }
+    }
+    $scope.addNode = function(data, cancelAction, callback) {
+        // $scope.manipulation.addNodeLabel
+        $scope.manipulation.addNodeProperties = [{key: "", value: ""}]
 
-        // document.getElementById("node-label").value = data.label;
-        console.log("data.label: ", data.label)
-        $scope.manipulation.nodeLabel = data.label
-
-
-        //  TODO: call backend to get node properties
-        // $http.get(getWebAppBackendUrl("/get_"))
-        // .then(function(response) {
-        //     $scope.relationTypes = response.data.relation_types
-        // }, function(e) {
-        //     $scope.error.msg = e.data;
-        // });
-
-        $scope.manipulation.editNodeProperties = {
-            name: "Jean",
-            age: 32,
-            city: "Lille"
-        }
-
-        
-        document.getElementById("node-saveButton").onclick = saveNodeData.bind(
-          this,
-          data,
-          callback
+        document.getElementById("add-node-saveButton").onclick = $scope.saveNodeData.bind(
+            this,
+            data,
+            'addNode',
+            callback
         );
-        document.getElementById("node-cancelButton").onclick = cancelAction.bind(
-          this,
-          callback
+        document.getElementById("add-node-cancelButton").onclick = cancelAction.bind(
+            this,
+            'addNode'
         );
-        document.getElementById("node-popUp").style.display = "block";
+        document.getElementById("add-node-popUp").style.display = "block";
         // force angularjs to refresh to bind ng-model 
         $scope.$apply()
     }
 
-    function clearNodePopUp() {
-        document.getElementById("node-saveButton").onclick = null;
-        document.getElementById("node-cancelButton").onclick = null;
-        document.getElementById("node-popUp").style.display = "none";
-    }
+    $scope.editNode = function(data, cancelAction, callback) {
+        // document.getElementById("node-label").value = data.label;
+        $scope.manipulation.editNodePopup = data.title.split("</b>")[0].split(">")[1]
+        console.log("data.label: ", data.label)
 
-    function cancelNodeEdit(callback) {
-        clearNodePopUp();
-        callback(null);
-    }
-      
-    function saveNodeData(data, callback) {
-        // data.label = document.getElementById("node-label").value;
-        data.label = $scope.manipulation.nodeLabel
-        // data.title = document.getElementById("node-id").value;
-        clearNodePopUp();
-        callback(data);
-    }
-    
-    function editEdgeWithoutDrag(data, callback) {
-        // filling in the popup DOM elements
-        document.getElementById("edge-label").value = data.label;
-        document.getElementById("edge-saveButton").onclick = saveEdgeData.bind(
+        $http.post(getWebAppBackendUrl("/get_selected_node_properties"), {node_id: data.id})
+        .then(function(response) {
+            $scope.manipulation.editNodeProperties = response.data.properties;
+        }, function(e) {
+            $scope.error.msg = e.data;
+        });
+        
+        document.getElementById("edit-node-saveButton").onclick = $scope.saveNodeData.bind(
           this,
           data,
+          'editNode',
           callback
         );
-        document.getElementById("edge-cancelButton").onclick = cancelEdgeEdit.bind(
+        document.getElementById("edit-node-cancelButton").onclick = cancelAction.bind(
           this,
           callback
         );
-        document.getElementById("edge-popUp").style.display = "block";
-    }
-      
-    function clearEdgePopUp() {
-        document.getElementById("edge-saveButton").onclick = null;
-        document.getElementById("edge-cancelButton").onclick = null;
-        document.getElementById("edge-popUp").style.display = "none";
+        document.getElementById("edit-node-popUp").style.display = "block";
+        // force angularjs to refresh to bind ng-model 
+        $scope.$apply()
     }
 
-    function cancelEdgeEdit(callback) {
-        clearEdgePopUp();
+    $scope.clearNodePopUp = function(mode) {
+        if (mode == 'editNode') {
+            document.getElementById("edit-node-saveButton").onclick = null;
+            document.getElementById("edit-node-cancelButton").onclick = null;
+            document.getElementById("edit-node-popUp").style.display = "none";
+        } else if (mode == 'addNode') {
+            document.getElementById("add-node-saveButton").onclick = null;
+            document.getElementById("add-node-cancelButton").onclick = null;
+            document.getElementById("add-node-popUp").style.display = "none";
+        }
+    }
+
+    $scope.cancelNodeEdit = function(callback) {
+        $scope.clearNodePopUp('editNode');
+        callback(null);
+    }
+      
+    $scope.saveNodeData = function(data, mode, callback) {
+        var properties;
+        var config = {}
+        if (mode == 'editNode') {
+            // TODO: call backend to execute cypher query to set/edit the new properties
+            properties = $scope.manipulation.editNodeProperties
+            config.node_id = data.id
+        } else if (mode == 'addNode') {
+            // TODO: call backend to execute cypher query to create a new node (and get the new node ID)
+            // data.id =    
+            properties = $scope.manipulation.addNodeProperties
+            data.group = $scope.manipulation.addNodeLabel  // TODO check that it is defined
+        }
+        config.label = data.group
+        config.properties = properties
+
+        $http.post(getWebAppBackendUrl("/set_title"), config)
+        .then(function(response) {
+            data.title = response.data.title
+            if ("caption" in $scope.nodeParams[data.group]) {
+                data.label = properties.filter(item => item.key == $scope.nodeParams[data.group].caption)[0].value
+            }
+            $scope.clearNodePopUp(mode);
+            callback(data);
+        }, function(e) {
+            $scope.error.msg = e.data;
+        });
+        // $scope.data.nodes.update({id: data.id, label: "NEW node !"})
+    }
+    
+    $scope.editEdgeWithoutDrag = function(data, callback) {
+        $scope.manipulation.editEdgePopup = `${data.label} (${data.from} -> ${data.to})`
+        
+        $http.post(getWebAppBackendUrl("/get_selected_edge_properties"), {src_id: data.from, tgt_id: data.to, rel_type: data.label})
+        .then(function(response) {
+            $scope.manipulation.editEdgeProperties = response.data.properties;
+        }, function(e) {
+            $scope.error.msg = e.data;
+        });
+
+        // document.getElementById("edge-label").value = data.label;
+        document.getElementById("edit-edge-saveButton").onclick = $scope.saveEdgeData.bind(
+          this,
+          data,
+          'editEdge',
+          callback
+        );
+        document.getElementById("edit-edge-cancelButton").onclick = $scope.cancelEdgeEdit.bind(
+          this,
+          'editEdge',
+          callback
+        );
+        document.getElementById("edit-edge-popUp").style.display = "block";
+    }
+
+    $scope.addEdgeWithoutDrag = function(data, callback) {
+        // $scope.manipulation.addEdgeType
+        $scope.manipulation.addEdgeProperties = [{key: "", value: ""}]
+        
+        document.getElementById("add-edge-saveButton").onclick = $scope.saveEdgeData.bind(
+          this,
+          data,
+          'addEdge',
+          callback
+        );
+        document.getElementById("add-edge-cancelButton").onclick = $scope.cancelEdgeEdit.bind(
+          this,
+          'addEdge',
+          callback
+        );
+        document.getElementById("add-edge-popUp").style.display = "block";
+    }
+      
+    $scope.clearEdgePopUp = function(mode) {
+        if (mode == 'editEdge') {
+            document.getElementById("edit-edge-saveButton").onclick = null;
+            document.getElementById("edit-edge-cancelButton").onclick = null;
+            document.getElementById("edit-edge-popUp").style.display = "none";
+        } else if (mode == 'addEdge') {
+            document.getElementById("add-edge-saveButton").onclick = null;
+            document.getElementById("add-edge-cancelButton").onclick = null;
+            document.getElementById("add-edge-popUp").style.display = "none";
+        }
+    }
+
+    $scope.cancelEdgeEdit = function(mode, callback) {
+        $scope.clearEdgePopUp(mode);
         callback(null);
     }
 
-    function saveEdgeData(data, callback) {
+    $scope.saveEdgeData = function(data, mode, callback) {
         if (typeof data.to === "object") data.to = data.to.id;
         if (typeof data.from === "object") data.from = data.from.id;
-        data.label = document.getElementById("edge-label").value;
-        clearEdgePopUp();
-        callback(data);
+
+        var properties; 
+        var config = {}
+        if (mode == 'editEdge') {
+            // TODO: call backend to execute cypher query to set/edit the new properties
+            properties = $scope.manipulation.editEdgeProperties
+        } else if (mode == 'addEdge') {
+            // TODO: call backend to execute cypher query to create a new edge
+            properties = $scope.manipulation.addEdgeProperties
+            data.label = $scope.manipulation.addEdgeType
+        }
+        config.label = data.label
+        config.properties = properties
+
+        $http.post(getWebAppBackendUrl("/set_title"), config)
+        .then(function(response) {
+            data.title = response.data.title
+            $scope.clearEdgePopUp(mode);
+            callback(data);
+        }, function(e) {
+            $scope.error.msg = e.data;
+        });
     }
     
     $scope.draw = function() {
@@ -362,16 +465,12 @@ app.controller("GraphController", function($scope, $http) {
 
             manipulation: {
                 addNode: function(data, callback) {
-                  // filling in the popup DOM elements
                   console.warn("addNode data: ", data)
-                  document.getElementById("node-operation").innerHTML = "Add Node";
-                  $scope.editNode(data, clearNodePopUp, callback);
+                  $scope.addNode(data, $scope.clearNodePopUp, callback);
                 },
                 editNode: function(data, callback) {
-                  // filling in the popup DOM elements
                   console.warn("editNode data: ", data)
-                  document.getElementById("node-operation").innerHTML = "Edit Node";
-                  $scope.editNode(data, cancelNodeEdit, callback);
+                  $scope.editNode(data, $scope.cancelNodeEdit, callback);
                 },
 
                 addEdge: function(data, callback) {
@@ -383,23 +482,24 @@ app.controller("GraphController", function($scope, $http) {
                     }
                   }
                   console.warn("addEdge data: ", data)
-                  document.getElementById("edge-operation").innerHTML = "Add Edge";
-                  editEdgeWithoutDrag(data, callback);
+                //   document.getElementById("edge-operation").innerHTML = "Add Edge";
+                  $scope.addEdgeWithoutDrag(data, callback);
                 },
                 editEdge: {
                   editWithoutDrag: function(data, callback) {
                     console.warn("editEdge data: ", data)
-                    document.getElementById("edge-operation").innerHTML = "Edit Edge";
-                    editEdgeWithoutDrag(data, callback);
+                    // document.getElementById("edge-operation").innerHTML = "Edit Edge";
+                    $scope.editEdgeWithoutDrag(data, callback);
                   }
                 },
                 deleteNode: function(data, callback) {
                     console.warn("deleteNode data: ", data)
                     callback(data)
+                },
+                deleteEdge: function(data, callback) {
+                    console.warn("deleteEdge data: ", data)
+                    callback(data)
                 }
-                // deleteNode: {
-                //     enabled: false
-                // }
             },
 
             physics: {
@@ -473,8 +573,8 @@ app.controller("GraphController", function($scope, $http) {
 //         $http.get(getWebAppBackendUrl("/draw_graph"), {params: {config: JSON.stringify(config)}})
         .then(function(response) {
             $scope.data = {
-                nodes: response.data.nodes,
-                edges: response.data.edges
+                nodes: new vis.DataSet(response.data.nodes),
+                edges: new vis.DataSet(response.data.edges)
             }
             
             console.log("data: ", $scope.data)
@@ -494,13 +594,15 @@ app.controller("GraphController", function($scope, $http) {
             console.log("finsih timeout")
 
             $scope.network.on('doubleClick', function(data) {
+
                 console.log("this: ", this)
                 console.log('clicked data:', data);
-                var newData = {
-                    nodes: [{ id: 1, label: "Mayeul", color: "#97C2FC" }, {id: 2, label: "Alex C", color: "#FFFF00" }],
-                    edges: [{ from: 1, to: 2}]
-                };
-                this.setData(newData)
+                // $scope.data.nodes.update({id: data.nodes[0], label: "NEW node !"})
+                // var newData = {
+                //     nodes: [{ id: 1, label: "Mayeul", color: "#97C2FC" }, {id: 2, label: "Alex C", color: "#FFFF00" }],
+                //     edges: [{ from: 1, to: 2}]
+                // };
+                // this.setData(newData)
             });
         }, function(e) {
             console.log("about to get error: ", e.data)

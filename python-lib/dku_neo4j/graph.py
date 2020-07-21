@@ -80,8 +80,8 @@ class GraphVis:
         if params:
             if "caption" in params:
                 info["label"] = self._str_or_none(properties.get(params["caption"], None))
-            if "size" in params:
-                info["value"] = int(properties.get(params["size"], 0))
+            # if "size" in params:
+            #     info["value"] = int(properties.get(params["size"], 0))
             # if "shape" in node_params:
             #     info["shape"] = node_params["shape"]
 

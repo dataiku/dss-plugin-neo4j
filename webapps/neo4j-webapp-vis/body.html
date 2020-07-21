@@ -30,51 +30,97 @@
                 {{error.msg}}
             </div>
 
-            <div id="node-popUp">
-                <span id="node-operation">node</span> <br />
-
-                <!-- <button type="button" class="text-button" ng-click="testClick()">Test</button>
-                <input type="number" id="test-input" ng-model="test.input"/>
-                <button type="button" class="text-button" ng-click="incrementTest()">++</button> -->
-
+            <div id="edit-node-popUp" class="node-popup">
+                <h2 ng-bind="manipulation.editNodePopup"></h2>
                 <table style="margin:auto;">
                     <tr>
                         <th>Key</th>
                         <th>Value</th>
                     </tr>
-                    <tbody ng-repeat="(key, value) in manipulation.editNodeProperties">
+                    <tbody ng-repeat="property in manipulation.editNodeProperties">
                         <tr>
-                            <td>{{key}}</td>
-                            <td><input ng-model="value"/></td>
+                            <td><input ng-model="property.key"/></td>
+                            <td><input ng-model="property.value"/></td>
                         </tr>
                     </tbody>
-                  <!-- <tbody>
-                    <tr>
-                      <td>label</td>
-                      <td><input id="node-label" value="new value" /></td>
-                        <td><input id="node-label" ng-model="manipulation.nodeLabel"/></td>
-                    </tr>
-                  </tbody> -->
-
+                    <tfoot>
+                      <tr>
+                          <td><button type="button" class="text-button" ng-click="addProperty('editNode')">Add Property</button></td>
+                      </tr>
+                  </tfoot>
                 </table>
-                <button type="button" class="text-button" id="node-saveButton">Save</button>
-                <button type="button" class="text-button" id="node-cancelButton">Cancel</button>
-                <!-- <input type="button" value="save" id="node-saveButton" /> -->
-                <!-- <input type="button" value="cancel" id="node-cancelButton" /> -->
+                <button type="button" class="text-button" id="edit-node-saveButton">Save</button>
+                <button type="button" class="text-button" id="edit-node-cancelButton">Cancel</button>
             </div>
 
-            <div id="edge-popUp">
-                <span id="edge-operation">edge</span> <br />
+            <div id="add-node-popUp" class="node-popup">
+                <b> Node label: </b><select ng-model="manipulation.addNodeLabel" ng-options="item for item in nodeLabels"></select>
+                <!-- <input ng-model="manipulation.addNodeLabel"/> -->
                 <table style="margin:auto;">
-                  <tbody>
                     <tr>
-                      <td>label</td>
-                      <td><input id="edge-label" value="new value" /></td>
+                        <th>Key</th>
+                        <th>Value</th>
                     </tr>
-                  </tbody>
+                    <tbody ng-repeat="property in manipulation.addNodeProperties">
+                        <tr>
+                            <td><input ng-model="property.key"/></td>
+                            <td><input ng-model="property.value"/></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                          <td><button type="button" class="text-button" ng-click="addProperty('addNode')">Add Property</button></td>
+                      </tr>
+                  </tfoot>
                 </table>
-                <input type="button" value="save" id="edge-saveButton" />
-                <input type="button" value="cancel" id="edge-cancelButton" />
+                <button type="button" class="text-button" id="add-node-saveButton">Save</button>
+                <button type="button" class="text-button" id="add-node-cancelButton">Cancel</button>
+            </div>
+
+            <div id="edit-edge-popUp" class="edge-popup">
+                <h2 ng-bind="manipulation.editEdgePopup"></h2>
+                <table style="margin:auto;">
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                    </tr>
+                    <tbody ng-repeat="property in manipulation.editEdgeProperties">
+                        <tr>
+                            <td><input ng-model="property.key"/></td>
+                            <td><input ng-model="property.value"/></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                          <td><button type="button" class="text-button" ng-click="addProperty('editEdge')">Add Property</button></td>
+                      </tr>
+                  </tfoot>
+                </table>
+                <button type="button" class="text-button" id="edit-edge-saveButton">Save</button>
+                <button type="button" class="text-button" id="edit-edge-cancelButton">Cancel</button>
+            </div>
+
+            <div id="add-edge-popUp" class="edge-popup">
+                <b> Edge type: </b><select ng-model="manipulation.addEdgeType" ng-options="item for item in relationTypes"></select>
+                <table style="margin:auto;">
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                    </tr>
+                    <tbody ng-repeat="property in manipulation.addEdgeProperties">
+                        <tr>
+                            <td><input ng-model="property.key"/></td>
+                            <td><input ng-model="property.value"/></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                          <td><button type="button" class="text-button" ng-click="addProperty('addEdge')">Add Property</button></td>
+                      </tr>
+                  </tfoot>
+                </table>
+                <button type="button" class="text-button" id="add-edge-saveButton">Save</button>
+                <button type="button" class="text-button" id="add-edge-cancelButton">Cancel</button>
             </div>
             
             <div id="graph-container" ></div>

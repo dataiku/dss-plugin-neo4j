@@ -25,20 +25,15 @@
 
     </table>
 
-    <table class="nodes-table" ng-if="(nodeProperties | json) != '{}'">
+    <table class="nodes-table" ng-if="nodeProperties.length > 0">
         <tr>
             <th>Node</th>
-            <th>Label</th>
-            <th>Size</th>
+            <th>Caption</th>
         </tr>
-        <tbody ng-repeat="(node, values) in nodeProperties">
+        <tbody ng-repeat="item in nodeProperties">
             <tr>
-                <td>{{node}}</td>
-                <td><select ng-model="nodeParams[node].caption" ng-options="property for property in nodeProperties[node].all" ng-init="nodeParams[node] = {}" >
-                    <option value=""></option>
-                </select></td>
-                <td><select ng-model="nodeParams[node].size" ng-options="numProperty for numProperty in nodeProperties[node].num">
-                    <option value=""></option>
+                <td>{{item.label}}</td>
+                <td><select ng-model="nodeParams[item.label].caption" ng-options="property for property in item.all" ng-init="nodeParams[item.label] = {}" >
                 </select></td>
             </tr>
         </tbody>

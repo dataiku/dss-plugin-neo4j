@@ -181,6 +181,52 @@ def get_rel_properties():
     return json.dumps({"rel_properties": rel_properties})
 
 
+@app.route('/get_selected_node_properties', methods=["POST"])
+def get_selected_node_properties():
+    config = json.loads(request.data)
+    node_id = config['node_id']
+    query = "MATCH (n) WHERE id(n) = {} RETURN *".format(node_id)
+    data = graph_neo4j.run(query).data()
+    properties = dict(data[0]["n"])
+    properties_list = [{"key": k, "value": str(v)} for k, v in properties.items()]
+    return json.dumps({"properties": properties_list})
+
+
+@app.route('/get_selected_edge_properties', methods=["POST"])
+def get_selected_edge_properties():
+    config = json.loads(request.data)
+    src_id = config['src_id']
+    tgt_id = config['tgt_id']
+    rel_type = config['rel_type']
+    query = "MATCH (n)-[r:{}]->(m) WHERE id(n)={} AND id(m)={} RETURN *".format(
+        rel_type, src_id, tgt_id)
+    data = graph_neo4j.run(query).data()
+    properties = dict(data[0]["r"])
+    properties_list = [{"key": k, "value": str(v)} for k, v in properties.items()]
+    return json.dumps({"properties": properties_list})
+
+
+@app.route('/set_title', methods=["POST"])
+def set_title():
+    config = json.loads(request.data)
+    label = config.get('label', None)
+    properties = config.get('properties', None)
+    node_id = config.get('node_id', None)
+
+
+    title_list = []
+    if node_id:
+        title_list += ["<b>{} ({})</b>".format(label, node_id)]
+        # title += "<br>".join(["<b>{} ({})</b>".format(label, node_id)] + ["{}: {}".format(key, str(value)) for key, value in properties.items()])
+    else:
+        title_list += ["<b>{}</b>".format(label)]
+        # title += "<br>".join(["<b>{}</b>".format(label)] + ["{}: {}".format(key, str(value)) for key, value in properties.items()])
+    title_list += ["{}: {}".format(p['key'], str(p['value'])) for p in properties if p['key'] and p['value']]
+    title = "<br>".join(title_list)
+
+    return json.dumps({"title": title})
+
+
 # @app.route('/draw_subgraph')
 # def draw_subgraph():
 #     try:
