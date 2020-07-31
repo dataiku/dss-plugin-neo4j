@@ -1,0 +1,34 @@
+{
+    "meta" : {
+        "label": "Neo4j server configuration",
+        "description": "",
+        "icon": "icon-puzzle-piece"
+    },
+
+    "defaultDefinableInline": true,
+    "defaultDefinableAtProjectLevel": true,
+
+    "params": [
+        {
+            "name": "neo4j_uri",
+            "label": "URI of the Neo4j database",
+            "description": "bolt://...",
+            "type": "STRING",
+            "mandatory": true
+        },
+        {
+            "name": "neo4j_username",
+            "label": "Username",
+            "description": "Username used to connect to the Neo4j database",
+            "type": "STRING",
+            "mandatory": true
+        },
+        {
+            "name": "neo4j_password",
+            "label": "Password",
+            "description": "Password used to connect to the Neo4j database",
+            "type": "PASSWORD",
+            "mandatory": true
+        }
+    ]
+}

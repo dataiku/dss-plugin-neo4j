@@ -13,9 +13,9 @@ from dku_neo4j import *
 
 logger = logging.getLogger()
 
-def setup_logging(output_folder):
-    logger.setLevel(logging.INFO)
-    return logger
+# def setup_logging(output_folder):
+#     logger.setLevel(logging.INFO)
+#     return logger
 
 def get_neo4jhandle():
     neo4jhandle = Neo4jHandle(
