@@ -6,13 +6,6 @@ import neotime
 class MyConnector(Connector):
 
     def __init__(self, config, plugin_config):
-        """
-        The configuration parameters set up by the user in the settings tab of the
-        dataset are passed as a json object 'config' to the constructor.
-        The static configuration parameters set up by the developer in the optional
-        file settings.json at the root of the plugin directory are passed as a json
-        object 'plugin_config' to the constructor
-        """
         Connector.__init__(self, config, plugin_config)
         self.config = config
         self.plugin_config = plugin_config
