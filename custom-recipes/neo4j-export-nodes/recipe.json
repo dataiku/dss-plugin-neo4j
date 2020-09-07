@@ -28,7 +28,8 @@
             "arity": "UNARY",
             "required": true,
             "acceptsManagedFolder": true,
-            "acceptsDataset": false
+            "acceptsDataset": false,
+            "mustBeStrictlyType": "SSH"
         }
     ],
     "params": [
