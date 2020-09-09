@@ -50,7 +50,7 @@ class MyConnector(Connector):
                     self._convert_neotime_properties(rel_properties)
                     yield rel_properties
             else:
-                query = "call db.schema"
+                query = "CALL db.schema()"
                 relationships = self.graph.run(query).data()[0]['relationships']
                 for rel in relationships:
                     yield {
