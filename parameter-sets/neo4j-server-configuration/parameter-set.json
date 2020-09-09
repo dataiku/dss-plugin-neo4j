@@ -1,33 +1,30 @@
 {
-    "id": "neo4j",
-    "version": "1.2.0",
-    "meta": {
-        "label": "Neo4j",
-        "description": "Interact with the Neo4j graph database",
-        "author": "Dataiku",
-        "icon": "icon-folder-close",
-        "iconColor": "green",
-        "licenseInfo": "Apache Software License",
-        "url": "https://www.dataiku.com/dss/plugins/info/neo4j.html",
-        "tags": ["Graph", "Connector"]
+    "meta" : {
+        "label": "Neo4j server configuration",
+        "description": "",
+        "icon": "icon-puzzle-piece"
     },
+
+    "defaultDefinableInline": true,
+    "defaultDefinableAtProjectLevel": true,
+
     "params": [
         {
-            "name": "neo4jUri",
+            "name": "neo4j_uri",
             "label": "URI of the Neo4j database",
             "description": "bolt://...",
             "type": "STRING",
             "mandatory": true
         },
         {
-            "name": "neo4jUsername",
+            "name": "neo4j_username",
             "label": "Username",
             "description": "Username used to connect to the Neo4j database",
             "type": "STRING",
             "mandatory": true
         },
         {
-            "name": "neo4jPassword",
+            "name": "neo4j_password",
             "label": "Password",
             "description": "Password used to connect to the Neo4j database",
             "type": "PASSWORD",
