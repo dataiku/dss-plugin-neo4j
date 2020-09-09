@@ -39,7 +39,7 @@
             "name": "selected_relationship",
             "type": "STRING",
             "label": "Select relationship",
-            "description": "List all relationship types if empty",
+            "description": "relA|relB|... or list all relationship types if empty",
             "visibilityCondition": "model.select_nodes_or_relationships == 'select_relationships'"
         }
     ]
