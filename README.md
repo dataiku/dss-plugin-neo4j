@@ -1,6 +1,6 @@
 # Neo4j Plugin
 
-The purpose of this Dataiku Plugin is to allow DSS users to read from the [Neo4j](https://neo4j.com/) graph platform.
+The purpose of this Dataiku Plugin is to allow DSS users to read and write from/to the [Neo4j](https://neo4j.com/) graph platform.
 Neo4j offers a popular database and language (Cypher), which lets users query and analyze graph data structures.
 
 
@@ -9,14 +9,14 @@ Neo4j offers a popular database and language (Cypher), which lets users query an
 The Plugin is made of the following components:
 
 * a **Dataset** type to get data out of Neo4j, either entire groups of nodes, or using a custom Cypher query
-* a **Recipes** to export a Dataiku datasets into Neo4j
+* 2 **Recipes** to export a Dataiku datasets into Neo4j
 * a **Macro** to run arbitrary Cypher statements against the Neo4j database, to be used when there is no need to output a Dataiku dataset
 
 ## Using the Plugin
 
 ### Prerequisites
 
-- The main prerequisite to use this Plugin is to know the credentials to connect to the Neo4j database (URI, username, password) These parameters need to be entered in the Plugin global settings (available from the *Plugins > Neo4j > Settings* pane), possibly by a DSS admin.
+- The main prerequisite to use this Plugin is to know the credentials to connect to the Neo4j database (URI, username, password). You need to create a plugin preset with these parameters (or ask your admin) in *Plugins > Neo4j > Settings > Neo4j server configuration*.
 
 ### Usage scenario
 The different components allow for different use cases:

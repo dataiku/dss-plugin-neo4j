@@ -2,7 +2,7 @@
 
     "meta": {
         "label": "Export nodes",
-        "description": "Create Neo4j nodes from a Dataiku dataset.",
+        "description": "Create Neo4j nodes from a DSS dataset.",
         "icon": "icon-visual_export_recipe",
         "iconColor": "green"
     },
@@ -28,20 +28,36 @@
             "arity": "UNARY",
             "required": true,
             "acceptsManagedFolder": true,
-            "acceptsDataset": false
+            "acceptsDataset": false,
+            "mustBeStrictlyType": "SSH"
         }
     ],
     "params": [
         {
+            "label": "Neo4j settings",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "neo4j_server_configuration",
+            "label": "Neo4j server configuration",
+            "type": "PRESET",
+            "parameterSetId" : "neo4j-server-configuration",
+            "mandatory" : true
+        },
+        {
+            "label": "Nodes parameters",
+            "type": "SEPARATOR"
+        },
+        {
             "name": "nodes_label",
-            "label": "Nodes label",
+            "label": "Node label",
             "type": "STRING",
             "description": "",
             "mandatory": true
         },
         {
             "name": "node_id_column",
-            "label": "Node id column",
+            "label": "Primary key",
             "type": "COLUMN",
             "columnRole": "input_dataset",
             "description": "In case of duplicates, only one node is kept",
@@ -58,11 +74,35 @@
             "defaultValue": "ALL_OTHER_COLUMNS"
         },
         {
-            "name": "properties_map",
-            "label": "Columns to store",
-            "type": "MAP",
-            "description": "column in DSS → property in Neo4j",
+            "name": "node_properties",
+            "label": "Select columns",
+            "type": "COLUMNS",
+            "columnRole": "input_dataset",
+            "description": "",
+            "mandatory": false,
             "visibilityCondition": "model.properties_mode == 'SELECT_COLUMNS'"
+        },
+        {
+            "label": "Property names",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "property_names_mapping",
+            "label": "Change names in Neo4j",
+            "type": "BOOLEAN",
+            "description": "Map column names in DSS to property names in Neo4j",
+            "defaultValue": false
+        },
+        {
+            "name": "property_names_map",
+            "label": "DSS column → Neo4j property",
+            "type": "MAP",
+            "description": "",
+            "visibilityCondition": "model.property_names_mapping"
+        },
+        {
+            "label": "Clear before run",
+            "type": "SEPARATOR"
         },
         {
             "name": "clear_before_run",
