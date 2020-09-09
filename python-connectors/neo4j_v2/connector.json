@@ -1,0 +1,46 @@
+{
+    "meta" : {
+        "label": "Neo4j v2",
+        "description": "Connector for the Neo4j graph database",
+        "icon": "icon-puzzle-piece"
+    },
+
+    "readable": true,
+    "writable": false,
+
+    "params": [
+        {
+            "name": "neo4j_server_configuration",
+            "label": "Neo4j server configuration",
+            "type": "PRESET",
+            "parameterSetId" : "neo4j-server-configuration",
+            "mandatory" : true
+        },
+        {
+            "name": "select_nodes_or_relationships",
+            "type": "SELECT",
+            "label": "Nodes or relationships",
+            "description": "",
+            "mandatory": true,
+            "selectChoices": [
+                {"value": "select_nodes","label": "Nodes"},
+                {"value": "select_relationships","label": "Relationships"}
+            ],
+            "defaultValue": "select_nodes"
+        },
+        {
+            "name": "selected_node",
+            "type": "STRING",
+            "label": "Select node",
+            "description": "List all node labels if empty",
+            "visibilityCondition": "model.select_nodes_or_relationships == 'select_nodes'"
+        },
+        {
+            "name": "selected_relationship",
+            "type": "STRING",
+            "label": "Select relationship",
+            "description": "List all relationship types if empty",
+            "visibilityCondition": "model.select_nodes_or_relationships == 'select_relationships'"
+        }
+    ]
+}
