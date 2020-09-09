@@ -10,28 +10,5 @@
         "licenseInfo": "Apache Software License",
         "url": "https://www.dataiku.com/dss/plugins/info/neo4j.html",
         "tags": ["Graph", "Connector"]
-    },
-    "params": [
-        {
-            "name": "neo4jUri",
-            "label": "URI of the Neo4j database",
-            "description": "bolt://...",
-            "type": "STRING",
-            "mandatory": true
-        },
-        {
-            "name": "neo4jUsername",
-            "label": "Username",
-            "description": "Username used to connect to the Neo4j database",
-            "type": "STRING",
-            "mandatory": true
-        },
-        {
-            "name": "neo4jPassword",
-            "label": "Password",
-            "description": "Password used to connect to the Neo4j database",
-            "type": "PASSWORD",
-            "mandatory": true
-        }
-    ]
+    }
 }
