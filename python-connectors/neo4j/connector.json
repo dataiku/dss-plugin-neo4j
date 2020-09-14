@@ -31,14 +31,14 @@
         {
             "name": "selected_node",
             "type": "STRING",
-            "label": "Select one node",
+            "label": "Enter one node",
             "description": "node_label|node_id|node_properties ... or list all node labels if empty",
             "visibilityCondition": "model.select_nodes_or_relationships == 'select_nodes'"
         },
         {
             "name": "selected_relationship",
             "type": "STRING",
-            "label": "Select one relationship",
+            "label": "Enter one relationship",
             "description": "rel_type|src_id|tgt_id|rel_properties ... or list all relationship types if empty",
             "visibilityCondition": "model.select_nodes_or_relationships == 'select_relationships'"
         }
