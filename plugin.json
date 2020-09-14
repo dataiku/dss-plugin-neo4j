@@ -5,7 +5,7 @@
         "label": "Neo4j",
         "description": "Interact with the Neo4j graph database",
         "author": "Dataiku",
-        "icon": "icon-folder-close",
+        "icon": "icon-link",
         "iconColor": "green",
         "licenseInfo": "Apache Software License",
         "url": "https://www.dataiku.com/dss/plugins/info/neo4j.html",

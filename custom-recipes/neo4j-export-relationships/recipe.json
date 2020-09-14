@@ -4,7 +4,8 @@
         "label": "Export relationships",
         "description": "Create Neo4j nodes and relationships from a DSS dataset.",
         "icon": "icon-visual_export_recipe",
-        "iconColor": "green"
+        "iconColor": "green",
+        "displayOrderRank": 1
     },
 
     "kind": "PYTHON",
