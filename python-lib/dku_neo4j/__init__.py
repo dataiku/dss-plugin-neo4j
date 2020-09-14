@@ -45,8 +45,8 @@ class Neo4jHandle(object):
         else:
             node_properties = [col['name'] for col in columns_list if col['name'] != params.node_id_column]
         properties = self._properties(columns_list, node_properties, 'n', params.property_names_map)
-        # TODO no PERIODIC COMMIT?
         q = """
+USING PERIODIC COMMIT
 LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
 WITH %s
 MERGE (n:`%s` {`%s`: `%s`})
