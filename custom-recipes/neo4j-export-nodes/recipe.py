@@ -31,9 +31,11 @@ export_file_fullname = os.path.join(get_export_file_path_in_folder(), get_export
 
 export_dataset(input_dataset, output_folder)
 
-# TODO add constraint?
+neo4jhandle.add_unique_constraint_on_nodes(params)
+
 if params.clear_before_run:
     neo4jhandle.delete_nodes(params.nodes_label)
+
 neo4jhandle.load_nodes(export_file_fullname, input_dataset_schema, params)
 
 # --- Cleanup

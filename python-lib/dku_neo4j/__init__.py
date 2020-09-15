@@ -1,9 +1,5 @@
 import logging
-import os
-import shutil
 from py2neo import Graph
-
-logger = logging.getLogger()
 
 
 class Neo4jHandle(object):
@@ -27,7 +23,7 @@ class Neo4jHandle(object):
           MATCH (n:`%s`)
           DETACH DELETE n
         """ % (nodes_label)
-        logger.info("[+] Delete nodes: {}".format(q))
+        logging.info("[+] Delete nodes: {}".format(q))
         self.run(q)
 
     def delete_relationships(self, params):
@@ -35,7 +31,7 @@ class Neo4jHandle(object):
           MATCH (:`%s`)-[r:`%s`]-(:`%s`)
           DELETE r
         """ % (params.source_node_label, params.relationships_verb, params.target_node_label)
-        logger.info("[+] Delete relationships: {}".format(q))
+        logging.info("[+] Delete relationships: {}".format(q))
         self.run(q)
 
     def load_nodes(self, csv_file_path, columns_list, params):
@@ -57,51 +53,23 @@ MERGE (n:`%s` {`%s`: `%s`})
             params.nodes_label, params.node_lookup_key, params.node_id_column,
             properties
             )
-        logger.info("[+] Importing nodes into Neo4j: %s" % (q))
+        logging.info("[+] Importing nodes into Neo4j: %s" % (q))
         r = self.run(q)
-        logger.info(r.stats())
+        logging.info(r.stats())
 
     def add_unique_constraint_on_relationship_nodes(self, params):
-        const1 = "CREATE CONSTRAINT ON (n:`%s`) ASSERT n.`%s` IS UNIQUE" % (params.source_node_label, params.source_node_lookup_key)
-        const2 = "CREATE CONSTRAINT ON (n:`%s`) ASSERT n.`%s` IS UNIQUE" % (params.target_node_label, params.target_node_lookup_key)
-        logger.info("[+] Create constraints on nodes: \n\t" + const1 + "\n\t" + const2)
-        self.run(const1)
-        self.run(const2)
+        self._add_unique_constraint_if_not_exist(params.source_node_label, params.source_node_lookup_key)
+        self._add_unique_constraint_if_not_exist(params.target_node_label, params.target_node_lookup_key)
+
+    def add_unique_constraint_on_nodes(self, params):
+        self._add_unique_constraint_if_not_exist(params.nodes_label, params.node_lookup_key)
+
+    def _add_unique_constraint_if_not_exist(self, label, property_key):
+        if property_key not in self.graph.schema.get_uniqueness_constraints(label=label):
+            self.graph.schema.create_uniqueness_constraint(label=label, property_key=property_key)
+            logging.info("[+] Created uniqueness constraint on {}.{}".format(label, property_key))
 
     def load_relationships(self, csv_file_path, columns_list, params):
-        definition = self._schema(columns_list)
-        if params.properties_mode == 'SELECT_COLUMNS':
-            properties_map = params.properties_map
-        else:
-            properties_map = {}
-            for col in columns_list:
-                if col['name'] not in [params.source_node_id_column, params.target_node_id_column]:
-                    properties_map[col['name']] = col['name']
-        properties = self._properties(columns_list, properties_map, 'rel')
-        q = """
-USING PERIODIC COMMIT
-LOAD CSV FROM 'file:///%s' AS line FIELDTERMINATOR '\t'
-WITH %s
-MATCH (f:`%s` {`%s`: `%s`})
-MATCH (t:`%s` {`%s`: `%s`})
-MERGE (f)-[rel:`%s`]->(t)
-ON CREATE SET rel.weight = 1
-ON MATCH SET rel.weight = rel.weight + 1
-%s
-        """ % (
-            csv_file_path,
-            definition,
-            params.source_node_label, params.source_node_lookup_key, params.source_node_id_column,
-            params.target_node_label, params.target_node_lookup_key, params.target_node_id_column,
-            params.relationships_verb,
-            properties
-        )
-        logger.info("[+] Import relationships into Neo4j: %s" % (q))
-        r = self.run(q)
-        logger.info(r.stats())
-
-    def load_combined(self, csv_file_path, columns_list, params):
-        # print(params.properties_map)
         definition = self._schema(columns_list)
         q = """
 USING PERIODIC COMMIT
@@ -129,9 +97,9 @@ ON MATCH SET rel.weight = rel.weight + 1
             params.relationships_verb,
             self._properties(columns_list, params.relationship_properties, 'rel', params.property_names_map)
         )
-        logger.info("[+] Import relationships and nodes into Neo4j: %s" % (q))
+        logging.info("[+] Import relationships and nodes into Neo4j: %s" % (q))
         r = self.run(q)
-        logger.info(r.stats())
+        logging.info(r.stats())
 
     def _build_nodes_definition(self, nodes_label, columns_list):
         definition = ':{}'.format(nodes_label)
@@ -211,57 +179,6 @@ class NodesExportParams(object):
 
 
 class RelationshipsExportParams(object):
-
-    def __init__(self,
-            source_node_label,
-            source_node_lookup_key,
-            source_node_id_column,
-            target_node_label,
-            target_node_lookup_key,
-            target_node_id_column,
-            relationships_verb,
-            properties_mode,
-            properties_map,
-            clear_before_run=False,
-        ):
-        self.source_node_label = source_node_label
-        self.source_node_lookup_key = source_node_lookup_key
-        self.source_node_id_column = source_node_id_column
-        self.target_node_label = target_node_label
-        self.target_node_lookup_key = target_node_lookup_key
-        self.target_node_id_column = target_node_id_column
-        self.relationships_verb = relationships_verb
-        self.properties_mode = properties_mode
-        self.properties_map = properties_map or {}
-        self.clear_before_run = clear_before_run
-
-    def check(self, input_dataset_schema):
-        if self.source_node_label is None or self.source_node_label == "":
-            raise ValueError('source_node_label not specified')
-        if self.source_node_lookup_key is None or self.source_node_lookup_key == "":
-            raise ValueError('source_node_lookup_key not specified')
-        if self.source_node_id_column is None or self.source_node_id_column == "":
-            raise ValueError('source_node_id_column not specified')
-        if self.target_node_label is None or self.target_node_label == "":
-            raise ValueError('target_node_label not specified')
-        if self.target_node_lookup_key is None or self.target_node_lookup_key == "":
-            raise ValueError('target_node_lookup_key not specified')
-        if self.target_node_id_column is None or self.target_node_id_column == "":
-            raise ValueError('target_node_id_column not specified')
-        if self.relationships_verb is None or self.relationships_verb == "":
-            raise ValueError('relationships_verb not specified')
-        existing_colnames = [c["name"] for c in input_dataset_schema]
-        if self.source_node_id_column not in existing_colnames:
-            raise ValueError("source_node_id_column. Column does not exist in input dataset: "+str(self.source_node_id_column))
-        if self.target_node_id_column not in existing_colnames:
-            raise ValueError("target_node_id_column. Column does not exist in input dataset: "+str(self.target_node_id_column))
-        if self.properties_mode == 'SELECT_COLUMNS':
-            for colname in self.properties_map:
-                if colname not in existing_colnames:
-                    raise ValueError("properties_map. Column does not exist in input dataset: "+str(colname))
-
-
-class CombinedExportParams(object):
     def __init__(self,
                  source_node_label,
                  source_node_id_column,
