@@ -65,6 +65,7 @@ MERGE (n:`%s` {`%s`: `%s`})
         self._add_unique_constraint_if_not_exist(params.nodes_label, params.node_lookup_key)
 
     def _add_unique_constraint_if_not_exist(self, label, property_key):
+        """ neo4j does not allow to create a constraint only if not already exists, will generate an error if it does exist """
         if property_key not in self.graph.schema.get_uniqueness_constraints(label=label):
             self.graph.schema.create_uniqueness_constraint(label=label, property_key=property_key)
             logging.info("[+] Created uniqueness constraint on {}.{}".format(label, property_key))
