@@ -25,6 +25,8 @@ class MyConnector(Connector):
             if self.config.get("selected_node", None):
                 self._check_query_input(self.config["selected_node"], "node label")
                 query = "MATCH (n:{}) RETURN n".format(self.config["selected_node"])
+                if records_limit > -1:
+                    query += " LIMIT {}".format(records_limit)
                 data = self.graph.run(query)
                 for row in data:
                     node_properties = {
@@ -45,6 +47,8 @@ class MyConnector(Connector):
             if self.config.get("selected_relationship", None):
                 self._check_query_input(self.config["selected_relationship"], "relationship type")
                 query = "MATCH ()-[r:{}]->() RETURN r".format(self.config["selected_relationship"])
+                if records_limit > -1:
+                    query += " LIMIT {}".format(records_limit)
                 data = self.graph.run(query)
                 for row in data:
                     rel_properties = {

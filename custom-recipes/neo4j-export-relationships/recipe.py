@@ -2,7 +2,7 @@ import os
 from dataiku.customrecipe import get_recipe_config
 from commons import get_input_output
 from commons import get_export_file_path_in_folder, get_export_file_name, export_dataset
-from dku_neo4j import CombinedExportParams, Neo4jHandle
+from dku_neo4j import RelationshipsExportParams, Neo4jHandle
 
 # --- Setup recipe
 recipe_config = get_recipe_config()
@@ -14,7 +14,7 @@ neo4jhandle = Neo4jHandle(
     password=neo4j_server_configuration.get("neo4j_password")
 )
 
-params = CombinedExportParams(
+params = RelationshipsExportParams(
     recipe_config.get('source_node_label'),
     recipe_config.get('source_node_id_column'),
     recipe_config.get('source_node_properties'),
@@ -35,12 +35,13 @@ export_file_fullname = os.path.join(get_export_file_path_in_folder(), get_export
 
 export_dataset(input_dataset, output_folder)
 
-#neo4j does not allow to create a constraint only if not already exists, will generate an error if it does exist
-#neo4jhandle.add_unique_constraint_on_relationship_nodes(params)
+neo4jhandle.add_unique_constraint_on_relationship_nodes(params)
+
 if params.clear_before_run:
     neo4jhandle.delete_nodes(params.source_node_label)
     neo4jhandle.delete_nodes(params.target_node_label)
-neo4jhandle.load_combined(export_file_fullname, input_dataset_schema, params)
+
+neo4jhandle.load_relationships(export_file_fullname, input_dataset_schema, params)
 
 # --- Cleanup
 # neo4jhandle.delete_file_from_import_dir(export_file_name)

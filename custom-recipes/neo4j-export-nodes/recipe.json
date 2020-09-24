@@ -2,9 +2,10 @@
 
     "meta": {
         "label": "Export nodes",
-        "description": "Create Neo4j nodes from a DSS dataset.",
+        "description": "Create or update Neo4j nodes from a DSS dataset.",
         "icon": "icon-visual_export_recipe",
-        "iconColor": "green"
+        "iconColor": "green",
+        "displayOrderRank": 2
     },
 
     "kind": "PYTHON",
