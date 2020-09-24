@@ -1,0 +1,152 @@
+{
+
+    "meta": {
+        "label": "Export relationships",
+        "description": "Create or update Neo4j nodes and relationships from a DSS dataset.",
+        "icon": "icon-visual_export_recipe",
+        "iconColor": "green",
+        "displayOrderRank": 1
+    },
+
+    "kind": "PYTHON",
+    "selectableFromDataset": "input_dataset",
+
+    "inputRoles": [
+        {
+            "name": "input_dataset",
+            "label": "Input Dataset",
+            "description": "Dataiku Dataset holding the nodes and relationships",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsDataset": true
+        }
+    ],
+    "outputRoles": [
+        {
+            "name": "output_folder",
+            "label": "Results Folder",
+            "description": "Dataiku Folder storing the export log and results",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsManagedFolder": true,
+            "acceptsDataset": false,
+            "mustBeStrictlyType": "SSH"
+        }
+    ],
+    "params": [
+        {
+            "label": "Neo4j settings",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "neo4j_server_configuration",
+            "label": "Neo4j server configuration",
+            "type": "PRESET",
+            "parameterSetId" : "neo4j-server-configuration",
+            "mandatory" : true
+        },
+        {
+            "label": "Source - Relationship -> Target",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "source_node_label",
+            "label": "Source nodes label",
+            "type": "STRING",
+            "description": "",
+            "mandatory": true
+        },
+        {
+            "name": "relationships_verb",
+            "label": "Relationships type",
+            "type": "STRING",
+            "description": "",
+            "mandatory": true
+        },
+        {
+            "name": "target_node_label",
+            "label": "Target nodes label",
+            "type": "STRING",
+            "description": "",
+            "mandatory": true
+        },
+        {
+            "label": "Source",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "source_node_id_column",
+            "label": "Primary key",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "description": "",
+            "mandatory": true
+        },
+        {
+            "name": "source_node_properties",
+            "label": "Additional properties",
+            "type": "COLUMNS",
+            "columnRole": "input_dataset",
+            "mandatory": false
+        },
+        {
+            "label": "Target",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "target_node_id_column",
+            "label": "Primary key",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "description": "",
+            "mandatory": true
+        },
+        {
+            "name": "target_node_properties",
+            "label": "Additional properties",
+            "type": "COLUMNS",
+            "columnRole": "input_dataset",
+            "mandatory": false
+        },
+        {
+            "label": "Relationship",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "relationship_properties",
+            "label": "Additional properties",
+            "type": "COLUMNS",
+            "columnRole": "input_dataset",
+            "mandatory": false
+        },
+        {
+            "label": "Property names",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "property_names_mapping",
+            "label": "Change names in Neo4j",
+            "type": "BOOLEAN",
+            "description": "Map column names in DSS to property names in Neo4j",
+            "defaultValue": false
+        },
+        {
+            "name": "property_names_map",
+            "label": "DSS column → Neo4j property",
+            "type": "MAP",
+            "description": "",
+            "visibilityCondition": "model.property_names_mapping"
+        },
+        {
+            "label": "Clear before run",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "clear_before_run",
+            "label": "Delete nodes before run",
+            "type": "BOOLEAN",
+            "description": "Nodes with selected labels (and attached relationships) will be deleted before run",
+            "defaultValue": false
+        }
+    ]
+}

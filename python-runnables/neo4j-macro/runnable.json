@@ -12,6 +12,13 @@
     "macroRoles": [],
     "params": [
         {
+            "name": "neo4j_server_configuration",
+            "label": "Neo4j server configuration",
+            "type": "PRESET",
+            "parameterSetId" : "neo4j-server-configuration",
+            "mandatory" : true
+        },
+        {
             "name": "cypherQuery",
             "label": "Query",
             "type": "TEXTAREA",
