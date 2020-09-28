@@ -1,6 +1,6 @@
 # Neo4j Plugin
 
-The purpose of this Dataiku Plugin is to allow DSS users to read and write from/to the [Neo4j](https://neo4j.com/) graph platform.
+The purpose of this [Dataiku Plugin](https://www.dataiku.com/dss/plugins/info/neo4j.html) is to allow DSS users to read and write from/to the [Neo4j](https://neo4j.com/) graph platform.
 
 
 ## Plugin Components
