@@ -2,7 +2,8 @@
     "meta" : {
         "label": "Neo4j",
         "description": "Connector for the Neo4j graph database",
-        "icon": "icon-puzzle-piece"
+        "icon": "icon-link",
+        "iconColor": "green"
     },
 
     "readable": true,

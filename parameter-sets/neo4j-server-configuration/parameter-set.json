@@ -2,7 +2,8 @@
     "meta" : {
         "label": "Neo4j server configuration",
         "description": "",
-        "icon": "icon-puzzle-piece"
+        "icon": "icon-link",
+        "iconColor": "green"
     },
 
     "defaultDefinableInline": true,
