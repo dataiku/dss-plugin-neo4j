@@ -1,5 +1,4 @@
 {
-
     "meta": {
         "label": "Export relationships",
         "description": "Create or update Neo4j nodes and relationships from a DSS dataset.",
@@ -7,10 +6,8 @@
         "iconColor": "green",
         "displayOrderRank": 1
     },
-
     "kind": "PYTHON",
     "selectableFromDataset": "input_dataset",
-
     "inputRoles": [
         {
             "name": "input_dataset",
@@ -29,8 +26,7 @@
             "arity": "UNARY",
             "required": true,
             "acceptsManagedFolder": true,
-            "acceptsDataset": false,
-            "mustBeStrictlyType": "SSH"
+            "acceptsDataset": false
         }
     ],
     "params": [
@@ -42,8 +38,8 @@
             "name": "neo4j_server_configuration",
             "label": "Neo4j server configuration",
             "type": "PRESET",
-            "parameterSetId" : "neo4j-server-configuration",
-            "mandatory" : true
+            "parameterSetId": "neo4j-server-configuration",
+            "mandatory": true
         },
         {
             "label": "Source - Relationship -> Target",
@@ -138,7 +134,7 @@
             "visibilityCondition": "model.property_names_mapping"
         },
         {
-            "label": "Clear before run",
+            "label": "Advanced parameters",
             "type": "SEPARATOR"
         },
         {
@@ -146,6 +142,13 @@
             "label": "Delete nodes before run",
             "type": "BOOLEAN",
             "description": "Nodes with selected labels (and attached relationships) will be deleted before run",
+            "defaultValue": false
+        },
+        {
+            "name": "load_from_csv",
+            "label": "Import data from CSV files",
+            "type": "BOOLEAN",
+            "description": "Faster for big dataset but requires output folder to be in a SCP/SFTP connection to Neo4j import directory",
             "defaultValue": false
         }
     ]
