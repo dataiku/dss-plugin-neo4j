@@ -1,5 +1,5 @@
 import logging
-
+import pandas as pd
 from neo4j import GraphDatabase
 
 
@@ -66,30 +66,34 @@ class Neo4jHandle(object):
 
     def load_nodes_from_csv(self, csv_file_path, columns_list, params):
         definition = self._schema(columns_list)
-        node_primary_key = self._primary_key(columns_list, params.node_lookup_key, params.node_id_column)
+        node_primary_key_statement = self._primary_key_statement(
+            columns_list, params.node_lookup_key, params.node_id_column
+        )
         properties = self._properties(columns_list, params.node_properties, "n", params.property_names_map)
         query = f"""
 USING PERIODIC COMMIT
 LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR '\t'
 WITH {definition}
-MERGE (n:`{params.nodes_label}` {node_primary_key})
+MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
 {properties}
 """
         logging.info(f"Neo4j plugin - Importing nodes into Neo4j: {query}")
         self.run(query, log_results=True)
 
     def insert_nodes_by_batch(self, df_iterator, columns_list, params):
-        node_primary_key = self._primary_key(columns_list, params.node_lookup_key, params.node_id_column, unwind=True)
+        node_primary_key_statement = self._primary_key_statement(
+            columns_list, params.node_lookup_key, params.node_id_column, unwind=True
+        )
         properties = self._properties(columns_list, params.node_properties, "n", params.property_names_map, unwind=True)
         query = f"""
 WITH ${self.DATA} AS dataset
 UNWIND dataset AS {self.ROWS}
-MERGE (n:`{params.nodes_label}` {node_primary_key})
+MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
 {properties}
 """
         logging.info(f"Neo4j plugin - Inserting nodes into Neo4j: {query}")
         for df in df_iterator:
-            data = df.to_dict(orient="records")
+            data = self._get_cleaned_data(df, mandatory_columns=[params.node_id_column])
             self.run(query, data=data, log_results=True)
 
     def add_unique_constraint_on_relationship_nodes(self, params):
@@ -106,10 +110,10 @@ MERGE (n:`{params.nodes_label}` {node_primary_key})
 
     def load_relationships_from_csv(self, csv_file_path, columns_list, params):
         definition = self._schema(columns_list)
-        source_node_primary_key = self._primary_key(
+        source_node_primary_key_statement = self._primary_key_statement(
             columns_list, params.source_node_lookup_key, params.source_node_id_column
         )
-        target_node_primary_key = self._primary_key(
+        target_node_primary_key_statement = self._primary_key_statement(
             columns_list, params.target_node_lookup_key, params.target_node_id_column
         )
         node_incremented_property = "count" if params.node_count_property else None
@@ -139,9 +143,9 @@ MERGE (n:`{params.nodes_label}` {node_primary_key})
 USING PERIODIC COMMIT
 LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR '\t'
 WITH {definition}
-MERGE (src:`{params.source_node_label}` {source_node_primary_key})
+MERGE (src:`{params.source_node_label}` {source_node_primary_key_statement})
 {source_node_properties}
-MERGE (tgt:`{params.target_node_label}` {target_node_primary_key})
+MERGE (tgt:`{params.target_node_label}` {target_node_primary_key_statement})
 {target_node_properties}
 MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
 {relationship_properties}
@@ -152,10 +156,10 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
     def insert_relationships_by_batch(self, df_iterator, columns_list, params):
         node_incremented_property = "count" if params.node_count_property else None
         edge_incremented_property = "weight" if params.edge_weight_property else None
-        source_node_primary_key = self._primary_key(
+        source_node_primary_key_statement = self._primary_key_statement(
             columns_list, params.source_node_lookup_key, params.source_node_id_column, unwind=True
         )
-        target_node_primary_key = self._primary_key(
+        target_node_primary_key_statement = self._primary_key_statement(
             columns_list, params.target_node_lookup_key, params.target_node_id_column, unwind=True
         )
         source_node_properties = self._properties(
@@ -185,16 +189,18 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
         query = f"""
 WITH ${self.DATA} AS dataset
 UNWIND dataset AS {self.ROWS}
-MERGE (src:`{params.source_node_label}` {source_node_primary_key})
+MERGE (src:`{params.source_node_label}` {source_node_primary_key_statement})
 {source_node_properties}
-MERGE (tgt:`{params.target_node_label}` {target_node_primary_key})
+MERGE (tgt:`{params.target_node_label}` {target_node_primary_key_statement})
 {target_node_properties}
 MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
 {relationship_properties}
 """
         logging.info(f"Neo4j plugin - Inserting nodes into Neo4j: {query}")
         for df in df_iterator:
-            data = df.to_dict(orient="records")
+            data = self._get_cleaned_data(
+                df, mandatory_columns=[params.source_node_id_column, params.target_node_id_column]
+            )
             self.run(query, data=data, log_results=True)
 
     def _build_nodes_definition(self, nodes_label, columns_list):
@@ -229,8 +235,8 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
             properties_strings.append(incremented_property_statement)
         return "\n".join(properties_strings)
 
-    def _primary_key(self, all_columns_list, node_lookup_key, node_id_column, unwind=False):
-        # {{`{params.node_lookup_key}`: {self.ROWS}.`{params.node_id_column}`}}
+    def _primary_key_statement(self, all_columns_list, node_lookup_key, node_id_column, unwind=False):
+        """Create a node merge statement in the form of '{node_lookup_key: node_id_column}'"""
         node_id_column_type = next((c["type"] for c in all_columns_list if c["name"] == node_id_column), None)
         typed_value = self._cast_property_type(node_id_column, node_id_column_type, unwind)
         return f"{{`{node_lookup_key}`: {typed_value}}}"
@@ -257,6 +263,17 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
         else:
             typedValue = colname_reference
         return typedValue
+
+    def _get_cleaned_data(self, df, mandatory_columns=None):
+        """Make sure primary key columns don't have missing values and remove missing values from other properties columns"""
+        if mandatory_columns:
+            if df[mandatory_columns].isnull().any().any():
+                raise ValueError(f"The primary key columns {mandatory_columns} cannot have missing values.")
+        data = self._remove_nan_values_from_records(df.to_dict(orient="records"))
+        return data
+
+    def _remove_nan_values_from_records(self, data):
+        return [{k: v for k, v in row.items() if not pd.isnull(v)} for row in data]
 
 
 class NodesExportParams(object):
