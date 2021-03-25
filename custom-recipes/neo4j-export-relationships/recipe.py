@@ -3,8 +3,6 @@ import os
 from dataiku.customrecipe import get_recipe_config
 from commons import (
     get_input_output,
-    get_export_file_path_in_folder,
-    get_export_file_name,
     export_dataset,
     create_dataframe_iterator,
     check_load_from_csv,
@@ -36,11 +34,9 @@ params = RelationshipsExportParams(
 params.check(input_dataset_schema)
 
 load_from_csv = recipe_config.get("load_from_csv", False)
-
 if load_from_csv:
     check_load_from_csv(output_folder)
-    export_file_fullname = os.path.join(get_export_file_path_in_folder(), get_export_file_name())
-    export_dataset(input_dataset, output_folder)
+    csv_file_paths = export_dataset(input_dataset, output_folder, columns=params.used_columns)
 
 neo4j_server_configuration = recipe_config.get("neo4j_server_configuration")
 uri = neo4j_server_configuration.get("neo4j_uri")
@@ -57,7 +53,7 @@ with Neo4jHandle(uri, username, password) as neo4jhandle:
         neo4jhandle.delete_nodes(params.target_node_label)
 
     if load_from_csv:
-        neo4jhandle.load_relationships_from_csv(export_file_fullname, input_dataset_schema, params)
+        neo4jhandle.load_relationships_from_csv(csv_file_paths, input_dataset_schema, params)
     else:
         # TODO batch size as UI parameter ?
         df_iterator = create_dataframe_iterator(input_dataset, batch_size=100, columns=params.used_columns)

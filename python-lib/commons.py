@@ -3,6 +3,7 @@ import logging
 import dataiku
 from dataiku.customrecipe import get_plugin_config, get_input_names_for_role, get_output_names_for_role
 from dku_neo4j import Neo4jHandle
+import gzip
 
 # This file contains stuff that is common across this plugin recipes but that are not part of
 # our dku_neo4j wrapper library. In particular, dku_neo4j library does not depend on any DSS code
@@ -30,26 +31,31 @@ def get_input_output():
     return (input_dataset, output_folder)
 
 
-def get_export_file_name():
-    (input_dataset, output_folder) = get_input_output()
-    # project hierarchy already exist in the folder
-    return "dss_neo4j_export_{}.csv".format(input_dataset.short_name)
+def export_dataset(dataset, folder, columns=None, file_size=1000000):
+    """Export the input dataset as multiple compressed csv files into the output folder.
 
+    Args:
+        dataset (dataiku.Dataset): Input dataset
+        folder (dataiku.Folder): Output folder stored in a SCP/SFTP connection to the Neo4j server import directory
+        columns (list, optional): List of columns that are exported. Defaults to None.
+        file_size (int, optional): Number of rows in each exported csv file.
 
-def get_export_file_path_in_folder():
-    (input_dataset, output_folder) = get_input_output()
-    return os.path.join(output_folder.project_key, output_folder.short_name)
+    Returns:
+        List of CSV file paths within the import directory of Neo4j
+    """
+    csv_file_paths = []
+    for i, df in enumerate(dataset.iter_dataframes(chunksize=file_size, columns=columns, parse_dates=False)):
+        path_in_folder = f"dss_neo4j_export_{dataset.short_name}/{dataset.short_name}_{i+1:03}.csv.gz"
+        string_buf = df.to_csv(sep=",", na_rep="", header=False, index=False)
+        with folder.get_writer(path=path_in_folder) as writer:
+            with gzip.GzipFile(fileobj=writer, mode="wb") as fgzip:
+                logging.info(f"Exporting file to: {path_in_folder}")
+                fgzip.write(string_buf.encode())
 
+        full_import_path = os.path.join(folder.project_key, folder.short_name, path_in_folder)
+        csv_file_paths.append(full_import_path)
 
-def export_dataset(dataset, output_folder, format="tsv-excel-noheader"):
-    if not isinstance(output_folder, dataiku.Folder):
-        raise ValueError("Invalid type for output_folder: {}, must be dataiku.Folder".format(type(output_folder)))
-
-    export_file_name = get_export_file_name()
-    logging.info("Exporting to {}".format(export_file_name))
-
-    with dataset.raw_formatted_data(format="tsv-excel-noheader") as i:
-        output_folder.upload_stream(export_file_name, i)
+    return csv_file_paths
 
 
 def create_dataframe_iterator(dataset, batch_size, columns=None):

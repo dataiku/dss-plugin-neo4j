@@ -64,19 +64,23 @@ class Neo4jHandle(object):
         logging.info("Neo4j plugin - Delete relationships: {query}")
         self.run(query, log_results=True)
 
-    def load_nodes_from_csv(self, csv_file_path, columns_list, params):
-        definition = self._schema(columns_list)
+    def load_nodes_from_csv(self, csv_file_paths, columns_list, params):
+        definition = self._schema(params.used_columns)
         node_primary_key = self._primary_key(columns_list, params.node_lookup_key, params.node_id_column)
         properties = self._properties(columns_list, params.node_properties, "n", params.property_names_map)
-        query = f"""
+        for i, csv_file_path in enumerate(csv_file_paths):
+            query = f"""
 USING PERIODIC COMMIT
-LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR '\t'
+LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR ','
 WITH {definition}
 MERGE (n:`{params.nodes_label}` {node_primary_key})
 {properties}
 """
-        logging.info(f"Neo4j plugin - Importing nodes into Neo4j: {query}")
-        self.run(query, log_results=True)
+            if i == 0:
+                logging.info(f"Neo4j plugin - Importing nodes into Neo4j: {query}")
+            else:
+                logging.info(f"Neo4j plugin - Same query using file: {csv_file_path}")
+            self.run(query, log_results=True)
 
     def insert_nodes_by_batch(self, df_iterator, columns_list, params):
         node_primary_key = self._primary_key(columns_list, params.node_lookup_key, params.node_id_column, unwind=True)
@@ -104,8 +108,8 @@ MERGE (n:`{params.nodes_label}` {node_primary_key})
         logging.info(f"Neo4j plugin - Creating uniqueness constraint on {label}.{property_key}")
         self.run(query, log_results=True)
 
-    def load_relationships_from_csv(self, csv_file_path, columns_list, params):
-        definition = self._schema(columns_list)
+    def load_relationships_from_csv(self, csv_file_paths, columns_list, params):
+        definition = self._schema(params.used_columns)
         source_node_primary_key = self._primary_key(
             columns_list, params.source_node_lookup_key, params.source_node_id_column
         )
@@ -135,9 +139,10 @@ MERGE (n:`{params.nodes_label}` {node_primary_key})
             params.property_names_map,
             incremented_property=edge_incremented_property,
         )
-        query = f"""
+        for i, csv_file_path in enumerate(csv_file_paths):
+            query = f"""
 USING PERIODIC COMMIT
-LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR '\t'
+LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR ','
 WITH {definition}
 MERGE (src:`{params.source_node_label}` {source_node_primary_key})
 {source_node_properties}
@@ -146,8 +151,11 @@ MERGE (tgt:`{params.target_node_label}` {target_node_primary_key})
 MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
 {relationship_properties}
 """
-        logging.info(f"Neo4j plugin - Import relationships and nodes into Neo4j: {query}")
-        self.run(query, log_results=True)
+            if i == 0:
+                logging.info(f"Neo4j plugin - Importing relationships and nodes into Neo4j: {query}")
+            else:
+                logging.info(f"Neo4j plugin - Same query using file: {csv_file_path}")
+            self.run(query, log_results=True)
 
     def insert_relationships_by_batch(self, df_iterator, columns_list, params):
         node_incremented_property = "count" if params.node_count_property else None
@@ -205,7 +213,7 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
         return definition
 
     def _schema(self, columns_list):
-        return ", ".join(["line[{}] AS `{}`".format(i, c["name"]) for i, c in enumerate(columns_list)])
+        return ", ".join(["line[{}] AS `{}`".format(i, c) for i, c in enumerate(columns_list)])
 
     def _properties(
         self, all_columns_list, properties_list, identifier, property_names_map, incremented_property=None, unwind=False
@@ -230,7 +238,6 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
         return "\n".join(properties_strings)
 
     def _primary_key(self, all_columns_list, node_lookup_key, node_id_column, unwind=False):
-        # {{`{params.node_lookup_key}`: {self.ROWS}.`{params.node_id_column}`}}
         node_id_column_type = next((c["type"] for c in all_columns_list if c["name"] == node_id_column), None)
         typed_value = self._cast_property_type(node_id_column, node_id_column_type, unwind)
         return f"{{`{node_lookup_key}`: {typed_value}}}"
