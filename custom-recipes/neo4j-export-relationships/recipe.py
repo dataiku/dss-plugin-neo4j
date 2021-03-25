@@ -29,6 +29,8 @@ params = RelationshipsExportParams(
     recipe_config.get("property_names_mapping"),
     recipe_config.get("property_names_map"),
     recipe_config.get("clear_before_run", False),
+    recipe_config.get("node_count_property", False),
+    recipe_config.get("edge_weight_property", False),
 )
 
 params.check(input_dataset_schema)

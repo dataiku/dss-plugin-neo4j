@@ -150,6 +150,20 @@
             "type": "BOOLEAN",
             "description": "Faster for big dataset but requires output folder to be in a SCP/SFTP connection to Neo4j import directory",
             "defaultValue": false
+        },
+        {
+            "name": "node_count_property",
+            "label": "Node count",
+            "type": "BOOLEAN",
+            "description": "When a node is updated, its 'count' property is incremented. Careful as it makes transactions not non-idempotent.",
+            "defaultValue": false
+        },
+        {
+            "name": "edge_weight_property",
+            "label": "Relationship weight",
+            "type": "BOOLEAN",
+            "description": "When a relationship is updated, its 'weight' property is incremented. Careful as it makes transactions not non-idempotent.",
+            "defaultValue": false
         }
     ]
 }

@@ -112,23 +112,28 @@ MERGE (n:`{params.nodes_label}` {node_primary_key})
         target_node_primary_key = self._primary_key(
             columns_list, params.target_node_lookup_key, params.target_node_id_column
         )
+        node_incremented_property = "count" if params.node_count_property else None
+        edge_incremented_property = "weight" if params.edge_weight_property else None
         source_node_properties = self._properties(
             columns_list,
             params.source_node_properties,
             "src",
             params.property_names_map,
+            incremented_property=node_incremented_property,
         )
         target_node_properties = self._properties(
             columns_list,
             params.target_node_properties,
             "tgt",
             params.property_names_map,
+            incremented_property=node_incremented_property,
         )
         relationship_properties = self._properties(
             columns_list,
             params.relationship_properties,
             "rel",
             params.property_names_map,
+            incremented_property=edge_incremented_property,
         )
         query = f"""
 USING PERIODIC COMMIT
@@ -136,21 +141,17 @@ LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR '\t'
 WITH {definition}
 MERGE (src:`{params.source_node_label}` {source_node_primary_key})
 {source_node_properties}
-ON CREATE SET src.count = 1
-ON MATCH SET src.count = src.count + 1
 MERGE (tgt:`{params.target_node_label}` {target_node_primary_key})
 {target_node_properties}
-ON CREATE SET tgt.count = 1
-ON MATCH SET tgt.count = tgt.count + 1
 MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
 {relationship_properties}
-ON CREATE SET rel.weight = 1
-ON MATCH SET rel.weight = rel.weight + 1
 """
         logging.info(f"Neo4j plugin - Import relationships and nodes into Neo4j: {query}")
         self.run(query, log_results=True)
 
     def insert_relationships_by_batch(self, df_iterator, columns_list, params):
+        node_incremented_property = "count" if params.node_count_property else None
+        edge_incremented_property = "weight" if params.edge_weight_property else None
         source_node_primary_key = self._primary_key(
             columns_list, params.source_node_lookup_key, params.source_node_id_column, unwind=True
         )
@@ -158,13 +159,28 @@ ON MATCH SET rel.weight = rel.weight + 1
             columns_list, params.target_node_lookup_key, params.target_node_id_column, unwind=True
         )
         source_node_properties = self._properties(
-            columns_list, params.source_node_properties, "src", params.property_names_map, unwind=True
+            columns_list,
+            params.source_node_properties,
+            "src",
+            params.property_names_map,
+            incremented_property=node_incremented_property,
+            unwind=True,
         )
         target_node_properties = self._properties(
-            columns_list, params.target_node_properties, "tgt", params.property_names_map, unwind=True
+            columns_list,
+            params.target_node_properties,
+            "tgt",
+            params.property_names_map,
+            incremented_property=node_incremented_property,
+            unwind=True,
         )
         relationship_properties = self._properties(
-            columns_list, params.relationship_properties, "rel", params.property_names_map, unwind=True
+            columns_list,
+            params.relationship_properties,
+            "rel",
+            params.property_names_map,
+            incremented_property=edge_incremented_property,
+            unwind=True,
         )
         query = f"""
 WITH ${self.DATA} AS dataset
@@ -191,7 +207,9 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
     def _schema(self, columns_list):
         return ", ".join(["line[{}] AS `{}`".format(i, c["name"]) for i, c in enumerate(columns_list)])
 
-    def _properties(self, all_columns_list, properties_list, identifier, property_names_map, unwind=False):
+    def _properties(
+        self, all_columns_list, properties_list, identifier, property_names_map, incremented_property=None, unwind=False
+    ):
         type_per_column = {}
         for c in all_columns_list:
             type_per_column[c["name"]] = c["type"]
@@ -203,6 +221,12 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
                 neo4j_property_name = colname
             propstr = self._property(colname, neo4j_property_name, type_per_column[colname], identifier, unwind=unwind)
             properties_strings.append(propstr)
+        if incremented_property:
+            incremented_property_statement = f"ON CREATE SET {identifier}.{incremented_property} = 1"
+            incremented_property_statement += (
+                f"\nON MATCH SET {identifier}.{incremented_property} = {identifier}.{incremented_property} + 1"
+            )
+            properties_strings.append(incremented_property_statement)
         return "\n".join(properties_strings)
 
     def _primary_key(self, all_columns_list, node_lookup_key, node_id_column, unwind=False):
@@ -245,6 +269,7 @@ class NodesExportParams(object):
         property_names_mapping,
         property_names_map,
         clear_before_run=False,
+        node_count_property=False,
         columns_list=None,
     ):
         self.nodes_label = nodes_label
@@ -253,6 +278,7 @@ class NodesExportParams(object):
         self.node_properties = node_properties or []
         self.property_names_map = property_names_map or {} if property_names_mapping else {}
         self.clear_before_run = clear_before_run
+        self.node_count_property = node_count_property
 
         if properties_mode == "SELECT_COLUMNS":
             if node_id_column in node_properties:
@@ -294,6 +320,8 @@ class RelationshipsExportParams(object):
         property_names_mapping,
         property_names_map,
         clear_before_run=False,
+        node_count_property=False,
+        edge_weight_property=False,
     ):
 
         self.source_node_label = source_node_label
@@ -306,6 +334,8 @@ class RelationshipsExportParams(object):
         self.relationship_properties = relationship_properties
         self.property_names_map = property_names_map or {} if property_names_mapping else {}
         self.clear_before_run = clear_before_run
+        self.node_count_property = node_count_property
+        self.edge_weight_property = edge_weight_property
 
         if source_node_id_column in source_node_properties:
             self.source_node_properties.remove(source_node_id_column)
