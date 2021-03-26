@@ -286,7 +286,6 @@ class NodesExportParams(object):
         property_names_mapping,
         property_names_map,
         clear_before_run=False,
-        node_count_property=False,
         columns_list=None,
     ):
         self.nodes_label = nodes_label
@@ -295,7 +294,6 @@ class NodesExportParams(object):
         self.node_properties = node_properties or []
         self.property_names_map = property_names_map or {} if property_names_mapping else {}
         self.clear_before_run = clear_before_run
-        self.node_count_property = node_count_property
 
         if properties_mode == "SELECT_COLUMNS":
             if node_id_column in node_properties:
