@@ -13,7 +13,10 @@ class Neo4jHandle(object):
         self.password = password
 
     def __enter__(self):
-        self.driver = GraphDatabase.driver(self.uri, auth=(self.username, self.password))
+        try:
+            self.driver = GraphDatabase.driver(self.uri, auth=(self.username, self.password))
+        except Exception as e:
+            raise Exception(f"Failed to connect to the Neo4j server. Please check your preset credentials and URI.")
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
