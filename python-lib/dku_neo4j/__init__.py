@@ -52,6 +52,7 @@ class Neo4jHandle(object):
         return results
 
     def delete_nodes(self, nodes_label):
+        # TODO method to delete by batch (or maybe not because deleting a too big dataset might be an error from the user)
         query = f"""
           MATCH (n:`{nodes_label}`)
           DETACH DELETE n
