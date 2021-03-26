@@ -1,5 +1,6 @@
 import logging
 import pandas as pd
+import neo4j
 from neo4j import GraphDatabase
 from dataiku.runnables import Runnable
 
@@ -23,19 +24,22 @@ class MyRunnable(Runnable):
         password = self.neo4j_server_configuration.get("neo4j_password")
 
         all_results_counters = []
-        with GraphDatabase.driver(uri, auth=(username, password)) as driver:
-            with driver.session() as session:
-                with session.begin_transaction() as tx:
-                    for query in queries:
-                        try:
-                            results = tx.run(query)
-                        except Exception as e:
-                            raise ValueError(f"Query '{query}' failed with error: {e}")
-                        results_counters = results.consume().counters.__dict__
-                        results_counters["query"] = query
-                        all_results_counters.append(results_counters)
-                    tx.commit()
-                    logging.info("Neo4j plugin macro - All queries were commited")
+        try:
+            with GraphDatabase.driver(uri, auth=(username, password)) as driver:
+                with driver.session() as session:
+                    with session.begin_transaction() as tx:
+                        for query in queries:
+                            try:
+                                results = tx.run(query)
+                            except Exception as e:
+                                raise ValueError(f"Query '{query}' failed with error: {e}")
+                            results_counters = results.consume().counters.__dict__
+                            results_counters["query"] = query
+                            all_results_counters.append(results_counters)
+                        tx.commit()
+                        logging.info("Neo4j plugin macro - All queries were commited")
+        except neo4j.exceptions.ConfigurationError as neo4j_error:
+            raise Exception(f"Failed to connect to the Neo4j server. Please check your preset credentials and URI.")
 
         df = pd.DataFrame(all_results_counters)
         temp = df["query"]
