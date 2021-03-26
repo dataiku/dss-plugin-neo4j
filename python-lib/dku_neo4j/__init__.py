@@ -95,9 +95,12 @@ MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
 {properties}
 """
         logging.info(f"Neo4j plugin - Inserting nodes into Neo4j: {query}")
+        rows_processed = 0
         for df in df_iterator:
+            rows_processed += len(df.index)
             data = self._get_cleaned_data(df, mandatory_columns=[params.node_id_column])
             self.run(query, data=data, log_results=True)
+            logging.info(f"Neo4j plugin - Processed rows: {rows_processed}")
 
     def add_unique_constraint_on_relationship_nodes(self, params):
         self._add_unique_constraint_if_not_exist(params.source_node_label, params.source_node_lookup_key)
@@ -200,11 +203,14 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
 {relationship_properties}
 """
         logging.info(f"Neo4j plugin - Inserting nodes into Neo4j: {query}")
+        rows_processed = 0
         for df in df_iterator:
+            rows_processed += len(df.index)
             data = self._get_cleaned_data(
                 df, mandatory_columns=[params.source_node_id_column, params.target_node_id_column]
             )
             self.run(query, data=data, log_results=True)
+            logging.info(f"Neo4j plugin - Processed rows: {rows_processed}")
 
     def _build_nodes_definition(self, nodes_label, columns_list):
         definition = ":{}".format(nodes_label)
