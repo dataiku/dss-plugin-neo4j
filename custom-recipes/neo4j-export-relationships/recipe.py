@@ -25,6 +25,7 @@ params = RelationshipsExportParams(
     recipe_config.get("target_node_id_column"),
     recipe_config.get("target_node_properties"),
     recipe_config.get("relationships_verb"),
+    recipe_config.get("relationship_id_column"),
     recipe_config.get("relationship_properties"),
     recipe_config.get("property_names_mapping"),
     recipe_config.get("property_names_map"),

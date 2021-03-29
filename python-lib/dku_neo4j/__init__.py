@@ -123,6 +123,11 @@ MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
         target_node_primary_key_statement = self._primary_key_statement(
             columns_list, params.target_node_lookup_key, params.target_node_id_column
         )
+
+        relationship_primary_key_statement = ""
+        if params.relationship_id_column:
+            self._primary_key_statement(columns_list, params.relationship_lookup_key, params.relationship_id_column)
+
         node_incremented_property = "count" if params.node_count_property else None
         edge_incremented_property = "weight" if params.edge_weight_property else None
         source_node_properties = self._properties(
@@ -154,7 +159,7 @@ MERGE (src:`{params.source_node_label}` {source_node_primary_key_statement})
 {source_node_properties}
 MERGE (tgt:`{params.target_node_label}` {target_node_primary_key_statement})
 {target_node_properties}
-MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
+MERGE (src)-[rel:`{params.relationships_verb}` {relationship_primary_key_statement}]->(tgt)
 {relationship_properties}
 """
         logging.info(f"Neo4j plugin - Import relationships and nodes into Neo4j: {query}")
@@ -169,6 +174,15 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
         target_node_primary_key_statement = self._primary_key_statement(
             columns_list, params.target_node_lookup_key, params.target_node_id_column, unwind=True
         )
+
+        relationship_primary_key_statement = ""
+        mandatory_columns = [params.source_node_id_column, params.target_node_id_column]
+        if params.relationship_id_column:
+            relationship_primary_key_statement = self._primary_key_statement(
+                columns_list, params.relationship_lookup_key, params.relationship_id_column, unwind=True
+            )
+            mandatory_columns.append(params.relationship_id_column)
+
         source_node_properties = self._properties(
             columns_list,
             params.source_node_properties,
@@ -200,16 +214,14 @@ MERGE (src:`{params.source_node_label}` {source_node_primary_key_statement})
 {source_node_properties}
 MERGE (tgt:`{params.target_node_label}` {target_node_primary_key_statement})
 {target_node_properties}
-MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
+MERGE (src)-[rel:`{params.relationships_verb}` {relationship_primary_key_statement}]->(tgt)
 {relationship_properties}
 """
         logging.info(f"Neo4j plugin - Inserting nodes into Neo4j: {query}")
         rows_processed = 0
         for df in df_iterator:
             rows_processed += len(df.index)
-            data = self._get_cleaned_data(
-                df, mandatory_columns=[params.source_node_id_column, params.target_node_id_column]
-            )
+            data = self._get_cleaned_data(df, mandatory_columns=mandatory_columns)
             self.run(query, data=data, log_results=True)
             logging.info(f"Neo4j plugin - Processed rows: {rows_processed}")
 
@@ -245,11 +257,11 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
             properties_strings.append(incremented_property_statement)
         return "\n".join(properties_strings)
 
-    def _primary_key_statement(self, all_columns_list, node_lookup_key, node_id_column, unwind=False):
-        """Create a node merge statement in the form of '{node_lookup_key: node_id_column}'"""
-        node_id_column_type = next((c["type"] for c in all_columns_list if c["name"] == node_id_column), None)
-        typed_value = self._cast_property_type(node_id_column, node_id_column_type, unwind)
-        return f"{{`{node_lookup_key}`: {typed_value}}}"
+    def _primary_key_statement(self, all_columns_list, lookup_key, id_column, unwind=False):
+        """Create a merge statement in the form of '{lookup_key: id_column}'"""
+        id_column_type = next((c["type"] for c in all_columns_list if c["name"] == id_column), None)
+        typed_value = self._cast_property_type(id_column, id_column_type, unwind)
+        return f"{{`{lookup_key}`: {typed_value}}}"
 
     def _property(self, colname, prop, coltype, identifier, unwind=False):
         typedValue = self._cast_property_type(colname, coltype, unwind)
@@ -341,6 +353,7 @@ class RelationshipsExportParams(object):
         target_node_id_column,
         target_node_properties,
         relationships_verb,
+        relationship_id_column,
         relationship_properties,
         property_names_mapping,
         property_names_map,
@@ -356,6 +369,7 @@ class RelationshipsExportParams(object):
         self.target_node_id_column = target_node_id_column
         self.target_node_properties = target_node_properties or []
         self.relationships_verb = relationships_verb
+        self.relationship_id_column = relationship_id_column
         self.relationship_properties = relationship_properties
         self.property_names_map = property_names_map or {} if property_names_mapping else {}
         self.clear_before_run = clear_before_run
@@ -376,6 +390,13 @@ class RelationshipsExportParams(object):
         else:
             self.target_node_lookup_key = target_node_id_column
 
+        if relationship_id_column in relationship_properties:
+            self.relationship_properties.remove(relationship_id_column)
+        if relationship_id_column in property_names_map:
+            self.relationship_lookup_key = property_names_map[relationship_id_column]
+        else:
+            self.relationship_lookup_key = relationship_id_column
+
         self.used_columns = list(
             set(
                 [self.source_node_id_column, self.target_node_id_column]
@@ -384,6 +405,8 @@ class RelationshipsExportParams(object):
                 + self.relationship_properties
             )
         )
+        if self.relationship_id_column:
+            self.used_columns.append(self.relationship_id_column)
 
     def check(self, input_dataset_schema):
         if self.source_node_label is None or self.source_node_label == "":
@@ -404,6 +427,10 @@ class RelationshipsExportParams(object):
         if self.target_node_id_column not in existing_colnames:
             raise ValueError(
                 "Target nodes primary key. Column does not exist in input dataset: " + str(self.target_node_id_column)
+            )
+        if self.relationship_id_column and self.relationship_id_column not in existing_colnames:
+            raise ValueError(
+                "Relationship primary key. Column does not exist in input dataset: " + str(self.relationship_id_column)
             )
         for colname in self.source_node_properties:
             if colname and colname not in existing_colnames:
