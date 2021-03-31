@@ -52,7 +52,7 @@ def export_dataset(dataset, output_folder, format="tsv-excel-noheader"):
         output_folder.upload_stream(export_file_name, i)
 
 
-def create_dataframe_iterator(dataset, batch_size, columns=None):
+def create_dataframe_iterator(dataset, batch_size=10000, columns=None):
     for df in dataset.iter_dataframes(chunksize=batch_size, columns=columns, parse_dates=False):
         yield df
 
