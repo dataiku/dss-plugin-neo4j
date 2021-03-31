@@ -61,5 +61,5 @@ with Neo4jHandle(uri, username, password) as neo4jhandle:
         neo4jhandle.load_relationships_from_csv(export_file_fullname, input_dataset_schema, params)
     else:
         # TODO batch size as UI parameter ?
-        df_iterator = create_dataframe_iterator(input_dataset, batch_size=10000, columns=params.used_columns)
+        df_iterator = create_dataframe_iterator(input_dataset, columns=params.used_columns)
         neo4jhandle.insert_relationships_by_batch(df_iterator, input_dataset_schema, params)
