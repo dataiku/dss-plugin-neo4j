@@ -18,7 +18,7 @@
         {
             "name": "select_nodes_or_relationships",
             "type": "SELECT",
-            "label": "Nodes or relationships",
+            "label": "Data to retrieve",
             "description": "",
             "mandatory": true,
             "selectChoices": [
