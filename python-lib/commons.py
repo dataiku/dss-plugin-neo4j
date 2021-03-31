@@ -31,7 +31,7 @@ def get_input_output():
     return (input_dataset, output_folder)
 
 
-def export_dataset(dataset, folder, columns=None, file_size=1000000):
+def export_dataset(dataset, folder, columns=None, file_size=100000):
     """Export the input dataset as multiple compressed csv files into the output folder.
 
     Args:
