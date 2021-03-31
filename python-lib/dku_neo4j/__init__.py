@@ -126,7 +126,9 @@ MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
 
         relationship_primary_key_statement = ""
         if params.relationship_id_column:
-            self._primary_key_statement(columns_list, params.relationship_lookup_key, params.relationship_id_column)
+            relationship_primary_key_statement = self._primary_key_statement(
+                columns_list, params.relationship_lookup_key, params.relationship_id_column
+            )
 
         node_incremented_property = "count" if params.node_count_property else None
         edge_incremented_property = "weight" if params.edge_weight_property else None
@@ -428,13 +430,17 @@ class RelationshipsExportParams(object):
         check_backtick(self.relationships_verb, "Relationships type")
 
         if not self.source_node_id_column or self.source_node_id_column not in existing_colnames:
-            raise ValueError(f"Source nodes primary key '{self.source_node_id_column}' is invalid")
+            raise ValueError(
+                f"Source nodes primary key '{self.source_node_id_column}' is invalid. It is mandatory and must be a valid column"
+            )
 
         if not self.target_node_id_column or self.target_node_id_column not in existing_colnames:
-            raise ValueError(f"Target nodes primary key '{self.target_node_id_column}' is invalid")
+            raise ValueError(
+                f"Target nodes primary key '{self.target_node_id_column}' is invalid. It is mandatory and must be a valid column"
+            )
 
         if self.relationship_id_column and self.relationship_id_column not in existing_colnames:
-            raise ValueError(f"Relationship primary key '{self.relationship_id_column}' is invalid")
+            raise ValueError(f"Relationship primary key '{self.relationship_id_column}' is not a valid column")
 
         for colname in self.source_node_properties:
             if colname not in existing_colnames:
