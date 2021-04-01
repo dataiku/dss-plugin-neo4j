@@ -64,14 +64,17 @@ class Neo4jHandle(object):
         logging.info("Neo4j plugin - Delete relationships: {query}")
         self.run(query, log_results=True)
 
-    def load_nodes_from_csv(self, csv_file_paths, columns_list, params):
+    def load_nodes_from_csv(self, df_iterator, columns_list, params, file_handler):
         definition = self._schema(params.used_columns)
         node_primary_key = self._primary_key(columns_list, params.node_lookup_key, params.node_id_column)
         properties = self._properties(columns_list, params.node_properties, "n", params.property_names_map)
-        for i, csv_file_path in enumerate(csv_file_paths):
+        for i, df in enumerate(df_iterator):
+            # check_primary_keys_for_empty_values(df)
+            local_path = f"dss_neo4j_export_temp_file_{i+1:03}.csv.gz"
+            import_file_path = file_handler.write(df, local_path)
             query = f"""
 USING PERIODIC COMMIT
-LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR ','
+LOAD CSV FROM 'file:///{import_file_path}' AS line FIELDTERMINATOR ','
 WITH {definition}
 MERGE (n:`{params.nodes_label}` {node_primary_key})
 {properties}
@@ -79,8 +82,9 @@ MERGE (n:`{params.nodes_label}` {node_primary_key})
             if i == 0:
                 logging.info(f"Neo4j plugin - Importing nodes into Neo4j: {query}")
             else:
-                logging.info(f"Neo4j plugin - Same query using file: {csv_file_path}")
+                logging.info(f"Neo4j plugin - Same query using file: {import_file_path}")
             self.run(query, log_results=True)
+            file_handler.delete(local_path)
 
     def insert_nodes_by_batch(self, df_iterator, columns_list, params):
         node_primary_key = self._primary_key(columns_list, params.node_lookup_key, params.node_id_column, unwind=True)
@@ -108,7 +112,7 @@ MERGE (n:`{params.nodes_label}` {node_primary_key})
         logging.info(f"Neo4j plugin - Creating uniqueness constraint on {label}.{property_key}")
         self.run(query, log_results=True)
 
-    def load_relationships_from_csv(self, csv_file_paths, columns_list, params):
+    def load_relationships_from_csv(self, df_iterator, columns_list, params, file_handler):
         definition = self._schema(params.used_columns)
         source_node_primary_key = self._primary_key(
             columns_list, params.source_node_lookup_key, params.source_node_id_column
@@ -139,10 +143,13 @@ MERGE (n:`{params.nodes_label}` {node_primary_key})
             params.property_names_map,
             incremented_property=edge_incremented_property,
         )
-        for i, csv_file_path in enumerate(csv_file_paths):
+        for i, df in enumerate(df_iterator):
+            # check_primary_keys_for_empty_values(df)
+            local_path = f"dss_neo4j_export_temp_file_{i+1:03}.csv.gz"
+            import_file_path = file_handler.write(df, local_path)
             query = f"""
 USING PERIODIC COMMIT
-LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR ','
+LOAD CSV FROM 'file:///{import_file_path}' AS line FIELDTERMINATOR ','
 WITH {definition}
 MERGE (src:`{params.source_node_label}` {source_node_primary_key})
 {source_node_properties}
@@ -154,8 +161,9 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
             if i == 0:
                 logging.info(f"Neo4j plugin - Importing relationships and nodes into Neo4j: {query}")
             else:
-                logging.info(f"Neo4j plugin - Same query using file: {csv_file_path}")
+                logging.info(f"Neo4j plugin - Same query using file: {import_file_path}")
             self.run(query, log_results=True)
+            file_handler.delete(local_path)
 
     def insert_relationships_by_batch(self, df_iterator, columns_list, params):
         node_incremented_property = "count" if params.node_count_property else None
@@ -276,7 +284,6 @@ class NodesExportParams(object):
         property_names_mapping,
         property_names_map,
         clear_before_run=False,
-        node_count_property=False,
         columns_list=None,
     ):
         self.nodes_label = nodes_label
@@ -285,7 +292,6 @@ class NodesExportParams(object):
         self.node_properties = node_properties or []
         self.property_names_map = property_names_map or {} if property_names_mapping else {}
         self.clear_before_run = clear_before_run
-        self.node_count_property = node_count_property
 
         if properties_mode == "SELECT_COLUMNS":
             if node_id_column in node_properties:
