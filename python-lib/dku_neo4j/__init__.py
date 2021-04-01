@@ -70,10 +70,12 @@ class Neo4jHandle(object):
 
     def load_nodes_from_csv(self, df_iterator, columns_list, params, file_handler):
         definition = self._schema(params.used_columns)
-        node_primary_key = self._primary_key_statement(columns_list, params.node_lookup_key, params.node_id_column)
+        node_primary_key_statement = self._primary_key_statement(
+            columns_list, params.node_lookup_key, params.node_id_column
+        )
         properties = self._properties(columns_list, params.node_properties, "n", params.property_names_map)
         for i, df in enumerate(df_iterator):
-            # check_primary_keys_for_empty_values(df)
+            self._check_no_empty_primary_key(df, mandatory_columns=[params.node_id_column])
             local_path = f"dss_neo4j_export_temp_file_{i+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
             query = f"""
@@ -123,7 +125,7 @@ MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
 
     def load_relationships_from_csv(self, df_iterator, columns_list, params, file_handler):
         definition = self._schema(params.used_columns)
-        source_node_primary_key = self._primary_key_statement(
+        source_node_primary_key_statement = self._primary_key_statement(
             columns_list, params.source_node_lookup_key, params.source_node_id_column
         )
         target_node_primary_key_statement = self._primary_key_statement(
@@ -153,7 +155,9 @@ MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
             incremented_property=edge_incremented_property,
         )
         for i, df in enumerate(df_iterator):
-            # check_primary_keys_for_empty_values(df)
+            self._check_no_empty_primary_key(
+                df, mandatory_columns=[params.source_node_id_column, params.target_node_id_column]
+            )
             local_path = f"dss_neo4j_export_temp_file_{i+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
             query = f"""
@@ -291,10 +295,12 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
     def _get_cleaned_data(self, df, mandatory_columns=None):
         """Make sure primary key columns don't have missing values and remove missing values from other properties columns"""
         if mandatory_columns:
-            if df[mandatory_columns].isnull().any().any():
-                raise ValueError(f"The primary key columns {mandatory_columns} cannot have missing values.")
-        data = self._remove_nan_values_from_records(df.to_dict(orient="records"))
-        return data
+            self._check_no_empty_primary_key(df, mandatory_columns)
+        return self._remove_nan_values_from_records(df.to_dict(orient="records"))
+
+    def _check_no_empty_primary_key(self, df, mandatory_columns=None):
+        if df[mandatory_columns].isnull().any().any():
+            raise ValueError(f"The primary key columns {mandatory_columns} cannot have missing values.")
 
     def _remove_nan_values_from_records(self, data):
         return [{k: v for k, v in row.items() if not pd.isnull(v)} for row in data]
