@@ -134,35 +134,39 @@
             "visibilityCondition": "model.property_names_mapping"
         },
         {
-            "label": "Advanced parameters",
+            "label": "Extra properties",
             "type": "SEPARATOR"
-        },
-        {
-            "name": "clear_before_run",
-            "label": "Delete nodes before run",
-            "type": "BOOLEAN",
-            "description": "Nodes with selected labels (and attached relationships) will be deleted before run",
-            "defaultValue": false
-        },
-        {
-            "name": "load_from_csv",
-            "label": "Import data from CSV files",
-            "type": "BOOLEAN",
-            "description": "Faster for big dataset but requires output folder to be in a SCP/SFTP connection to Neo4j import directory",
-            "defaultValue": false
         },
         {
             "name": "node_count_property",
             "label": "Node count",
             "type": "BOOLEAN",
-            "description": "When a node is updated, its 'count' property is incremented. Careful as it makes transactions not non-idempotent.",
+            "description": "When a node is updated, its 'count' property is incremented.",
             "defaultValue": false
         },
         {
             "name": "edge_weight_property",
             "label": "Relationship weight",
             "type": "BOOLEAN",
-            "description": "When a relationship is updated, its 'weight' property is incremented. Careful as it makes transactions not non-idempotent.",
+            "description": "When a relationship is updated, its 'weight' property is incremented.",
+            "defaultValue": false
+        },
+        {
+            "label": "Export parameters",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "load_from_csv",
+            "label": "Import data from CSV files",
+            "type": "BOOLEAN",
+            "description": "Requires output folder to be in a SCP/SFTP connection to the Neo4j import directory.",
+            "defaultValue": false
+        },
+        {
+            "name": "clear_before_run",
+            "label": "Delete nodes before run",
+            "type": "BOOLEAN",
+            "description": "Nodes with selected labels (and attached relationships) will be deleted before run.",
             "defaultValue": false
         }
     ]
