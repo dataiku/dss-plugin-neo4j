@@ -54,17 +54,17 @@ class Neo4jHandle(object):
     def delete_nodes(self, nodes_label):
         # TODO method to delete by batch (or maybe not because deleting a too big dataset might be an error from the user)
         query = f"""
-          MATCH (n:`{nodes_label}`)
-          DETACH DELETE n
-        """
+MATCH (n:`{nodes_label}`)
+DETACH DELETE n
+"""
         logging.info(f"Neo4j plugin - Deleting nodes: {query}")
         self.run(query, log_results=True)
 
     def delete_relationships(self, params):
         query = f"""
-          MATCH (:`{params.source_node_label}`)-[r:`{params.relationships_verb}`]-(:`{params.target_node_label}`)
-          DELETE r
-        """
+MATCH (:`{params.source_node_label}`)-[r:`{params.relationships_verb}`]-(:`{params.target_node_label}`)
+DELETE r
+"""
         logging.info("Neo4j plugin - Delete relationships: {query}")
         self.run(query, log_results=True)
 
