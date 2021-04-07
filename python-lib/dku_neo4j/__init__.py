@@ -401,12 +401,14 @@ class RelationshipsExportParams(object):
         else:
             self.target_node_lookup_key = target_node_id_column
 
-        self.used_columns = list(
-            set(
-                [self.source_node_id_column, self.target_node_id_column]
-                + self.source_node_properties
-                + self.target_node_properties
-                + self.relationship_properties
+        self.used_columns = sorted(
+            list(
+                set(
+                    [self.source_node_id_column, self.target_node_id_column]
+                    + self.source_node_properties
+                    + self.target_node_properties
+                    + self.relationship_properties
+                )
             )
         )
 

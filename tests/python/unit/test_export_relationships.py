@@ -1,5 +1,5 @@
 from dku_neo4j import RelationshipsExportParams
-from mocking import MockNeo4jHandle
+from mocking import MockNeo4jHandle, MockImportFileHandler
 import pandas as pd
 
 # import pytest
@@ -74,16 +74,19 @@ DETACH DELETE n
 """
             )
 
-    def test_load_nodes_from_csv(self):
+    def test_load_relationships_from_csv(self):
+        file_handler = MockImportFileHandler()
+        df_iterator = self._create_dataframe_iterator()
         with MockNeo4jHandle() as neo4jhandle:
-            neo4jhandle.load_relationships_from_csv("mock_path", self.dataset_schema, self.params)
-            print(neo4jhandle.queries[0])
+            print(f"self.params.used_columns: {self.params.used_columns}")
+            neo4jhandle.load_relationships_from_csv(df_iterator, self.dataset_schema, self.params, file_handler)
+            print(f"neo4jhandle.queries[0]:\n{neo4jhandle.queries[0]}")
             assert (
                 neo4jhandle.queries[0]
                 == """
 USING PERIODIC COMMIT
-LOAD CSV FROM 'file:///mock_path' AS line FIELDTERMINATOR '	'
-WITH line[0] AS `player_name`, line[1] AS `timestamp`, line[2] AS `fee`, line[3] AS `player_age`, line[4] AS `club_name`, line[5] AS `club_country`
+LOAD CSV FROM 'file:///dss_neo4j_export_temp_file_001.csv.gz' AS line FIELDTERMINATOR ','
+WITH line[0] AS `club_country`, line[1] AS `club_name`, line[2] AS `fee`, line[3] AS `player_age`, line[4] AS `player_name`, line[5] AS `timestamp`
 MERGE (src:`Player` {`name`: `player_name`})
 
 MERGE (tgt:`Club` {`name`: `club_name`})
@@ -102,21 +105,8 @@ ON MATCH SET rel.weight = rel.weight + 1
             )
 
     def test_insert_relationships_by_batch(self):
+        df_iterator = self._create_dataframe_iterator()
         with MockNeo4jHandle() as neo4jhandle:
-            df = pd.DataFrame(
-                {
-                    "player_name": ["Zidane", "Ronaldo", "Messi", "Neymar"],
-                    "timestamp": ["2010-02-01", "2015-06-01", "2018-02-01", "2020-06-01"],
-                    "fee": [122345.5, 4352.5, 3245234, 34535],
-                    "player_age": [32, 24, 26, 18],
-                    "club_name": ["Real Madrid", "Real Madrid", "Barcelona", "PSG"],
-                    "club_country": ["Spain", "Spain", "Spain", "France"],
-                }
-            )
-            df["timestamp"] = pd.to_datetime(df["timestamp"]).dt.tz_localize(tz=None)
-
-            df_iterator = [df.iloc[:2], df.iloc[2:]]
-
             neo4jhandle.insert_relationships_by_batch(df_iterator, self.dataset_schema, self.params)
 
             assert len(neo4jhandle.queries) == len(df_iterator)
@@ -141,3 +131,17 @@ ON CREATE SET rel.weight = 1
 ON MATCH SET rel.weight = rel.weight + 1
 """
             )
+
+    def _create_dataframe_iterator(self):
+        df = pd.DataFrame(
+            {
+                "player_name": ["Zidane", "Ronaldo", "Messi", "Neymar"],
+                "timestamp": ["2010-02-01", "2015-06-01", "2018-02-01", "2020-06-01"],
+                "fee": [122345.5, 4352.5, 3245234, 34535],
+                "player_age": [32, 24, 26, 18],
+                "club_name": ["Real Madrid", "Real Madrid", "Barcelona", "PSG"],
+                "club_country": ["Spain", "Spain", "Spain", "France"],
+            }
+        )
+        df["timestamp"] = pd.to_datetime(df["timestamp"]).dt.tz_localize(tz=None)
+        return [df.iloc[:2], df.iloc[2:]]
