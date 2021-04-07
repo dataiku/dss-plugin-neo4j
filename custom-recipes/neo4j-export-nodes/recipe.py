@@ -51,5 +51,5 @@ with Neo4jHandle(uri, username, password) as neo4jhandle:
     if load_from_csv:
         neo4jhandle.load_nodes_from_csv(export_file_fullname, input_dataset_schema, params)
     else:
-        df_iterator = create_dataframe_iterator(input_dataset, batch_size=100, columns=params.used_columns)
+        df_iterator = create_dataframe_iterator(input_dataset, columns=params.used_columns)
         neo4jhandle.insert_nodes_by_batch(df_iterator, input_dataset_schema, params)

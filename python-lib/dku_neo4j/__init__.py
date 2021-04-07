@@ -52,18 +52,19 @@ class Neo4jHandle(object):
         return results
 
     def delete_nodes(self, nodes_label):
+        # TODO method to delete by batch (or maybe not because deleting a too big dataset might be an error from the user)
         query = f"""
-          MATCH (n:`{nodes_label}`)
-          DETACH DELETE n
-        """
+MATCH (n:`{nodes_label}`)
+DETACH DELETE n
+"""
         logging.info(f"Neo4j plugin - Deleting nodes: {query}")
         self.run(query, log_results=True)
 
     def delete_relationships(self, params):
         query = f"""
-          MATCH (:`{params.source_node_label}`)-[r:`{params.relationships_verb}`]-(:`{params.target_node_label}`)
-          DELETE r
-        """
+MATCH (:`{params.source_node_label}`)-[r:`{params.relationships_verb}`]-(:`{params.target_node_label}`)
+DELETE r
+"""
         logging.info("Neo4j plugin - Delete relationships: {query}")
         self.run(query, log_results=True)
 
@@ -95,9 +96,12 @@ MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
 {properties}
 """
         logging.info(f"Neo4j plugin - Inserting nodes into Neo4j: {query}")
+        rows_processed = 0
         for df in df_iterator:
+            rows_processed += len(df.index)
             data = self._get_cleaned_data(df, mandatory_columns=[params.node_id_column])
             self.run(query, data=data, log_results=True)
+            logging.info(f"Neo4j plugin - Processed rows: {rows_processed}")
 
     def add_unique_constraint_on_relationship_nodes(self, params):
         self._add_unique_constraint_if_not_exist(params.source_node_label, params.source_node_lookup_key)
@@ -200,11 +204,14 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
 {relationship_properties}
 """
         logging.info(f"Neo4j plugin - Inserting nodes into Neo4j: {query}")
+        rows_processed = 0
         for df in df_iterator:
+            rows_processed += len(df.index)
             data = self._get_cleaned_data(
                 df, mandatory_columns=[params.source_node_id_column, params.target_node_id_column]
             )
             self.run(query, data=data, log_results=True)
+            logging.info(f"Neo4j plugin - Processed rows: {rows_processed}")
 
     def _build_nodes_definition(self, nodes_label, columns_list):
         definition = ":{}".format(nodes_label)
@@ -304,24 +311,29 @@ class NodesExportParams(object):
         else:
             self.node_properties = [col["name"] for col in columns_list if col["name"] != self.node_id_column]
 
-        if node_id_column in property_names_map:
-            self.node_lookup_key = property_names_map[node_id_column]
+        if node_id_column in self.property_names_map:
+            self.node_lookup_key = self.property_names_map[node_id_column]
         else:
             self.node_lookup_key = node_id_column
 
         self.used_columns = [self.node_id_column] + self.node_properties
 
     def check(self, input_dataset_schema):
-        if self.nodes_label is None:
-            raise ValueError("nodes_label not specified")
-        if self.node_id_column is None:
-            raise ValueError("Primary key not specified")
         existing_colnames = [c["name"] for c in input_dataset_schema]
+
+        if not self.nodes_label:
+            raise ValueError("Node label is not specified.")
+        check_backtick(self.nodes_label, "Node label")
+
+        if not self.node_id_column or self.node_id_column not in existing_colnames:
+            raise ValueError(f"Primary key column '{self.node_id_column}' is invalid.")
+
         if self.properties_mode == "SELECT_COLUMNS":
             for colname in self.node_properties:
-                if colname and colname not in existing_colnames:
-                    raise ValueError("node_properties. Column does not exist in input dataset: " + str(colname))
-        # TODO sanitize label and properties name entered by user (remove `back tick`)
+                if colname not in existing_colnames:
+                    raise ValueError(f"Node properties column '{colname}' is invalid.")
+
+        check_property_names_map(self.property_names_map, self.used_columns)
 
 
 class RelationshipsExportParams(object):
@@ -357,15 +369,15 @@ class RelationshipsExportParams(object):
 
         if source_node_id_column in source_node_properties:
             self.source_node_properties.remove(source_node_id_column)
-        if source_node_id_column in property_names_map:
-            self.source_node_lookup_key = property_names_map[source_node_id_column]
+        if source_node_id_column in self.property_names_map:
+            self.source_node_lookup_key = self.property_names_map[source_node_id_column]
         else:
             self.source_node_lookup_key = source_node_id_column
 
         if target_node_id_column in target_node_properties:
             self.target_node_properties.remove(target_node_id_column)
-        if target_node_id_column in property_names_map:
-            self.target_node_lookup_key = property_names_map[target_node_id_column]
+        if target_node_id_column in self.property_names_map:
+            self.target_node_lookup_key = self.property_names_map[target_node_id_column]
         else:
             self.target_node_lookup_key = target_node_id_column
 
@@ -379,31 +391,51 @@ class RelationshipsExportParams(object):
         )
 
     def check(self, input_dataset_schema):
-        if self.source_node_label is None or self.source_node_label == "":
-            raise ValueError("Source nodes label not specified")
-        if self.target_node_label is None or self.target_node_label == "":
-            raise ValueError("Target nodes label not specified")
-        if self.source_node_id_column is None or self.source_node_id_column == "":
-            raise ValueError("Source nodes primary key not specified")
-        if self.target_node_id_column is None or self.target_node_id_column == "":
-            raise ValueError("Target nodes primary key not specified")
-        if self.relationships_verb is None or self.relationships_verb == "":
-            raise ValueError("Relationships type not specified")
         existing_colnames = [c["name"] for c in input_dataset_schema]
-        if self.source_node_id_column not in existing_colnames:
-            raise ValueError(
-                "Source nodes primary key. Column does not exist in input dataset: " + str(self.source_node_id_column)
-            )
-        if self.target_node_id_column not in existing_colnames:
-            raise ValueError(
-                "Target nodes primary key. Column does not exist in input dataset: " + str(self.target_node_id_column)
-            )
+        if not self.source_node_label:
+            raise ValueError("Source nodes label not specified")
+        check_backtick(self.source_node_label, "Source node label")
+
+        if not self.target_node_label:
+            raise ValueError("Target nodes label not specified")
+        check_backtick(self.target_node_label, "Target node label")
+
+        if not self.source_node_id_column or self.source_node_id_column not in existing_colnames:
+            raise ValueError(f"Source nodes primary key '{self.source_node_id_column}' is invalid")
+
+        if not self.target_node_id_column or self.target_node_id_column not in existing_colnames:
+            raise ValueError(f"Target nodes primary key '{self.target_node_id_column}' is invalid")
+
+        if not self.relationships_verb:
+            raise ValueError("Relationships type not specified")
+        check_backtick(self.relationships_verb, "Relationships type")
+
         for colname in self.source_node_properties:
-            if colname and colname not in existing_colnames:
-                raise ValueError("Source nodes properties. Column does not exist in input dataset: " + str(colname))
+            if colname not in existing_colnames:
+                raise ValueError(f"Source nodes property '{colname}' is invalid.")
         for colname in self.target_node_properties:
-            if colname and colname not in existing_colnames:
-                raise ValueError("Target nodes properties. Column does not exist in input dataset: " + str(colname))
+            if colname not in existing_colnames:
+                raise ValueError(f"Target nodes property '{colname}' is invalid.")
         for colname in self.relationship_properties:
-            if colname and colname not in existing_colnames:
-                raise ValueError("Relationship properties. Column does not exist in input dataset: " + str(colname))
+            if colname not in existing_colnames:
+                raise ValueError(f"Relationship property '{colname}' is invalid.")
+
+        check_property_names_map(self.property_names_map, self.used_columns)
+
+
+def check_property_names_map(property_names_map, used_columns):
+    """Check that all key -> values in the DSS column -> Neo4j name mapping are valid """
+    if property_names_map:
+        for dss_column, neo4j_property in property_names_map.items():
+            if dss_column not in used_columns:
+                raise ValueError(f"'{dss_column}' is not a valid DSS column name for changing names in Neo4j.")
+
+            if not neo4j_property:
+                raise ValueError(f"Neo4j property for DSS column '{dss_column}' is not specified.")
+            check_backtick(neo4j_property, "Neo4j property name")
+
+
+def check_backtick(value, label):
+    """Raise an error if the value contain any backtick """
+    if "`" in value:
+        raise ValueError(f"{label} '{value}' cannot contain backticks (`). Please remove any backtick.")
