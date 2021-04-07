@@ -78,7 +78,7 @@ DELETE r
 USING PERIODIC COMMIT
 LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR '\t'
 WITH {definition}
-MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
+MERGE (n:`{params.nodes_label}`{node_primary_key_statement})
 {properties}
 """
         logging.info(f"Neo4j plugin - Importing nodes into Neo4j: {query}")
@@ -92,7 +92,7 @@ MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
         query = f"""
 WITH ${self.DATA} AS dataset
 UNWIND dataset AS {self.ROWS}
-MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
+MERGE (n:`{params.nodes_label}`{node_primary_key_statement})
 {properties}
 """
         logging.info(f"Neo4j plugin - Inserting nodes into Neo4j: {query}")
@@ -157,11 +157,11 @@ MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
 USING PERIODIC COMMIT
 LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR '\t'
 WITH {definition}
-MERGE (src:`{params.source_node_label}` {source_node_primary_key_statement})
+MERGE (src:`{params.source_node_label}`{source_node_primary_key_statement})
 {source_node_properties}
-MERGE (tgt:`{params.target_node_label}` {target_node_primary_key_statement})
+MERGE (tgt:`{params.target_node_label}`{target_node_primary_key_statement})
 {target_node_properties}
-MERGE (src)-[rel:`{params.relationships_verb}` {relationship_primary_key_statement}]->(tgt)
+MERGE (src)-[rel:`{params.relationships_verb}`{relationship_primary_key_statement}]->(tgt)
 {relationship_properties}
 """
         logging.info(f"Neo4j plugin - Import relationships and nodes into Neo4j: {query}")
@@ -212,11 +212,11 @@ MERGE (src)-[rel:`{params.relationships_verb}` {relationship_primary_key_stateme
         query = f"""
 WITH ${self.DATA} AS dataset
 UNWIND dataset AS {self.ROWS}
-MERGE (src:`{params.source_node_label}` {source_node_primary_key_statement})
+MERGE (src:`{params.source_node_label}`{source_node_primary_key_statement})
 {source_node_properties}
-MERGE (tgt:`{params.target_node_label}` {target_node_primary_key_statement})
+MERGE (tgt:`{params.target_node_label}`{target_node_primary_key_statement})
 {target_node_properties}
-MERGE (src)-[rel:`{params.relationships_verb}` {relationship_primary_key_statement}]->(tgt)
+MERGE (src)-[rel:`{params.relationships_verb}`{relationship_primary_key_statement}]->(tgt)
 {relationship_properties}
 """
         logging.info(f"Neo4j plugin - Inserting nodes into Neo4j: {query}")
@@ -263,7 +263,7 @@ MERGE (src)-[rel:`{params.relationships_verb}` {relationship_primary_key_stateme
         """Create a merge statement in the form of '{lookup_key: id_column}'"""
         id_column_type = next((c["type"] for c in all_columns_list if c["name"] == id_column), None)
         typed_value = self._cast_property_type(id_column, id_column_type, unwind)
-        return f"{{`{lookup_key}`: {typed_value}}}"
+        return f" {{`{lookup_key}`: {typed_value}}}"
 
     def _property(self, colname, prop, coltype, identifier, unwind=False):
         typedValue = self._cast_property_type(colname, coltype, unwind)

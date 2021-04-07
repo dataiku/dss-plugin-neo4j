@@ -49,6 +49,7 @@ class TestRelationshipsExport:
             self.recipe_config.get("target_node_id_column"),
             self.recipe_config.get("target_node_properties"),
             self.recipe_config.get("relationships_verb"),
+            self.recipe_config.get("relationship_id_column"),
             self.recipe_config.get("relationship_properties"),
             self.recipe_config.get("property_names_mapping"),
             self.recipe_config.get("property_names_map"),
@@ -118,7 +119,7 @@ ON MATCH SET rel.weight = rel.weight + 1
             df_iterator = [df.iloc[:2], df.iloc[2:]]
 
             neo4jhandle.insert_relationships_by_batch(df_iterator, self.dataset_schema, self.params)
-
+            print(f"neo4jhandle.queries[1]: {neo4jhandle.queries[1]}")
             assert len(neo4jhandle.queries) == len(df_iterator)
             assert (
                 neo4jhandle.queries[1]
