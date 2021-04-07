@@ -104,21 +104,21 @@
             "visibilityCondition": "model.property_names_mapping"
         },
         {
-            "label": "Advanced parameters",
+            "label": "Export parameters",
             "type": "SEPARATOR"
-        },
-        {
-            "name": "clear_before_run",
-            "label": "Delete nodes before run",
-            "type": "BOOLEAN",
-            "description": "Nodes with this label will be deleted before run",
-            "defaultValue": false
         },
         {
             "name": "load_from_csv",
             "label": "Import data from CSV files",
             "type": "BOOLEAN",
             "description": "Faster for big dataset but requires output folder to be in a SCP/SFTP connection to Neo4j import directory",
+            "defaultValue": false
+        },
+        {
+            "name": "clear_before_run",
+            "label": "Delete nodes before run",
+            "type": "BOOLEAN",
+            "description": "Nodes with this label will be deleted before run",
             "defaultValue": false
         }
     ]
