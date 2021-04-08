@@ -25,19 +25,27 @@ unit-tests:
 		if [ $$PYTHON_VERSION_IS_CORRECT == "False" ]; then echo "Python version $$PYTHON_VERSION is not in acceptedPythonInterpreters"; exit 1; else echo "Python version $$PYTHON_VERSION is in acceptedPythonInterpreters"; fi; \
 	)
 	@( \
+		rm -rf ./env/; \
 		python3 -m venv env/; \
 		source env/bin/activate; \
-		pip3 install --upgrade pip; \
-		pip install --no-cache-dir -r tests/python/requirements.txt; \
+		pip install --upgrade pip;\
+		pip install --no-cache-dir -r tests/python/unit/requirements.txt; \
 		pip install --no-cache-dir -r code-env/python/spec/requirements.txt; \
 		export PYTHONPATH="$(PYTHONPATH):$(PWD)/python-lib"; \
-		pytest -o junit_family=xunit2 --junitxml=unit.xml tests/python/unit || true; \
+		pytest tests/python/unit --alluredir=tests/allure_report || ret=$$?; exit $$ret \
 	)
 	@echo "[SUCCESS] Running unit tests: Done!"
 
 integration-tests:
 	@echo "[START] Running integration tests..."
-	# TODO add integration tests
+	@( \
+		rm -rf ./env/; \
+		python3 -m venv env/; \
+		source env/bin/activate; \
+		pip3 install --upgrade pip;\
+		pip install --no-cache-dir -r tests/python/integration/requirements.txt; \
+		pytest tests/python/integration --alluredir=tests/allure_report || ret=$$?; exit $$ret \
+	)
 	@echo "[SUCCESS] Running integration tests: Done!"
 
 tests: unit-tests integration-tests
