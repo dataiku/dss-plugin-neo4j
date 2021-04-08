@@ -1,5 +1,4 @@
 from dku_neo4j import Neo4jHandle
-from commons import ImportFileHandler
 
 
 class MockNeo4jHandle(Neo4jHandle):
@@ -17,7 +16,7 @@ class MockNeo4jHandle(Neo4jHandle):
         self.queries.append(query)
 
 
-class MockImportFileHandler(ImportFileHandler):
+class MockImportFileHandler:
     def __init__(self):
         pass
 
