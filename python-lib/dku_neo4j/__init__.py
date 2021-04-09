@@ -227,22 +227,17 @@ MERGE (src)-[rel:`{params.relationships_verb}`{relationship_primary_key_statemen
             self.run(query, data=data, log_results=True)
             logging.info(f"Neo4j plugin - Processed rows: {rows_processed}")
 
-    def _build_nodes_definition(self, nodes_label, columns_list):
-        definition = ":{}".format(nodes_label)
-        definition += " {" + "\n"
-        definition += ",\n".join(["  `{}`: line[{}]".format(r["name"], i) for i, r in enumerate(columns_list)])
-        definition += "\n" + "}"
-        return definition
-
     def _schema(self, columns_list):
-        return ", ".join(["line[{}] AS `{}`".format(i, c["name"]) for i, c in enumerate(columns_list)])
+        return ", ".join(
+            ["line[{}] AS `{}`".format(index, column["name"]) for index, column in enumerate(columns_list)]
+        )
 
     def _properties(
         self, all_columns_list, properties_list, identifier, property_names_map, incremented_property=None, unwind=False
     ):
         type_per_column = {}
-        for c in all_columns_list:
-            type_per_column[c["name"]] = c["type"]
+        for column in all_columns_list:
+            type_per_column[column["name"]] = column["type"]
         properties_strings = []
         for colname in properties_list:
             if colname in property_names_map:
@@ -261,7 +256,7 @@ MERGE (src)-[rel:`{params.relationships_verb}`{relationship_primary_key_statemen
 
     def _primary_key_statement(self, all_columns_list, lookup_key, id_column, unwind=False):
         """Create a merge statement in the form of '{lookup_key: id_column}'"""
-        id_column_type = next((c["type"] for c in all_columns_list if c["name"] == id_column), None)
+        id_column_type = next((column["type"] for column in all_columns_list if column["name"] == id_column), None)
         typed_value = self._cast_property_type(id_column, id_column_type, unwind)
         return f" {{`{lookup_key}`: {typed_value}}}"
 
@@ -297,7 +292,7 @@ MERGE (src)-[rel:`{params.relationships_verb}`{relationship_primary_key_statemen
         return data
 
     def _remove_nan_values_from_records(self, data):
-        return [{k: v for k, v in row.items() if not pd.isnull(v)} for row in data]
+        return [{key: value for key, value in row.items() if not pd.isnull(value)} for row in data]
 
 
 class NodesExportParams(object):
@@ -323,7 +318,7 @@ class NodesExportParams(object):
             if node_id_column in node_properties:
                 self.node_properties.remove(node_id_column)
         else:
-            self.node_properties = [col["name"] for col in columns_list if col["name"] != self.node_id_column]
+            self.node_properties = [column["name"] for column in columns_list if column["name"] != self.node_id_column]
 
         if node_id_column in self.property_names_map:
             self.node_lookup_key = self.property_names_map[node_id_column]
@@ -332,8 +327,8 @@ class NodesExportParams(object):
 
         self.used_columns = [self.node_id_column] + self.node_properties
 
-    def check(self, input_dataset_schema):
-        existing_colnames = [c["name"] for c in input_dataset_schema]
+    def check(self, column_list):
+        existing_colnames = [column["name"] for column in column_list]
 
         if not self.nodes_label:
             raise ValueError("Node label is not specified.")
@@ -415,8 +410,8 @@ class RelationshipsExportParams(object):
         if self.relationship_id_column:
             self.used_columns.append(self.relationship_id_column)
 
-    def check(self, input_dataset_schema):
-        existing_colnames = [c["name"] for c in input_dataset_schema]
+    def check(self, column_list):
+        existing_colnames = [column["name"] for column in column_list]
         if not self.source_node_label:
             raise ValueError("Source nodes label not specified")
         check_backtick(self.source_node_label, "Source node label")
