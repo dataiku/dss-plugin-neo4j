@@ -68,21 +68,29 @@ DELETE r
         logging.info("Neo4j plugin - Delete relationships: {query}")
         self.run(query, log_results=True)
 
-    def load_nodes_from_csv(self, csv_file_path, columns_list, params):
-        definition = self._schema(columns_list)
+    def load_nodes_from_csv(self, df_iterator, columns_list, params, file_handler):
+        definition = self._schema(params.used_columns)
         node_primary_key_statement = self._primary_key_statement(
             columns_list, params.node_lookup_key, params.node_id_column
         )
         properties = self._properties(columns_list, params.node_properties, "n", params.property_names_map)
-        query = f"""
+        for index, df in enumerate(df_iterator):
+            self._check_no_empty_primary_key(df, mandatory_columns=[params.node_id_column])
+            local_path = f"dss_neo4j_export_temp_file_{index+1:03}.csv.gz"
+            import_file_path = file_handler.write(df, local_path)
+            query = f"""
 USING PERIODIC COMMIT
-LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR '\t'
+LOAD CSV FROM 'file:///{import_file_path}' AS line FIELDTERMINATOR ','
 WITH {definition}
 MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
 {properties}
 """
-        logging.info(f"Neo4j plugin - Importing nodes into Neo4j: {query}")
-        self.run(query, log_results=True)
+            if index == 0:
+                logging.info(f"Neo4j plugin - Importing nodes into Neo4j: {query}")
+            else:
+                logging.info(f"Neo4j plugin - Same query using file: {import_file_path}")
+            self.run(query, log_results=True)
+            file_handler.delete(local_path)
 
     def insert_nodes_by_batch(self, df_iterator, columns_list, params):
         node_primary_key_statement = self._primary_key_statement(
@@ -115,8 +123,8 @@ MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
         logging.info(f"Neo4j plugin - Creating uniqueness constraint on {label}.{property_key}")
         self.run(query, log_results=True)
 
-    def load_relationships_from_csv(self, csv_file_path, columns_list, params):
-        definition = self._schema(columns_list)
+    def load_relationships_from_csv(self, df_iterator, columns_list, params, file_handler):
+        definition = self._schema(params.used_columns)
         source_node_primary_key_statement = self._primary_key_statement(
             columns_list, params.source_node_lookup_key, params.source_node_id_column
         )
@@ -146,9 +154,15 @@ MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
             params.property_names_map,
             incremented_property=edge_incremented_property,
         )
-        query = f"""
+        for i, df in enumerate(df_iterator):
+            self._check_no_empty_primary_key(
+                df, mandatory_columns=[params.source_node_id_column, params.target_node_id_column]
+            )
+            local_path = f"dss_neo4j_export_temp_file_{i+1:03}.csv.gz"
+            import_file_path = file_handler.write(df, local_path)
+            query = f"""
 USING PERIODIC COMMIT
-LOAD CSV FROM 'file:///{csv_file_path}' AS line FIELDTERMINATOR '\t'
+LOAD CSV FROM 'file:///{import_file_path}' AS line FIELDTERMINATOR ','
 WITH {definition}
 MERGE (src:`{params.source_node_label}` {source_node_primary_key_statement})
 {source_node_properties}
@@ -157,8 +171,12 @@ MERGE (tgt:`{params.target_node_label}` {target_node_primary_key_statement})
 MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
 {relationship_properties}
 """
-        logging.info(f"Neo4j plugin - Import relationships and nodes into Neo4j: {query}")
-        self.run(query, log_results=True)
+            if i == 0:
+                logging.info(f"Neo4j plugin - Importing relationships and nodes into Neo4j: {query}")
+            else:
+                logging.info(f"Neo4j plugin - Same query using file: {import_file_path}")
+            self.run(query, log_results=True)
+            file_handler.delete(local_path)
 
     def insert_relationships_by_batch(self, df_iterator, columns_list, params):
         node_incremented_property = "count" if params.node_count_property else None
@@ -221,7 +239,7 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
         return definition
 
     def _schema(self, columns_list):
-        return ", ".join(["line[{}] AS `{}`".format(i, c["name"]) for i, c in enumerate(columns_list)])
+        return ", ".join(["line[{}] AS `{}`".format(i, c) for i, c in enumerate(columns_list)])
 
     def _properties(
         self, all_columns_list, properties_list, identifier, property_names_map, incremented_property=None, unwind=False
@@ -277,10 +295,12 @@ MERGE (src)-[rel:`{params.relationships_verb}`]->(tgt)
     def _get_cleaned_data(self, df, mandatory_columns=None):
         """Make sure primary key columns don't have missing values and remove missing values from other properties columns"""
         if mandatory_columns:
-            if df[mandatory_columns].isnull().any().any():
-                raise ValueError(f"The primary key columns {mandatory_columns} cannot have missing values.")
-        data = self._remove_nan_values_from_records(df.to_dict(orient="records"))
-        return data
+            self._check_no_empty_primary_key(df, mandatory_columns)
+        return self._remove_nan_values_from_records(df.to_dict(orient="records"))
+
+    def _check_no_empty_primary_key(self, df, mandatory_columns=None):
+        if df[mandatory_columns].isnull().any().any():
+            raise ValueError(f"The primary key columns {mandatory_columns} cannot have missing values.")
 
     def _remove_nan_values_from_records(self, data):
         return [{k: v for k, v in row.items() if not pd.isnull(v)} for row in data]
@@ -381,12 +401,14 @@ class RelationshipsExportParams(object):
         else:
             self.target_node_lookup_key = target_node_id_column
 
-        self.used_columns = list(
-            set(
-                [self.source_node_id_column, self.target_node_id_column]
-                + self.source_node_properties
-                + self.target_node_properties
-                + self.relationship_properties
+        self.used_columns = sorted(
+            list(
+                set(
+                    [self.source_node_id_column, self.target_node_id_column]
+                    + self.source_node_properties
+                    + self.target_node_properties
+                    + self.relationship_properties
+                )
             )
         )
 
