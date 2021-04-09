@@ -1,4 +1,4 @@
-from dku_neo4j import NodesExportParams
+from dku_neo4j.neo4j_handle import NodesExportParams
 from mocking import MockNeo4jHandle, MockImportFileHandler
 import pandas as pd
 

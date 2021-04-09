@@ -1,4 +1,4 @@
-from dku_neo4j import Neo4jHandle
+from dku_neo4j.neo4j_handle import Neo4jHandle
 
 
 class MockNeo4jHandle(Neo4jHandle):

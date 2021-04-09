@@ -2,7 +2,7 @@ import os
 import logging
 import dataiku
 from dataiku.customrecipe import get_plugin_config, get_input_names_for_role, get_output_names_for_role
-from dku_neo4j import Neo4jHandle
+from dku_neo4j.neo4j_handle import Neo4jHandle
 import gzip
 
 # This file contains stuff that is common across this plugin recipes but that are not part of

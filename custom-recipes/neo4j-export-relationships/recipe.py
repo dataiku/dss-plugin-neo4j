@@ -2,7 +2,7 @@ from json import load
 import os
 from dataiku.customrecipe import get_recipe_config
 from commons import get_input_output, create_dataframe_iterator, check_load_from_csv, ImportFileHandler
-from dku_neo4j import RelationshipsExportParams, Neo4jHandle
+from dku_neo4j.neo4j_handle import RelationshipsExportParams, Neo4jHandle
 
 # --- Setup recipe
 recipe_config = get_recipe_config()
