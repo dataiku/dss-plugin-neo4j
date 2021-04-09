@@ -247,7 +247,7 @@ MERGE (src)-[rel:`{params.relationships_verb}`{relationship_primary_key_statemen
 
     def _schema(self, columns_list):
         return ", ".join(
-            ["line[{}] AS `{}`".format(index, column["name"]) for index, column in enumerate(columns_list)]
+            [f"line[{index}] AS `{column}`" for index, column in enumerate(columns_list)]
         )
 
     def _properties(
