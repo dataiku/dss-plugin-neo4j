@@ -74,9 +74,9 @@ DELETE r
             columns_list, params.node_lookup_key, params.node_id_column
         )
         properties = self._properties(columns_list, params.node_properties, "n", params.property_names_map)
-        for i, df in enumerate(df_iterator):
+        for index, df in enumerate(df_iterator):
             self._check_no_empty_primary_key(df, mandatory_columns=[params.node_id_column])
-            local_path = f"dss_neo4j_export_temp_file_{i+1:03}.csv.gz"
+            local_path = f"dss_neo4j_export_temp_file_{index+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
             query = f"""
 USING PERIODIC COMMIT
@@ -85,7 +85,7 @@ WITH {definition}
 MERGE (n:`{params.nodes_label}` {node_primary_key_statement})
 {properties}
 """
-            if i == 0:
+            if index == 0:
                 logging.info(f"Neo4j plugin - Importing nodes into Neo4j: {query}")
             else:
                 logging.info(f"Neo4j plugin - Same query using file: {import_file_path}")
