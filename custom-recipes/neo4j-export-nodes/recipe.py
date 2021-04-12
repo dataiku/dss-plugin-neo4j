@@ -1,14 +1,7 @@
 import os
 from dataiku.customrecipe import get_recipe_config
-from commons import (
-    get_input_output,
-    get_export_file_path_in_folder,
-    get_export_file_name,
-    export_dataset,
-    create_dataframe_iterator,
-    check_load_from_csv,
-)
-from dku_neo4j import NodesExportParams, Neo4jHandle
+from commons import get_input_output, create_dataframe_iterator, check_load_from_csv, ImportFileHandler
+from dku_neo4j.neo4j_handle import NodesExportParams, Neo4jHandle
 
 # --- Setup recipe
 recipe_config = get_recipe_config()
@@ -32,8 +25,7 @@ params.check(input_dataset_schema)
 load_from_csv = recipe_config.get("load_from_csv", False)
 if load_from_csv:
     check_load_from_csv(output_folder)
-    export_file_fullname = os.path.join(get_export_file_path_in_folder(), get_export_file_name())
-    export_dataset(input_dataset, output_folder)
+    file_handler = ImportFileHandler(output_folder)
 
 neo4j_server_configuration = recipe_config.get("neo4j_server_configuration")
 uri = neo4j_server_configuration.get("neo4j_uri")
@@ -48,8 +40,10 @@ with Neo4jHandle(uri, username, password) as neo4jhandle:
     if params.clear_before_run:
         neo4jhandle.delete_nodes(params.nodes_label)
 
+    batch_size = 100000 if load_from_csv else 10000
+    df_iterator = create_dataframe_iterator(input_dataset, batch_size=batch_size, columns=params.used_columns)
+
     if load_from_csv:
-        neo4jhandle.load_nodes_from_csv(export_file_fullname, input_dataset_schema, params)
+        neo4jhandle.load_nodes_from_csv(df_iterator, input_dataset_schema, params, file_handler)
     else:
-        df_iterator = create_dataframe_iterator(input_dataset, columns=params.used_columns)
         neo4jhandle.insert_nodes_by_batch(df_iterator, input_dataset_schema, params)

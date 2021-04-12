@@ -1,4 +1,4 @@
-from dku_neo4j import Neo4jHandle
+from dku_neo4j.neo4j_handle import Neo4jHandle
 
 
 class MockNeo4jHandle(Neo4jHandle):
@@ -14,3 +14,14 @@ class MockNeo4jHandle(Neo4jHandle):
 
     def run(self, query, data=None, log_results=False):
         self.queries.append(query)
+
+
+class MockImportFileHandler:
+    def __init__(self):
+        pass
+
+    def write(self, df, path):
+        return path
+
+    def delete(self, path):
+        pass

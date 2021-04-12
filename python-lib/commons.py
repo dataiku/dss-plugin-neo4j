@@ -2,7 +2,8 @@ import os
 import logging
 import dataiku
 from dataiku.customrecipe import get_plugin_config, get_input_names_for_role, get_output_names_for_role
-from dku_neo4j import Neo4jHandle
+from dku_neo4j.neo4j_handle import Neo4jHandle
+import gzip
 
 # This file contains stuff that is common across this plugin recipes but that are not part of
 # our dku_neo4j wrapper library. In particular, dku_neo4j library does not depend on any DSS code
@@ -30,26 +31,25 @@ def get_input_output():
     return (input_dataset, output_folder)
 
 
-def get_export_file_name():
-    (input_dataset, output_folder) = get_input_output()
-    # project hierarchy already exist in the folder
-    return "dss_neo4j_export_{}.csv".format(input_dataset.short_name)
+class ImportFileHandler:
+    """Class to write and delete dataframe as csv file into a dataiku.Folder """
 
+    def __init__(self, folder):
+        self.folder = folder
 
-def get_export_file_path_in_folder():
-    (input_dataset, output_folder) = get_input_output()
-    return os.path.join(output_folder.project_key, output_folder.short_name)
+    def write(self, df, path):
+        """Write df to path in Folder as a compressed csv. Returns the complete path of the import directory"""
+        string_buf = df.to_csv(sep=",", na_rep="", header=False, index=False)
+        with self.folder.get_writer(path=path) as writer:
+            with gzip.GzipFile(fileobj=writer, mode="wb") as fgzip:
+                logging.info(f"Writing file: {path}")
+                fgzip.write(string_buf.encode())
+        full_path = os.path.join(self.folder.project_key, self.folder.short_name, path)
+        return full_path
 
-
-def export_dataset(dataset, output_folder, format="tsv-excel-noheader"):
-    if not isinstance(output_folder, dataiku.Folder):
-        raise ValueError("Invalid type for output_folder: {}, must be dataiku.Folder".format(type(output_folder)))
-
-    export_file_name = get_export_file_name()
-    logging.info("Exporting to {}".format(export_file_name))
-
-    with dataset.raw_formatted_data(format="tsv-excel-noheader") as i:
-        output_folder.upload_stream(export_file_name, i)
+    def delete(self, path):
+        logging.info(f"Deleting file: {path}")
+        self.folder.delete_path(path)
 
 
 def create_dataframe_iterator(dataset, batch_size=10000, columns=None):

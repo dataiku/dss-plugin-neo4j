@@ -109,6 +109,14 @@
             "type": "SEPARATOR"
         },
         {
+            "name": "relationship_id_column",
+            "label": "Primary key",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "description": "Optional",
+            "mandatory": false
+        },
+        {
             "name": "relationship_properties",
             "label": "Additional properties",
             "type": "COLUMNS",
