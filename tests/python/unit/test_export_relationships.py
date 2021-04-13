@@ -17,6 +17,7 @@ class TestRelationshipsExport:
                 "timestamp": "transfer_date",
                 "fee": "transfer_fee",
             },
+            "expert_mode": True,
             "clear_before_run": True,
             "load_from_csv": False,
             "node_properties": ["player_age", "player_country", "timestamp", "fee"],
@@ -42,20 +43,21 @@ class TestRelationshipsExport:
         ]
 
         self.params = RelationshipsExportParams(
-            self.recipe_config.get("source_node_label"),
-            self.recipe_config.get("source_node_id_column"),
-            self.recipe_config.get("source_node_properties"),
-            self.recipe_config.get("target_node_label"),
-            self.recipe_config.get("target_node_id_column"),
-            self.recipe_config.get("target_node_properties"),
-            self.recipe_config.get("relationships_verb"),
-            self.recipe_config.get("relationship_id_column"),
-            self.recipe_config.get("relationship_properties"),
-            self.recipe_config.get("property_names_mapping"),
-            self.recipe_config.get("property_names_map"),
-            self.recipe_config.get("clear_before_run", False),
-            self.recipe_config.get("node_count_property", False),
-            self.recipe_config.get("edge_weight_property", False),
+            source_node_label=self.recipe_config.get("source_node_label"),
+            source_node_id_column=self.recipe_config.get("source_node_id_column"),
+            source_node_properties=self.recipe_config.get("source_node_properties"),
+            target_node_label=self.recipe_config.get("target_node_label"),
+            target_node_id_column=self.recipe_config.get("target_node_id_column"),
+            target_node_properties=self.recipe_config.get("target_node_properties"),
+            relationships_verb=self.recipe_config.get("relationships_verb"),
+            relationship_id_column=self.recipe_config.get("relationship_id_column"),
+            relationship_properties=self.recipe_config.get("relationship_properties"),
+            property_names_mapping=self.recipe_config.get("property_names_mapping"),
+            property_names_map=self.recipe_config.get("property_names_map"),
+            expert_mode=self.recipe_config.get("expert_mode"),
+            clear_before_run=self.recipe_config.get("clear_before_run", False),
+            node_count_property=self.recipe_config.get("node_count_property", False),
+            edge_weight_property=self.recipe_config.get("edge_weight_property", False),
         )
         self.params.check(self.dataset_schema)
 
