@@ -41,6 +41,7 @@ class MyRunnable(Runnable):
                         tx.commit()
                         logging.info("Neo4j plugin macro - All queries were commited")
         except neo4j.exceptions.ConfigurationError as neo4j_error:
+            logging.error(f"Neo4j plugin - Macro - Error while connecting to Neo4j server: {neo4j_error}")
             raise Exception(f"Failed to connect to the Neo4j server. Please check your preset credentials and URI.")
 
         df = pd.DataFrame(queries_statistics)
@@ -55,11 +56,11 @@ class MyRunnable(Runnable):
 
         html += "<h5>Queries data (if any, truncated to first 10 records}</h5>"
 
-        for i, query in enumerate(queries):
+        for index, query in enumerate(queries):
             html += f"<h6>{query}</h6>"
             html = html + '<pre style="font-size: 11px">'
-            if len(queries_data[i]) > 0:
-                html += pd.DataFrame(queries_data[i]).to_html(index=False, justify="left", max_rows=10, na_rep="")
+            if len(queries_data[index]) > 0:
+                html += pd.DataFrame(queries_data[index]).to_html(index=False, justify="left", max_rows=10, na_rep="")
             else:
                 html += "No results"
             html = html + "</pre>"

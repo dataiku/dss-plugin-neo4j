@@ -22,7 +22,7 @@
             "name": "cypherQuery",
             "label": "Cypher queries",
             "type": "TEXTAREA",
-            "description": "Type your custom Cypher queries. Multiple queries are separated with a ';'.",
+            "description": "Type your custom Cypher queries. Multiple queries are separated with a ';' and are executed within the same transaction.",
             "mandatory": true
         }
     ]
