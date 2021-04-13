@@ -124,6 +124,22 @@
             "visibilityCondition": "model.expert_mode"
         },
         {
+            "name": "batch_size",
+            "label": "Batch size",
+            "type": "INT",
+            "description": "",
+            "defaultValue": 500,
+            "visibilityCondition": "model.expert_mode && !model.load_from_csv"
+        },
+        {
+            "name": "csv_size",
+            "label": "CSV size",
+            "type": "INT",
+            "description": "",
+            "defaultValue": 100000,
+            "visibilityCondition": "model.expert_mode && model.load_from_csv"
+        },
+        {
             "name": "clear_before_run",
             "label": "Delete nodes before run",
             "type": "BOOLEAN",

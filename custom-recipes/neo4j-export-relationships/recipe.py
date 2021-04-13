@@ -15,27 +15,28 @@ recipe_config = get_recipe_config()
 (input_dataset, output_folder) = get_input_output()
 input_dataset_schema = input_dataset.read_schema()
 
+export_params = GeneralExportParams(recipe_config)
+export_params.check()
+
 params = RelationshipsExportParams(
-    recipe_config.get("source_node_label"),
-    recipe_config.get("source_node_id_column"),
-    recipe_config.get("source_node_properties"),
-    recipe_config.get("target_node_label"),
-    recipe_config.get("target_node_id_column"),
-    recipe_config.get("target_node_properties"),
-    recipe_config.get("relationships_verb"),
-    recipe_config.get("relationship_id_column"),
-    recipe_config.get("relationship_properties"),
-    recipe_config.get("property_names_mapping"),
-    recipe_config.get("property_names_map"),
-    recipe_config.get("clear_before_run", False),
-    recipe_config.get("node_count_property", False),
-    recipe_config.get("edge_weight_property", False),
+    source_node_label=recipe_config.get("source_node_label"),
+    source_node_id_column=recipe_config.get("source_node_id_column"),
+    source_node_properties=recipe_config.get("source_node_properties"),
+    target_node_label=recipe_config.get("target_node_label"),
+    target_node_id_column=recipe_config.get("target_node_id_column"),
+    target_node_properties=recipe_config.get("target_node_properties"),
+    relationships_verb=recipe_config.get("relationships_verb"),
+    relationship_id_column=recipe_config.get("relationship_id_column"),
+    relationship_properties=recipe_config.get("relationship_properties"),
+    property_names_mapping=recipe_config.get("property_names_mapping"),
+    property_names_map=recipe_config.get("property_names_map"),
+    expert_mode=recipe_config.get("expert_mode"),
+    clear_before_run=recipe_config.get("clear_before_run"),
+    node_count_property=recipe_config.get("node_count_property"),
+    edge_weight_property=recipe_config.get("edge_weight_property"),
 )
 
 params.check(input_dataset_schema)
-
-export_params = GeneralExportParams(recipe_config)
-export_params.check()
 
 if export_params.load_from_csv:
     file_handler = ImportFileHandler(output_folder)

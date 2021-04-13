@@ -33,10 +33,19 @@ def get_input_output():
 
 class GeneralExportParams:
     def __init__(self, recipe_config):
+        self.expert_mode = recipe_config.get("expert_mode", False)
         self.load_from_csv = recipe_config.get("load_from_csv", False)
-        self.batch_size = (
-            recipe_config.get("csv_size", 100000) if self.load_from_csv else recipe_config.get("batch_size", 500)
-        )
+        self.csv_size = recipe_config.get("csv_size", 100000)
+        self.batch_size = recipe_config.get("batch_size", 500)
+
+        if not self.expert_mode:
+            self.load_from_csv = False
+            self.csv_size = 100000
+            self.batch_size = 500
+
+        if self.load_from_csv:
+            self.batch_size = self.csv_size
+
         neo4j_server_configuration = recipe_config.get("neo4j_server_configuration")
         self.uri = neo4j_server_configuration.get("neo4j_uri")
         self.username = neo4j_server_configuration.get("neo4j_username")

@@ -338,6 +338,7 @@ class NodesExportParams(object):
         node_properties,
         property_names_mapping,
         property_names_map,
+        expert_mode=False,
         clear_before_run=False,
         columns_list=None,
     ):
@@ -346,7 +347,8 @@ class NodesExportParams(object):
         self.properties_mode = properties_mode
         self.node_properties = node_properties or []
         self.property_names_map = property_names_map or {} if property_names_mapping else {}
-        self.clear_before_run = clear_before_run
+
+        self.clear_before_run = clear_before_run if expert_mode else False
 
         if properties_mode == "SELECT_COLUMNS":
             if node_id_column in node_properties:
@@ -393,6 +395,7 @@ class RelationshipsExportParams(object):
         relationship_properties,
         property_names_mapping,
         property_names_map,
+        expert_mode=False,
         clear_before_run=False,
         node_count_property=False,
         edge_weight_property=False,
@@ -408,9 +411,10 @@ class RelationshipsExportParams(object):
         self.relationship_id_column = relationship_id_column
         self.relationship_properties = relationship_properties
         self.property_names_map = property_names_map or {} if property_names_mapping else {}
-        self.clear_before_run = clear_before_run
-        self.node_count_property = node_count_property
-        self.edge_weight_property = edge_weight_property
+
+        self.clear_before_run = clear_before_run if expert_mode else False
+        self.node_count_property = node_count_property if expert_mode else False
+        self.edge_weight_property = edge_weight_property if expert_mode else False
 
         if source_node_id_column in source_node_properties:
             self.source_node_properties.remove(source_node_id_column)
