@@ -110,10 +110,10 @@
         },
         {
             "name": "relationship_id_column",
-            "label": "Primary key",
+            "label": "Primary key (optional)",
             "type": "COLUMN",
             "columnRole": "input_dataset",
-            "description": "Optional",
+            "description": "",
             "mandatory": false
         },
         {
@@ -142,40 +142,69 @@
             "visibilityCondition": "model.property_names_mapping"
         },
         {
+            "name": "expert_mode",
+            "label": "Expert mode",
+            "type": "BOOLEAN",
+            "description": "",
+            "defaultValue": false
+        },
+        {
             "label": "Extra properties",
-            "type": "SEPARATOR"
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.expert_mode"
         },
         {
             "name": "node_count_property",
             "label": "Node count",
             "type": "BOOLEAN",
             "description": "When a node is updated, its 'count' property is incremented.",
-            "defaultValue": false
+            "defaultValue": false,
+            "visibilityCondition": "model.expert_mode"
         },
         {
             "name": "edge_weight_property",
             "label": "Relationship weight",
             "type": "BOOLEAN",
             "description": "When a relationship is updated, its 'weight' property is incremented.",
-            "defaultValue": false
+            "defaultValue": false,
+            "visibilityCondition": "model.expert_mode"
         },
         {
             "label": "Export parameters",
-            "type": "SEPARATOR"
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.expert_mode"
         },
         {
             "name": "load_from_csv",
             "label": "Import data from CSV files",
             "type": "BOOLEAN",
             "description": "Requires output folder to be in a SCP/SFTP connection to the Neo4j import directory.",
-            "defaultValue": false
+            "defaultValue": false,
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "name": "batch_size",
+            "label": "Batch size",
+            "type": "INT",
+            "description": "",
+            "defaultValue": 500,
+            "visibilityCondition": "model.expert_mode && !model.load_from_csv"
+        },
+        {
+            "name": "csv_size",
+            "label": "CSV size",
+            "type": "INT",
+            "description": "",
+            "defaultValue": 100000,
+            "visibilityCondition": "model.expert_mode && model.load_from_csv"
         },
         {
             "name": "clear_before_run",
             "label": "Delete nodes before run",
             "type": "BOOLEAN",
             "description": "Nodes with selected labels (and attached relationships) will be deleted before run.",
-            "defaultValue": false
+            "defaultValue": false,
+            "visibilityCondition": "model.expert_mode"
         }
     ]
 }

@@ -31,6 +31,23 @@ def get_input_output():
     return (input_dataset, output_folder)
 
 
+class GeneralExportParams:
+    def __init__(self, recipe_config):
+        self.load_from_csv = recipe_config.get("load_from_csv", False)
+        self.batch_size = (
+            recipe_config.get("csv_size", 100000) if self.load_from_csv else recipe_config.get("batch_size", 500)
+        )
+        neo4j_server_configuration = recipe_config.get("neo4j_server_configuration")
+        self.uri = neo4j_server_configuration.get("neo4j_uri")
+        self.username = neo4j_server_configuration.get("neo4j_username")
+        self.password = neo4j_server_configuration.get("neo4j_password")
+
+    def check(self):
+        if not isinstance(self.batch_size, int) or self.batch_size < 1:
+            label = "CSV size" if self.load_from_csv else "Batch size"
+            raise ValueError(f"{label} must be an integer greater than 1.")
+
+
 class ImportFileHandler:
     """Class to write and delete dataframe as csv file into a dataiku.Folder """
 
@@ -55,11 +72,3 @@ class ImportFileHandler:
 def create_dataframe_iterator(dataset, batch_size=10000, columns=None):
     for df in dataset.iter_dataframes(chunksize=batch_size, columns=columns, parse_dates=False):
         yield df
-
-
-def check_load_from_csv(folder):
-    folder_type = folder.get_info()["type"]
-    if folder_type not in ["SCP", "SFTP"]:
-        raise ValueError(
-            f"Output folder must be in a SCP/SFTP connection to the Neo4j server import directory but it is in a {folder_type} connection."
-        )
