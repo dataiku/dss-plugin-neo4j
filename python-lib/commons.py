@@ -35,8 +35,8 @@ class GeneralExportParams:
     def __init__(self, recipe_config):
         self.expert_mode = recipe_config.get("expert_mode", False)
         self.load_from_csv = recipe_config.get("load_from_csv", False)
-        self.csv_size = recipe_config.get("csv_size", 100000)
-        self.batch_size = recipe_config.get("batch_size", 500)
+        self.csv_size = recipe_config.get("csv_size")
+        self.batch_size = recipe_config.get("batch_size")
 
         if not self.expert_mode:
             self.load_from_csv = False

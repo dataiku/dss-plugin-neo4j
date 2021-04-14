@@ -188,6 +188,7 @@
             "type": "INT",
             "description": "Number of rows to send in each Cypher queries.",
             "defaultValue": 500,
+            "minI": 1,
             "visibilityCondition": "model.expert_mode && !model.load_from_csv"
         },
         {
@@ -196,6 +197,7 @@
             "type": "INT",
             "description": "Number of rows to send by batch as CSV files to the Neo4j import directory.",
             "defaultValue": 100000,
+            "minI": 1,
             "visibilityCondition": "model.expert_mode && model.load_from_csv"
         },
         {
