@@ -17,6 +17,7 @@ class TestNodesExport:
                 "timestamp": "birthdate",
                 "fee": "value",
             },
+            "expert_mode": True,
             "clear_before_run": True,
             "load_from_csv": False,
             "node_properties": ["player_age", "player_country", "timestamp", "fee"],
@@ -33,14 +34,14 @@ class TestNodesExport:
         ]
 
         self.params = NodesExportParams(
-            self.recipe_config.get("nodes_label"),
-            self.recipe_config.get("node_id_column"),
-            self.recipe_config.get("properties_mode"),
-            self.recipe_config.get("node_properties"),
-            self.recipe_config.get("property_names_mapping"),
-            self.recipe_config.get("property_names_map"),
-            self.recipe_config.get("clear_before_run", False),
-            self.dataset_schema,
+            nodes_label=self.recipe_config.get("nodes_label"),
+            node_id_column=self.recipe_config.get("node_id_column"),
+            properties_mode=self.recipe_config.get("properties_mode"),
+            node_properties=self.recipe_config.get("node_properties"),
+            property_names_mapping=self.recipe_config.get("property_names_mapping"),
+            property_names_map=self.recipe_config.get("property_names_map"),
+            clear_before_run=self.recipe_config.get("clear_before_run", False),
+            columns_list=self.dataset_schema,
         )
         self.params.check(self.dataset_schema)
 
