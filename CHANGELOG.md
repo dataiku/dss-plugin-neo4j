@@ -1,6 +1,6 @@
 # Changelog
 
-## [Version 2.0.0](https://github.com/dataiku/dss-plugin-neo4j/tree/v2.0.0) - Feature improvements release - 2021-04
+## [Version 1.3.0](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.3.0) - Feature improvements release - 2021-04
 
 ### General
 - Use of the official Neo4j python driver instead of py2neo

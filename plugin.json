@@ -1,6 +1,6 @@
 {
     "id": "neo4j",
-    "version": "1.2.3",
+    "version": "1.3.0",
     "meta": {
         "label": "Neo4j",
         "description": "Interact with the Neo4j graph database",
@@ -9,6 +9,9 @@
         "iconColor": "green",
         "licenseInfo": "Apache Software License",
         "url": "https://www.dataiku.com/product/plugins/neo4j/",
-        "tags": ["Graph", "Connector"]
+        "tags": [
+            "Graph",
+            "Connector"
+        ]
     }
 }
