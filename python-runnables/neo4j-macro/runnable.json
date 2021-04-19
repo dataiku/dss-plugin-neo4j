@@ -15,14 +15,14 @@
             "name": "neo4j_server_configuration",
             "label": "Neo4j server configuration",
             "type": "PRESET",
-            "parameterSetId" : "neo4j-server-configuration",
-            "mandatory" : true
+            "parameterSetId": "neo4j-server-configuration",
+            "mandatory": true
         },
         {
             "name": "cypherQuery",
-            "label": "Query",
+            "label": "Cypher queries",
             "type": "TEXTAREA",
-            "description": "Type your custom Cypher query",
+            "description": "Type your custom Cypher queries. Multiple queries are separated with a ';' and are executed within the same transaction.",
             "mandatory": true
         }
     ]

@@ -1,31 +1,39 @@
 {
-    "meta" : {
+    "meta": {
         "label": "Neo4j",
         "description": "Connector for the Neo4j graph database",
         "icon": "icon-link",
         "iconColor": "green"
     },
-
     "readable": true,
     "writable": false,
-
     "params": [
         {
             "name": "neo4j_server_configuration",
             "label": "Neo4j server configuration",
             "type": "PRESET",
-            "parameterSetId" : "neo4j-server-configuration",
-            "mandatory" : true
+            "parameterSetId": "neo4j-server-configuration",
+            "mandatory": true
         },
         {
             "name": "select_nodes_or_relationships",
             "type": "SELECT",
-            "label": "Nodes or relationships",
+            "label": "Data to retrieve",
             "description": "",
             "mandatory": true,
             "selectChoices": [
-                {"value": "select_nodes","label": "Nodes"},
-                {"value": "select_relationships","label": "Relationships"}
+                {
+                    "value": "select_nodes",
+                    "label": "Nodes"
+                },
+                {
+                    "value": "select_relationships",
+                    "label": "Relationships"
+                },
+                {
+                    "value": "custom_query",
+                    "label": "Custom Cypher query"
+                }
             ],
             "defaultValue": "select_nodes"
         },
@@ -42,6 +50,13 @@
             "label": "Enter one relationship",
             "description": "rel_type|src_id|tgt_id|rel_properties ... or list all relationship types if empty",
             "visibilityCondition": "model.select_nodes_or_relationships == 'select_relationships'"
+        },
+        {
+            "name": "selected_custom_query",
+            "type": "TEXTAREA",
+            "label": "Enter a Cypher query",
+            "description": "Each row is a record of the output of the Cypher query",
+            "visibilityCondition": "model.select_nodes_or_relationships == 'custom_query'"
         }
     ]
 }

@@ -1,5 +1,4 @@
 {
-
     "meta": {
         "label": "Export relationships",
         "description": "Create or update Neo4j nodes and relationships from a DSS dataset.",
@@ -7,10 +6,8 @@
         "iconColor": "green",
         "displayOrderRank": 1
     },
-
     "kind": "PYTHON",
     "selectableFromDataset": "input_dataset",
-
     "inputRoles": [
         {
             "name": "input_dataset",
@@ -29,8 +26,7 @@
             "arity": "UNARY",
             "required": true,
             "acceptsManagedFolder": true,
-            "acceptsDataset": false,
-            "mustBeStrictlyType": "SSH"
+            "acceptsDataset": false
         }
     ],
     "params": [
@@ -42,8 +38,8 @@
             "name": "neo4j_server_configuration",
             "label": "Neo4j server configuration",
             "type": "PRESET",
-            "parameterSetId" : "neo4j-server-configuration",
-            "mandatory" : true
+            "parameterSetId": "neo4j-server-configuration",
+            "mandatory": true
         },
         {
             "label": "Source - Relationship -> Target",
@@ -113,6 +109,14 @@
             "type": "SEPARATOR"
         },
         {
+            "name": "relationship_id_column",
+            "label": "Primary key (optional)",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "description": "",
+            "mandatory": false
+        },
+        {
             "name": "relationship_properties",
             "label": "Additional properties",
             "type": "COLUMNS",
@@ -138,15 +142,71 @@
             "visibilityCondition": "model.property_names_mapping"
         },
         {
-            "label": "Clear before run",
-            "type": "SEPARATOR"
+            "name": "expert_mode",
+            "label": "Expert mode",
+            "type": "BOOLEAN",
+            "description": "",
+            "defaultValue": false
+        },
+        {
+            "label": "Extra properties",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "name": "node_count_property",
+            "label": "Node count",
+            "type": "BOOLEAN",
+            "description": "When a node is updated, its 'count' property is incremented.",
+            "defaultValue": false,
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "name": "edge_weight_property",
+            "label": "Relationship weight",
+            "type": "BOOLEAN",
+            "description": "When a relationship is updated, its 'weight' property is incremented.",
+            "defaultValue": false,
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "label": "Export parameters",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "name": "load_from_csv",
+            "label": "Import data from CSV files",
+            "type": "BOOLEAN",
+            "description": "Requires output folder to be in a connection pointing to the Neo4j import directory.",
+            "defaultValue": false,
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "name": "batch_size",
+            "label": "Batch size",
+            "type": "INT",
+            "description": "Number of rows to send in each Cypher queries.",
+            "defaultValue": 500,
+            "minI": 1,
+            "visibilityCondition": "model.expert_mode && !model.load_from_csv"
+        },
+        {
+            "name": "csv_size",
+            "label": "CSV file size",
+            "type": "INT",
+            "description": "Number of rows to send by batch as CSV files to the Neo4j import directory.",
+            "defaultValue": 100000,
+            "minI": 1,
+            "visibilityCondition": "model.expert_mode && model.load_from_csv"
         },
         {
             "name": "clear_before_run",
             "label": "Delete nodes before run",
             "type": "BOOLEAN",
-            "description": "Nodes with selected labels (and attached relationships) will be deleted before run",
-            "defaultValue": false
+            "description": "Nodes with selected labels (and attached relationships) will be deleted before run.",
+            "defaultValue": false,
+            "visibilityCondition": "model.expert_mode"
         }
     ]
 }

@@ -1,47 +1,60 @@
+from json import load
 import os
 from dataiku.customrecipe import get_recipe_config
-from commons import get_input_output
-from commons import get_export_file_path_in_folder, get_export_file_name, export_dataset
-from dku_neo4j import RelationshipsExportParams, Neo4jHandle
+from commons import (
+    get_input_output,
+    create_dataframe_iterator,
+    ImportFileHandler,
+    GeneralExportParams,
+)
+from dku_neo4j.neo4j_handle import RelationshipsExportParams, Neo4jHandle
 
 # --- Setup recipe
 recipe_config = get_recipe_config()
 
-neo4j_server_configuration = recipe_config.get("neo4j_server_configuration")
-neo4jhandle = Neo4jHandle(
-    uri=neo4j_server_configuration.get("neo4j_uri"),
-    username=neo4j_server_configuration.get("neo4j_username"),
-    password=neo4j_server_configuration.get("neo4j_password")
-)
-
-params = RelationshipsExportParams(
-    recipe_config.get('source_node_label'),
-    recipe_config.get('source_node_id_column'),
-    recipe_config.get('source_node_properties'),
-    recipe_config.get('target_node_label'),
-    recipe_config.get('target_node_id_column'),
-    recipe_config.get('target_node_properties'),
-    recipe_config.get('relationships_verb'),
-    recipe_config.get('relationship_properties'),
-    recipe_config.get('property_names_mapping'),
-    recipe_config.get('property_names_map'),
-    recipe_config.get('clear_before_run', False)
-    )
 (input_dataset, output_folder) = get_input_output()
 input_dataset_schema = input_dataset.read_schema()
+
+export_params = GeneralExportParams(recipe_config)
+export_params.check()
+
+params = RelationshipsExportParams(
+    source_node_label=recipe_config.get("source_node_label"),
+    source_node_id_column=recipe_config.get("source_node_id_column"),
+    source_node_properties=recipe_config.get("source_node_properties"),
+    target_node_label=recipe_config.get("target_node_label"),
+    target_node_id_column=recipe_config.get("target_node_id_column"),
+    target_node_properties=recipe_config.get("target_node_properties"),
+    relationships_verb=recipe_config.get("relationships_verb"),
+    relationship_id_column=recipe_config.get("relationship_id_column"),
+    relationship_properties=recipe_config.get("relationship_properties"),
+    property_names_mapping=recipe_config.get("property_names_mapping"),
+    property_names_map=recipe_config.get("property_names_map"),
+    expert_mode=recipe_config.get("expert_mode"),
+    clear_before_run=recipe_config.get("clear_before_run"),
+    node_count_property=recipe_config.get("node_count_property"),
+    edge_weight_property=recipe_config.get("edge_weight_property"),
+)
+
 params.check(input_dataset_schema)
-export_file_fullname = os.path.join(get_export_file_path_in_folder(), get_export_file_name())
-# --- Run
 
-export_dataset(input_dataset, output_folder)
+if export_params.load_from_csv:
+    file_handler = ImportFileHandler(output_folder)
 
-neo4jhandle.add_unique_constraint_on_relationship_nodes(params)
+with Neo4jHandle(export_params.uri, export_params.username, export_params.password) as neo4jhandle:
+    neo4jhandle.check()
 
-if params.clear_before_run:
-    neo4jhandle.delete_nodes(params.source_node_label)
-    neo4jhandle.delete_nodes(params.target_node_label)
+    neo4jhandle.add_unique_constraint_on_relationship_nodes(params)
 
-neo4jhandle.load_relationships(export_file_fullname, input_dataset_schema, params)
+    if params.clear_before_run:
+        neo4jhandle.delete_nodes(params.source_node_label)
+        neo4jhandle.delete_nodes(params.target_node_label)
 
-# --- Cleanup
-# neo4jhandle.delete_file_from_import_dir(export_file_name)
+    df_iterator = create_dataframe_iterator(
+        input_dataset, batch_size=export_params.batch_size, columns=params.used_columns
+    )
+
+    if export_params.load_from_csv:
+        neo4jhandle.load_relationships_from_csv(df_iterator, input_dataset_schema, params, file_handler)
+    else:
+        neo4jhandle.insert_relationships_by_batch(df_iterator, input_dataset_schema, params)
