@@ -44,6 +44,7 @@ class TestNodesExport:
             columns_list=self.dataset_schema,
         )
         self.params.check(self.dataset_schema)
+        self.params.set_periodic_commit(500)
 
     def test_add_unique_constraint_on_nodes(self):
         with MockNeo4jHandle() as neo4jhandle:
@@ -69,7 +70,7 @@ DETACH DELETE n
             assert (
                 neo4jhandle.queries[0]
                 == """
-USING PERIODIC COMMIT
+USING PERIODIC COMMIT 500
 LOAD CSV FROM 'file:///dss_neo4j_export_temp_file_001.csv.gz' AS line FIELDTERMINATOR ','
 WITH line[0] AS `player_name`, line[1] AS `player_age`, line[2] AS `player_country`, line[3] AS `timestamp`, line[4] AS `fee`
 MERGE (n:`Player` {`name`: `player_name`})
