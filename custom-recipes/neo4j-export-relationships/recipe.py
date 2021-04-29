@@ -40,6 +40,7 @@ params.check(input_dataset_schema)
 
 if export_params.load_from_csv:
     file_handler = ImportFileHandler(output_folder)
+    params.set_periodic_commit(export_params.batch_size)
 
 with Neo4jHandle(export_params.uri, export_params.username, export_params.password) as neo4jhandle:
     neo4jhandle.check()
@@ -50,9 +51,8 @@ with Neo4jHandle(export_params.uri, export_params.username, export_params.passwo
         neo4jhandle.delete_nodes(params.source_node_label)
         neo4jhandle.delete_nodes(params.target_node_label)
 
-    df_iterator = create_dataframe_iterator(
-        input_dataset, batch_size=export_params.batch_size, columns=params.used_columns
-    )
+    batch_size = export_params.csv_size if export_params.load_from_csv else export_params.batch_size
+    df_iterator = create_dataframe_iterator(input_dataset, batch_size=batch_size, columns=params.used_columns)
 
     if export_params.load_from_csv:
         neo4jhandle.load_relationships_from_csv(df_iterator, input_dataset_schema, params, file_handler)

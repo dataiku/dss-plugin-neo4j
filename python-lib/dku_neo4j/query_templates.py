@@ -1,5 +1,5 @@
 LOAD_FROM_CSV_PREFIX = """
-USING PERIODIC COMMIT
+USING PERIODIC COMMIT {periodic_commit}
 LOAD CSV FROM 'file:///{import_file_path}' AS line FIELDTERMINATOR ','
 WITH {definition}"""
 

@@ -85,6 +85,7 @@ DELETE r
             local_path = f"dss_neo4j_export_temp_file_{index+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
             query = LOAD_NODES_FROM_CSV.format(
+                periodic_commit=params.periodic_commit,
                 import_file_path=import_file_path,
                 definition=definition,
                 nodes_label=params.nodes_label,
@@ -177,6 +178,7 @@ DELETE r
             local_path = f"dss_neo4j_export_temp_file_{i+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
             query = LOAD_RELATIONSHIPS_FROM_CSV.format(
+                periodic_commit=params.periodic_commit,
                 import_file_path=import_file_path,
                 definition=definition,
                 source_node_label=params.source_node_label,
@@ -329,7 +331,15 @@ DELETE r
         return [{key: value for key, value in row.items() if not pd.isnull(value)} for row in data]
 
 
-class NodesExportParams(object):
+class ExportParams(object):
+    def __init__(self):
+        pass
+
+    def set_periodic_commit(self, periodic_commit):
+        self.periodic_commit = periodic_commit
+
+
+class NodesExportParams(ExportParams):
     def __init__(
         self,
         nodes_label,
@@ -381,7 +391,7 @@ class NodesExportParams(object):
         check_property_names_map(self.property_names_map, self.used_columns)
 
 
-class RelationshipsExportParams(object):
+class RelationshipsExportParams(ExportParams):
     def __init__(
         self,
         source_node_label,

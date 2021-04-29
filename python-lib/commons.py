@@ -43,9 +43,6 @@ class GeneralExportParams:
             self.csv_size = 100000
             self.batch_size = 500
 
-        if self.load_from_csv:
-            self.batch_size = self.csv_size
-
         neo4j_server_configuration = recipe_config.get("neo4j_server_configuration")
         self.uri = neo4j_server_configuration.get("neo4j_uri")
         self.username = neo4j_server_configuration.get("neo4j_username")

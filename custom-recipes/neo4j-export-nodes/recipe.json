@@ -116,21 +116,21 @@
             "visibilityCondition": "model.expert_mode"
         },
         {
+            "name": "batch_size",
+            "label": "Batch size",
+            "type": "INT",
+            "description": "Number of rows in each Cypher query commit.",
+            "defaultValue": 500,
+            "minI": 1,
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
             "name": "load_from_csv",
             "label": "Import data from CSV files",
             "type": "BOOLEAN",
             "description": "Requires output folder to be in a connection pointing to the Neo4j import directory.",
             "defaultValue": false,
             "visibilityCondition": "model.expert_mode"
-        },
-        {
-            "name": "batch_size",
-            "label": "Batch size",
-            "type": "INT",
-            "description": "Number of rows to send in each Cypher queries.",
-            "defaultValue": 500,
-            "minI": 1,
-            "visibilityCondition": "model.expert_mode && !model.load_from_csv"
         },
         {
             "name": "csv_size",
