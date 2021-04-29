@@ -79,5 +79,7 @@ class ImportFileHandler:
 
 
 def create_dataframe_iterator(dataset, batch_size=10000, columns=None):
-    for df in dataset.iter_dataframes(chunksize=batch_size, columns=columns, parse_dates=False):
+    for df in dataset.iter_dataframes(
+        chunksize=batch_size, columns=columns, parse_dates=False, infer_with_pandas=False
+    ):
         yield df
