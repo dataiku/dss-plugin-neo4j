@@ -57,8 +57,7 @@ class TestNodesExport:
             assert (
                 neo4jhandle.queries[0]
                 == """
-MATCH (n:`Player`)
-DETACH DELETE n
+CALL apoc.periodic.iterate("MATCH (n:`Player`) return n", "DETACH DELETE n", {batchSize:1000}) yield batches, total RETURN batches, total
 """
             )
 

@@ -69,12 +69,11 @@ class TestRelationshipsExport:
 
     def test_delete_nodes(self):
         with MockNeo4jHandle() as neo4jhandle:
-            neo4jhandle.delete_nodes(self.params.target_node_label)
+            neo4jhandle.delete_nodes(self.params.target_node_label, batch_size=500)
             assert (
                 neo4jhandle.queries[0]
                 == """
-MATCH (n:`Club`)
-DETACH DELETE n
+CALL apoc.periodic.iterate("MATCH (n:`Club`) return n", "DETACH DELETE n", {batchSize:500}) yield batches, total RETURN batches, total
 """
             )
 
