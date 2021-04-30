@@ -41,7 +41,7 @@ with Neo4jHandle(export_params.uri, export_params.username, export_params.passwo
     neo4jhandle.add_unique_constraint_on_nodes(params)
 
     if params.clear_before_run:
-        neo4jhandle.delete_nodes(params.nodes_label)
+        neo4jhandle.delete_nodes(params.nodes_label, batch_size=export_params.batch_size)
 
     batch_size = export_params.csv_size if export_params.load_from_csv else export_params.batch_size
     df_iterator = create_dataframe_iterator(input_dataset, batch_size=batch_size, columns=params.used_columns)

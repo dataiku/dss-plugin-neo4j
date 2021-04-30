@@ -6,6 +6,7 @@ from dku_neo4j.query_templates import (
     LOAD_RELATIONSHIPS_FROM_CSV,
     BATCH_INSERT_NODES,
     BATCH_INSERT_RELATIONSHIPS,
+    BATCH_DELETE_NODES,
 )
 
 
@@ -57,21 +58,9 @@ class Neo4jHandle(object):
         results = tx.run(query, parameters={self.DATA: data})
         return results
 
-    def delete_nodes(self, nodes_label):
-        # TODO method to delete by batch (or maybe not because deleting a too big dataset might be an error from the user)
-        query = f"""
-MATCH (n:`{nodes_label}`)
-DETACH DELETE n
-"""
+    def delete_nodes(self, nodes_label, batch_size=1000):
+        query = BATCH_DELETE_NODES.format(nodes_label=nodes_label, batch_size=batch_size)
         logging.info(f"Neo4j plugin - Deleting nodes: {query}")
-        self.run(query, log_results=True)
-
-    def delete_relationships(self, params):
-        query = f"""
-MATCH (:`{params.source_node_label}`)-[r:`{params.relationships_verb}`]-(:`{params.target_node_label}`)
-DELETE r
-"""
-        logging.info("Neo4j plugin - Delete relationships: {query}")
         self.run(query, log_results=True)
 
     def load_nodes_from_csv(self, df_iterator, columns_list, params, file_handler):
