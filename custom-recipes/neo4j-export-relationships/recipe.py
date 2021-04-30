@@ -34,6 +34,7 @@ params = RelationshipsExportParams(
     clear_before_run=recipe_config.get("clear_before_run"),
     node_count_property=recipe_config.get("node_count_property"),
     edge_weight_property=recipe_config.get("edge_weight_property"),
+    existing_nodes_only=recipe_config.get("existing_nodes_only"),
 )
 
 params.check(input_dataset_schema)

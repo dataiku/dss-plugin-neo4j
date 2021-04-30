@@ -2,10 +2,11 @@ import logging
 import pandas as pd
 from neo4j import GraphDatabase
 from dku_neo4j.query_templates import (
-    LOAD_NODES_FROM_CSV,
-    LOAD_RELATIONSHIPS_FROM_CSV,
-    BATCH_INSERT_NODES,
-    BATCH_INSERT_RELATIONSHIPS,
+    LOAD_FROM_CSV_PREFIX,
+    UNWIND_PREFIX,
+    EXPORT_NODES_SUFFIX,
+    EXPORT_RELATIONSHIPS_SUFFIX,
+    EXPORT_RELATIONSHIPS_EXISTING_NODES_ONLY_SUFFIX,
     BATCH_DELETE_NODES,
 )
 
@@ -73,7 +74,8 @@ class Neo4jHandle(object):
             self._check_no_empty_primary_key(df, mandatory_columns=[params.node_id_column])
             local_path = f"dss_neo4j_export_temp_file_{index+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
-            query = LOAD_NODES_FROM_CSV.format(
+            query_template = LOAD_FROM_CSV_PREFIX + EXPORT_NODES_SUFFIX
+            query = query_template.format(
                 periodic_commit=params.periodic_commit,
                 import_file_path=import_file_path,
                 definition=definition,
@@ -94,7 +96,8 @@ class Neo4jHandle(object):
             columns_list, params.node_lookup_key, params.node_id_column, unwind=True
         )
         properties = self._properties(columns_list, params.node_properties, "n", params.property_names_map, unwind=True)
-        query = BATCH_INSERT_NODES.format(
+        query_template = UNWIND_PREFIX + EXPORT_NODES_SUFFIX
+        query = query_template.format(
             data=self.DATA,
             rows=self.ROWS,
             nodes_label=params.nodes_label,
@@ -145,6 +148,7 @@ class Neo4jHandle(object):
             "src",
             params.property_names_map,
             incremented_property=node_incremented_property,
+            existing_nodes_only=params.existing_nodes_only,
         )
         target_node_properties = self._properties(
             columns_list,
@@ -152,6 +156,7 @@ class Neo4jHandle(object):
             "tgt",
             params.property_names_map,
             incremented_property=node_incremented_property,
+            existing_nodes_only=params.existing_nodes_only,
         )
         relationship_properties = self._properties(
             columns_list,
@@ -166,7 +171,12 @@ class Neo4jHandle(object):
             )
             local_path = f"dss_neo4j_export_temp_file_{i+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
-            query = LOAD_RELATIONSHIPS_FROM_CSV.format(
+            query_template = LOAD_FROM_CSV_PREFIX
+            if params.existing_nodes_only:
+                query_template += EXPORT_RELATIONSHIPS_EXISTING_NODES_ONLY_SUFFIX
+            else:
+                query_template += EXPORT_RELATIONSHIPS_SUFFIX
+            query = query_template.format(
                 periodic_commit=params.periodic_commit,
                 import_file_path=import_file_path,
                 definition=definition,
@@ -213,6 +223,7 @@ class Neo4jHandle(object):
             params.property_names_map,
             incremented_property=node_incremented_property,
             unwind=True,
+            existing_nodes_only=params.existing_nodes_only,
         )
         target_node_properties = self._properties(
             columns_list,
@@ -221,6 +232,7 @@ class Neo4jHandle(object):
             params.property_names_map,
             incremented_property=node_incremented_property,
             unwind=True,
+            existing_nodes_only=params.existing_nodes_only,
         )
         relationship_properties = self._properties(
             columns_list,
@@ -230,7 +242,12 @@ class Neo4jHandle(object):
             incremented_property=edge_incremented_property,
             unwind=True,
         )
-        query = BATCH_INSERT_RELATIONSHIPS.format(
+        query_template = UNWIND_PREFIX
+        if params.existing_nodes_only:
+            query_template += EXPORT_RELATIONSHIPS_EXISTING_NODES_ONLY_SUFFIX
+        else:
+            query_template += EXPORT_RELATIONSHIPS_SUFFIX
+        query = query_template.format(
             data=self.DATA,
             rows=self.ROWS,
             source_node_label=params.source_node_label,
@@ -256,7 +273,14 @@ class Neo4jHandle(object):
         return ", ".join([f"line[{index}] AS `{column}`" for index, column in enumerate(columns_list)])
 
     def _properties(
-        self, all_columns_list, properties_list, identifier, property_names_map, incremented_property=None, unwind=False
+        self,
+        all_columns_list,
+        properties_list,
+        identifier,
+        property_names_map,
+        incremented_property=None,
+        unwind=False,
+        existing_nodes_only=False,
     ):
         type_per_column = {}
         for column in all_columns_list:
@@ -267,7 +291,14 @@ class Neo4jHandle(object):
                 neo4j_property_name = property_names_map[colname]
             else:
                 neo4j_property_name = colname
-            propstr = self._property(colname, neo4j_property_name, type_per_column[colname], identifier, unwind=unwind)
+            propstr = self._property(
+                colname,
+                neo4j_property_name,
+                type_per_column[colname],
+                identifier,
+                unwind=unwind,
+                existing_nodes_only=existing_nodes_only,
+            )
             properties_strings.append(propstr)
         if incremented_property:
             incremented_property_statement = f"ON CREATE SET {identifier}.{incremented_property} = 1"
@@ -283,11 +314,13 @@ class Neo4jHandle(object):
         typed_value = self._cast_property_type(id_column, id_column_type, unwind)
         return f" {{`{lookup_key}`: {typed_value}}}"
 
-    def _property(self, colname, prop, coltype, identifier, unwind=False):
+    def _property(self, colname, prop, coltype, identifier, unwind=False, existing_nodes_only=False):
         typedValue = self._cast_property_type(colname, coltype, unwind)
-        oncreate = f"ON CREATE SET {identifier}.`{prop}` = {typedValue}"
-        onmatch = f"ON MATCH SET {identifier}.`{prop}` = {typedValue}"
-        return oncreate + "\n" + onmatch
+        set_statement = f"{identifier}.`{prop}` = {typedValue}"
+        if existing_nodes_only:
+            return f"SET {set_statement}"
+        else:
+            return f"ON CREATE SET {set_statement}\nON MATCH SET {set_statement}"
 
     def _cast_property_type(self, colname, coltype, unwind):
         if unwind:
@@ -398,6 +431,7 @@ class RelationshipsExportParams(ExportParams):
         clear_before_run=False,
         node_count_property=False,
         edge_weight_property=False,
+        existing_nodes_only=False,
     ):
 
         self.source_node_label = source_node_label
@@ -414,6 +448,7 @@ class RelationshipsExportParams(ExportParams):
         self.clear_before_run = clear_before_run if expert_mode else False
         self.node_count_property = node_count_property if expert_mode else False
         self.edge_weight_property = edge_weight_property if expert_mode else False
+        self.existing_nodes_only = existing_nodes_only if expert_mode else False
 
         if source_node_id_column in source_node_properties:
             self.source_node_properties.remove(source_node_id_column)
