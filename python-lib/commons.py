@@ -75,8 +75,39 @@ class ImportFileHandler:
         self.folder.delete_path(path)
 
 
+class EmptyIntegerError(ValueError):
+    """Custom exception raised when there are empty values in integer columns"""
+
+    pass
+
+
+def next_with_custom_error(iterator, custom_error, *args):
+    """Get next element of iterator and call a custom function when failing """
+    try:
+        return next(iterator, None)
+    except Exception as error:
+        custom_error(error, *args)
+        raise Exception(error)
+
+
+def custom_error_for_empty_integer(error, columns):
+    """Custom error message if an integer column has empty values """
+    try:
+        error_string = str(error)
+        if "Integer column has NA values in column " in error_string:
+            column_index = int(error_string.strip("Integer column has NA values in column "))
+            raise EmptyIntegerError(
+                f"Column '{columns[column_index]}' of type integer has empty values. Remove these empty values or change the type (to string or double for example)."
+            )
+    except EmptyIntegerError as empty_integer_error:
+        raise ValueError(empty_integer_error)
+
+
 def create_dataframe_iterator(dataset, batch_size=10000, columns=None):
-    for df in dataset.iter_dataframes(
+    dataframe_iterator = dataset.iter_dataframes(
         chunksize=batch_size, columns=columns, parse_dates=False, infer_with_pandas=False
-    ):
+    )
+    df = next_with_custom_error(dataframe_iterator, custom_error_for_empty_integer, columns)
+    while df is not None:
         yield df
+        df = next_with_custom_error(dataframe_iterator, custom_error_for_empty_integer, columns)
