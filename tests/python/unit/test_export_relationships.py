@@ -60,6 +60,7 @@ class TestRelationshipsExport:
             edge_weight_property=self.recipe_config.get("edge_weight_property", False),
         )
         self.params.check(self.dataset_schema)
+        self.params.set_periodic_commit(500)
 
     def test_add_unique_constraint_on_relationship_nodes(self):
         with MockNeo4jHandle() as neo4jhandle:
@@ -68,12 +69,11 @@ class TestRelationshipsExport:
 
     def test_delete_nodes(self):
         with MockNeo4jHandle() as neo4jhandle:
-            neo4jhandle.delete_nodes(self.params.target_node_label)
+            neo4jhandle.delete_nodes(self.params.target_node_label, batch_size=500)
             assert (
                 neo4jhandle.queries[0]
                 == """
-MATCH (n:`Club`)
-DETACH DELETE n
+CALL apoc.periodic.iterate("MATCH (n:`Club`) return n", "DETACH DELETE n", {batchSize:500}) yield batches, total RETURN batches, total
 """
             )
 
@@ -87,7 +87,7 @@ DETACH DELETE n
             assert (
                 neo4jhandle.queries[0]
                 == """
-USING PERIODIC COMMIT
+USING PERIODIC COMMIT 500
 LOAD CSV FROM 'file:///dss_neo4j_export_temp_file_001.csv.gz' AS line FIELDTERMINATOR ','
 WITH line[0] AS `club_country`, line[1] AS `club_name`, line[2] AS `fee`, line[3] AS `player_age`, line[4] AS `player_name`, line[5] AS `timestamp`
 MERGE (src:`Player` {`name`: `player_name`})

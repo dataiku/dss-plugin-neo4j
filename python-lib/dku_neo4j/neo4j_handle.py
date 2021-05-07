@@ -6,6 +6,7 @@ from dku_neo4j.query_templates import (
     LOAD_RELATIONSHIPS_FROM_CSV,
     BATCH_INSERT_NODES,
     BATCH_INSERT_RELATIONSHIPS,
+    BATCH_DELETE_NODES,
 )
 
 
@@ -57,21 +58,9 @@ class Neo4jHandle(object):
         results = tx.run(query, parameters={self.DATA: data})
         return results
 
-    def delete_nodes(self, nodes_label):
-        # TODO method to delete by batch (or maybe not because deleting a too big dataset might be an error from the user)
-        query = f"""
-MATCH (n:`{nodes_label}`)
-DETACH DELETE n
-"""
+    def delete_nodes(self, nodes_label, batch_size=1000):
+        query = BATCH_DELETE_NODES.format(nodes_label=nodes_label, batch_size=batch_size)
         logging.info(f"Neo4j plugin - Deleting nodes: {query}")
-        self.run(query, log_results=True)
-
-    def delete_relationships(self, params):
-        query = f"""
-MATCH (:`{params.source_node_label}`)-[r:`{params.relationships_verb}`]-(:`{params.target_node_label}`)
-DELETE r
-"""
-        logging.info("Neo4j plugin - Delete relationships: {query}")
         self.run(query, log_results=True)
 
     def load_nodes_from_csv(self, df_iterator, columns_list, params, file_handler):
@@ -85,6 +74,7 @@ DELETE r
             local_path = f"dss_neo4j_export_temp_file_{index+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
             query = LOAD_NODES_FROM_CSV.format(
+                periodic_commit=params.periodic_commit,
                 import_file_path=import_file_path,
                 definition=definition,
                 nodes_label=params.nodes_label,
@@ -177,6 +167,7 @@ DELETE r
             local_path = f"dss_neo4j_export_temp_file_{i+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
             query = LOAD_RELATIONSHIPS_FROM_CSV.format(
+                periodic_commit=params.periodic_commit,
                 import_file_path=import_file_path,
                 definition=definition,
                 source_node_label=params.source_node_label,
@@ -329,7 +320,15 @@ DELETE r
         return [{key: value for key, value in row.items() if not pd.isnull(value)} for row in data]
 
 
-class NodesExportParams(object):
+class ExportParams(object):
+    def __init__(self):
+        pass
+
+    def set_periodic_commit(self, periodic_commit):
+        self.periodic_commit = periodic_commit
+
+
+class NodesExportParams(ExportParams):
     def __init__(
         self,
         nodes_label,
@@ -381,7 +380,7 @@ class NodesExportParams(object):
         check_property_names_map(self.property_names_map, self.used_columns)
 
 
-class RelationshipsExportParams(object):
+class RelationshipsExportParams(ExportParams):
     def __init__(
         self,
         source_node_label,

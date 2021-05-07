@@ -1,5 +1,5 @@
 LOAD_FROM_CSV_PREFIX = """
-USING PERIODIC COMMIT
+USING PERIODIC COMMIT {periodic_commit}
 LOAD CSV FROM 'file:///{import_file_path}' AS line FIELDTERMINATOR ','
 WITH {definition}"""
 
@@ -28,3 +28,7 @@ LOAD_RELATIONSHIPS_FROM_CSV = LOAD_FROM_CSV_PREFIX + EXPORT_RELATIONSHIPS_SUFFIX
 BATCH_INSERT_NODES = UNWIND_PREFIX + EXPORT_NODES_SUFFIX
 
 BATCH_INSERT_RELATIONSHIPS = UNWIND_PREFIX + EXPORT_RELATIONSHIPS_SUFFIX
+
+BATCH_DELETE_NODES = """
+CALL apoc.periodic.iterate("MATCH (n:`{nodes_label}`) return n", "DETACH DELETE n", {{batchSize:{batch_size}}}) yield batches, total RETURN batches, total
+"""
