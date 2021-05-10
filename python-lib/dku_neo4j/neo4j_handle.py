@@ -291,7 +291,7 @@ class Neo4jHandle(object):
                 neo4j_property_name = property_names_map[colname]
             else:
                 neo4j_property_name = colname
-            propstr = self._property(
+            property_string = self._property(
                 colname,
                 neo4j_property_name,
                 type_per_column[colname],
@@ -299,7 +299,7 @@ class Neo4jHandle(object):
                 unwind=unwind,
                 existing_nodes_only=existing_nodes_only,
             )
-            properties_strings.append(propstr)
+            properties_strings.append(property_string)
         if incremented_property:
             incremented_property_statement = f"ON CREATE SET {identifier}.{incremented_property} = 1"
             incremented_property_statement += (
