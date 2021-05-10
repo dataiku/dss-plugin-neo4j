@@ -300,7 +300,7 @@ class Neo4jHandle(object):
                 existing_nodes_only=existing_nodes_only,
             )
             properties_strings.append(property_string)
-        if incremented_property:
+        if incremented_property and not existing_nodes_only:
             incremented_property_statement = f"ON CREATE SET {identifier}.{incremented_property} = 1"
             incremented_property_statement += (
                 f"\nON MATCH SET {identifier}.{incremented_property} = {identifier}.{incremented_property} + 1"
