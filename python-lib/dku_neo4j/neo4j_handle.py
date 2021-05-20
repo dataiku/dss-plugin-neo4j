@@ -1,20 +1,25 @@
 import logging
+from numpy.lib.utils import source
 import pandas as pd
 from neo4j import GraphDatabase
 from dku_neo4j.query_templates import (
     LOAD_FROM_CSV_PREFIX,
     UNWIND_PREFIX,
-    EXPORT_NODES_SUFFIX,
-    EXPORT_RELATIONSHIPS_SUFFIX,
-    EXPORT_RELATIONSHIPS_EXISTING_NODES_ONLY_SUFFIX,
     BATCH_DELETE_NODES,
     DELETE_NODES,
+    SOURCE_MERGE_STATEMENT,
+    PROPERTIES_STATEMENT,
+    CREATE_CONSTRAINT_IF_NOT_EXIST,
+    create_export_relationship_suffix_query,
 )
 
 
 class Neo4jHandle(object):
     DATA = "data"
     ROWS = "rows"
+    SOURCE_IDENTIFIER = "src"
+    TARGET_IDENTIFIER = "tgt"
+    RELATIONSHIP_IDENTIFIER = "rel"
 
     def __init__(self, uri, username, password):
         self.uri = uri
@@ -76,20 +81,23 @@ class Neo4jHandle(object):
         node_primary_key_statement = self._primary_key_statement(
             columns_list, params.node_lookup_key, params.node_id_column
         )
-        properties = self._properties(columns_list, params.node_properties, "n", params.property_names_map)
+        properties = self._properties(
+            columns_list, params.node_properties, self.SOURCE_IDENTIFIER, params.property_names_map
+        )
         for index, df in enumerate(df_iterator):
             self._check_no_empty_primary_key(df, mandatory_columns=[params.node_id_column])
             local_path = f"dss_neo4j_export_temp_file_{index+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
-            query_template = LOAD_FROM_CSV_PREFIX + EXPORT_NODES_SUFFIX
-            query = query_template.format(
+
+            query = LOAD_FROM_CSV_PREFIX.format(
                 periodic_commit=params.periodic_commit,
                 import_file_path=import_file_path,
                 definition=definition,
-                nodes_label=params.nodes_label,
-                node_primary_key_statement=node_primary_key_statement,
-                properties=properties,
             )
+            query += SOURCE_MERGE_STATEMENT.format(
+                node_label=params.nodes_label, node_primary_key_statement=node_primary_key_statement
+            )
+            query += PROPERTIES_STATEMENT.format(properties=properties)
 
             if index == 0:
                 logging.info(f"Neo4j plugin - Importing nodes into Neo4j: {query}")
@@ -102,15 +110,18 @@ class Neo4jHandle(object):
         node_primary_key_statement = self._primary_key_statement(
             columns_list, params.node_lookup_key, params.node_id_column, unwind=True
         )
-        properties = self._properties(columns_list, params.node_properties, "n", params.property_names_map, unwind=True)
-        query_template = UNWIND_PREFIX + EXPORT_NODES_SUFFIX
-        query = query_template.format(
+        properties = self._properties(
+            columns_list, params.node_properties, self.SOURCE_IDENTIFIER, params.property_names_map, unwind=True
+        )
+
+        query = UNWIND_PREFIX.format(
             data=self.DATA,
             rows=self.ROWS,
-            nodes_label=params.nodes_label,
-            node_primary_key_statement=node_primary_key_statement,
-            properties=properties,
         )
+        query += SOURCE_MERGE_STATEMENT.format(
+            node_label=params.nodes_label, node_primary_key_statement=node_primary_key_statement
+        )
+        query += PROPERTIES_STATEMENT.format(properties=properties)
 
         logging.info(f"Neo4j plugin - Inserting nodes into Neo4j: {query}")
         rows_processed = 0
@@ -128,7 +139,7 @@ class Neo4jHandle(object):
         self._add_unique_constraint_if_not_exist(params.nodes_label, params.node_lookup_key)
 
     def _add_unique_constraint_if_not_exist(self, label, property_key):
-        query = f"CREATE CONSTRAINT IF NOT EXISTS ON (n:`{label}`) ASSERT n.`{property_key}` IS UNIQUE"
+        query = CREATE_CONSTRAINT_IF_NOT_EXIST.format(label=label, property_key=property_key)
         logging.info(f"Neo4j plugin - Creating uniqueness constraint on {label}.{property_key}")
         self.run(query, log_results=True)
 
@@ -152,23 +163,23 @@ class Neo4jHandle(object):
         source_node_properties = self._properties(
             columns_list,
             params.source_node_properties,
-            "src",
+            self.SOURCE_IDENTIFIER,
             params.property_names_map,
             incremented_property=node_incremented_property,
-            existing_nodes_only=params.existing_nodes_only,
+            skip_row_if_not_exist=params.skip_row_if_not_source,
         )
         target_node_properties = self._properties(
             columns_list,
             params.target_node_properties,
-            "tgt",
+            self.TARGET_IDENTIFIER,
             params.property_names_map,
             incremented_property=node_incremented_property,
-            existing_nodes_only=params.existing_nodes_only,
+            skip_row_if_not_exist=params.skip_row_if_not_target,
         )
         relationship_properties = self._properties(
             columns_list,
             params.relationship_properties,
-            "rel",
+            self.RELATIONSHIP_IDENTIFIER,
             params.property_names_map,
             incremented_property=edge_incremented_property,
         )
@@ -178,15 +189,13 @@ class Neo4jHandle(object):
             )
             local_path = f"dss_neo4j_export_temp_file_{i+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
-            query_template = LOAD_FROM_CSV_PREFIX
-            if params.existing_nodes_only:
-                query_template += EXPORT_RELATIONSHIPS_EXISTING_NODES_ONLY_SUFFIX
-            else:
-                query_template += EXPORT_RELATIONSHIPS_SUFFIX
-            query = query_template.format(
+            query = LOAD_FROM_CSV_PREFIX.format(
                 periodic_commit=params.periodic_commit,
                 import_file_path=import_file_path,
                 definition=definition,
+            )
+
+            query += create_export_relationship_suffix_query(
                 source_node_label=params.source_node_label,
                 source_node_primary_key_statement=source_node_primary_key_statement,
                 source_node_properties=source_node_properties,
@@ -196,6 +205,8 @@ class Neo4jHandle(object):
                 relationships_verb=params.relationships_verb,
                 relationship_primary_key_statement=relationship_primary_key_statement,
                 relationship_properties=relationship_properties,
+                skip_row_if_not_source=params.skip_row_if_not_source,
+                skip_row_if_not_target=params.skip_row_if_not_target,
             )
 
             if i == 0:
@@ -226,37 +237,35 @@ class Neo4jHandle(object):
         source_node_properties = self._properties(
             columns_list,
             params.source_node_properties,
-            "src",
+            self.SOURCE_IDENTIFIER,
             params.property_names_map,
             incremented_property=node_incremented_property,
             unwind=True,
-            existing_nodes_only=params.existing_nodes_only,
+            skip_row_if_not_exist=params.skip_row_if_not_source,
         )
         target_node_properties = self._properties(
             columns_list,
             params.target_node_properties,
-            "tgt",
+            self.TARGET_IDENTIFIER,
             params.property_names_map,
             incremented_property=node_incremented_property,
             unwind=True,
-            existing_nodes_only=params.existing_nodes_only,
+            skip_row_if_not_exist=params.skip_row_if_not_target,
         )
         relationship_properties = self._properties(
             columns_list,
             params.relationship_properties,
-            "rel",
+            self.RELATIONSHIP_IDENTIFIER,
             params.property_names_map,
             incremented_property=edge_incremented_property,
             unwind=True,
         )
-        query_template = UNWIND_PREFIX
-        if params.existing_nodes_only:
-            query_template += EXPORT_RELATIONSHIPS_EXISTING_NODES_ONLY_SUFFIX
-        else:
-            query_template += EXPORT_RELATIONSHIPS_SUFFIX
-        query = query_template.format(
+        query = UNWIND_PREFIX.format(
             data=self.DATA,
             rows=self.ROWS,
+        )
+
+        query += create_export_relationship_suffix_query(
             source_node_label=params.source_node_label,
             source_node_primary_key_statement=source_node_primary_key_statement,
             source_node_properties=source_node_properties,
@@ -266,6 +275,8 @@ class Neo4jHandle(object):
             relationships_verb=params.relationships_verb,
             relationship_primary_key_statement=relationship_primary_key_statement,
             relationship_properties=relationship_properties,
+            skip_row_if_not_source=params.skip_row_if_not_source,
+            skip_row_if_not_target=params.skip_row_if_not_target,
         )
 
         logging.info(f"Neo4j plugin - Inserting nodes into Neo4j: {query}")
@@ -287,7 +298,7 @@ class Neo4jHandle(object):
         property_names_map,
         incremented_property=None,
         unwind=False,
-        existing_nodes_only=False,
+        skip_row_if_not_exist=False,
     ):
         type_per_column = {}
         for column in all_columns_list:
@@ -304,10 +315,10 @@ class Neo4jHandle(object):
                 type_per_column[colname],
                 identifier,
                 unwind=unwind,
-                existing_nodes_only=existing_nodes_only,
+                match_statement=skip_row_if_not_exist,
             )
             properties_strings.append(property_string)
-        if incremented_property and not existing_nodes_only:
+        if incremented_property and not skip_row_if_not_exist:
             incremented_property_statement = f"ON CREATE SET {identifier}.{incremented_property} = 1"
             incremented_property_statement += (
                 f"\nON MATCH SET {identifier}.{incremented_property} = {identifier}.{incremented_property} + 1"
@@ -321,10 +332,10 @@ class Neo4jHandle(object):
         typed_value = self._cast_property_type(id_column, id_column_type, unwind)
         return f" {{`{lookup_key}`: {typed_value}}}"
 
-    def _property(self, colname, prop, coltype, identifier, unwind=False, existing_nodes_only=False):
+    def _property(self, colname, prop, coltype, identifier, unwind=False, match_statement=False):
         typedValue = self._cast_property_type(colname, coltype, unwind)
         set_statement = f"{identifier}.`{prop}` = {typedValue}"
-        if existing_nodes_only:
+        if match_statement:
             return f"SET {set_statement}"
         else:
             return f"ON CREATE SET {set_statement}\nON MATCH SET {set_statement}"
@@ -438,7 +449,8 @@ class RelationshipsExportParams(ExportParams):
         clear_before_run=False,
         node_count_property=False,
         edge_weight_property=False,
-        existing_nodes_only=False,
+        skip_row_if_not_source=False,
+        skip_row_if_not_target=False,
     ):
 
         self.source_node_label = source_node_label
@@ -455,7 +467,8 @@ class RelationshipsExportParams(ExportParams):
         self.clear_before_run = clear_before_run if expert_mode else False
         self.node_count_property = node_count_property if expert_mode else False
         self.edge_weight_property = edge_weight_property if expert_mode else False
-        self.existing_nodes_only = existing_nodes_only if expert_mode else False
+        self.skip_row_if_not_source = skip_row_if_not_source if expert_mode else False
+        self.skip_row_if_not_target = skip_row_if_not_target if expert_mode else False
 
         if source_node_id_column in source_node_properties:
             self.source_node_properties.remove(source_node_id_column)

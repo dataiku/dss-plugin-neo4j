@@ -170,19 +170,6 @@
             "visibilityCondition": "model.expert_mode"
         },
         {
-            "label": "Nodes/relationships creation",
-            "type": "SEPARATOR",
-            "visibilityCondition": "model.expert_mode"
-        },
-        {
-            "name": "existing_nodes_only",
-            "label": "Existing nodes only",
-            "type": "BOOLEAN",
-            "description": "If selected, non-existing nodes and relationships won't be created if either the source or the target node doesn't exist.",
-            "defaultValue": false,
-            "visibilityCondition": "model.expert_mode"
-        },
-        {
             "label": "Export parameters",
             "type": "SEPARATOR",
             "visibilityCondition": "model.expert_mode"
@@ -218,6 +205,27 @@
             "label": "Delete nodes before run",
             "type": "BOOLEAN",
             "description": "Nodes with selected labels (and attached relationships) will be deleted before run.",
+            "defaultValue": false,
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "label": "Skip row when ...",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "name": "skip_row_if_not_source",
+            "label": "Source node doesn't exist",
+            "type": "BOOLEAN",
+            "description": "If selected, skip row if the source node doesn't exist.",
+            "defaultValue": false,
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "name": "skip_row_if_not_target",
+            "label": "Target node doesn't exist",
+            "type": "BOOLEAN",
+            "description": "If selected, skip row if the target node doesn't exist.",
             "defaultValue": false,
             "visibilityCondition": "model.expert_mode"
         }
