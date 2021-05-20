@@ -62,12 +62,13 @@ class Neo4jHandle(object):
 
     def delete_nodes(self, nodes_label, batch_size=1000):
         query = BATCH_DELETE_NODES.format(nodes_label=nodes_label, batch_size=batch_size)
-        logging.info(f"Neo4j plugin - Deleting nodes: {query}")
+        logging.info(f"Neo4j plugin - Deleting nodes by batch: {query}")
         try:
             self.run(query, log_results=True)
         except Exception as e:
             if e.code == "Neo.ClientError.Procedure.ProcedureNotFound":
                 query = DELETE_NODES.format(nodes_label=nodes_label)
+                logging.info(f"Neo4j plugin - APOC procedure not found, deleting nodes with: {query}")
                 self.run(query, log_results=True)
 
     def load_nodes_from_csv(self, df_iterator, columns_list, params, file_handler):
