@@ -8,6 +8,7 @@ from dku_neo4j.query_templates import (
     EXPORT_RELATIONSHIPS_SUFFIX,
     EXPORT_RELATIONSHIPS_EXISTING_NODES_ONLY_SUFFIX,
     BATCH_DELETE_NODES,
+    DELETE_NODES,
 )
 
 
@@ -62,7 +63,12 @@ class Neo4jHandle(object):
     def delete_nodes(self, nodes_label, batch_size=1000):
         query = BATCH_DELETE_NODES.format(nodes_label=nodes_label, batch_size=batch_size)
         logging.info(f"Neo4j plugin - Deleting nodes: {query}")
-        self.run(query, log_results=True)
+        try:
+            self.run(query, log_results=True)
+        except Exception as e:
+            if e.code == "Neo.ClientError.Procedure.ProcedureNotFound":
+                query = DELETE_NODES.format(nodes_label=nodes_label)
+                self.run(query, log_results=True)
 
     def load_nodes_from_csv(self, df_iterator, columns_list, params, file_handler):
         definition = self._schema(params.used_columns)

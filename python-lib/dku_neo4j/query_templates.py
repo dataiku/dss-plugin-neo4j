@@ -42,3 +42,7 @@ BATCH_INSERT_RELATIONSHIPS = UNWIND_PREFIX + EXPORT_RELATIONSHIPS_SUFFIX
 BATCH_DELETE_NODES = """
 CALL apoc.periodic.iterate("MATCH (n:`{nodes_label}`) return n", "DETACH DELETE n", {{batchSize:{batch_size}}}) yield batches, total RETURN batches, total
 """
+
+DELETE_NODES = """
+MATCH (n:`{nodes_label}`) DETACH DELETE n
+"""
