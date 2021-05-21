@@ -209,7 +209,7 @@
             "visibilityCondition": "model.expert_mode"
         },
         {
-            "label": "Skip row when ...",
+            "label": "Ignore row when ...",
             "type": "SEPARATOR",
             "visibilityCondition": "model.expert_mode"
         },
@@ -217,7 +217,7 @@
             "name": "skip_row_if_not_source",
             "label": "Source node doesn't exist",
             "type": "BOOLEAN",
-            "description": "If selected, skip row if the source node doesn't exist.",
+            "description": "If selected, export row only if the source node exists in Neo4j.",
             "defaultValue": false,
             "visibilityCondition": "model.expert_mode"
         },
@@ -225,7 +225,7 @@
             "name": "skip_row_if_not_target",
             "label": "Target node doesn't exist",
             "type": "BOOLEAN",
-            "description": "If selected, skip row if the target node doesn't exist.",
+            "description": "If selected, export row only if the target node exists in Neo4j.",
             "defaultValue": false,
             "visibilityCondition": "model.expert_mode"
         }
