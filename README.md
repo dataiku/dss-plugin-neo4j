@@ -37,7 +37,6 @@ Note: If you select *Import data from CSV files*, you need to create a SCP/SFTP 
 ## Plugin limitations and improvements
 
 * Neo4j 4.2 and higher required
-* Only URI's in the form of "bolt://" have been tested, with a username / password based authentication
 
 ## Contributing
 You are welcome to contribute to this Plugin. Please feel free to use Github issues and pull requests.
