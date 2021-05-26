@@ -1,8 +1,6 @@
 from dku_neo4j.neo4j_handle import NodesExportParams
-from mocking import MockNeo4jHandle, MockImportFileHandler
+from mocking import MockNeo4jHandle, MockImportFileHandler, compare_queries
 import pandas as pd
-
-# import pytest
 
 
 class TestNodesExport:
@@ -49,63 +47,61 @@ class TestNodesExport:
     def test_add_unique_constraint_on_nodes(self):
         with MockNeo4jHandle() as neo4jhandle:
             neo4jhandle.add_unique_constraint_on_nodes(self.params)
-            assert neo4jhandle.queries[0] == "CREATE CONSTRAINT IF NOT EXISTS ON (n:`Player`) ASSERT n.`name` IS UNIQUE"
+            reference_query = """
+CREATE CONSTRAINT IF NOT EXISTS ON (n:`Player`)
+ASSERT n.`name` IS UNIQUE
+"""
+            compare_queries(neo4jhandle.queries[0], reference_query)
 
     def test_delete_nodes(self):
         with MockNeo4jHandle() as neo4jhandle:
             neo4jhandle.delete_nodes(self.params.nodes_label)
-            assert (
-                neo4jhandle.queries[0]
-                == """
-CALL apoc.periodic.iterate("MATCH (n:`Player`) return n", "DETACH DELETE n", {batchSize:1000}) yield batches, total RETURN batches, total
+            reference_query = """
+CALL apoc.periodic.iterate("MATCH (n:`Player`) return n", "DETACH DELETE n", {batchSize:1000})
+YIELD batches, total RETURN batches, total
 """
-            )
+            compare_queries(neo4jhandle.queries[0], reference_query)
 
     def test_load_nodes_from_csv(self):
         file_handler = MockImportFileHandler()
         df_iterator = self._create_dataframe_iterator()
         with MockNeo4jHandle() as neo4jhandle:
             neo4jhandle.load_nodes_from_csv(df_iterator, self.dataset_schema, self.params, file_handler)
-            assert (
-                neo4jhandle.queries[0]
-                == """
+            reference_query = """
 USING PERIODIC COMMIT 500
 LOAD CSV FROM 'file:///dss_neo4j_export_temp_file_001.csv.gz' AS line FIELDTERMINATOR ','
 WITH line[0] AS `player_name`, line[1] AS `player_age`, line[2] AS `player_country`, line[3] AS `timestamp`, line[4] AS `fee`
-MERGE (n:`Player` {`name`: `player_name`})
-ON CREATE SET n.`age` = toInteger(`player_age`)
-ON MATCH SET n.`age` = toInteger(`player_age`)
-ON CREATE SET n.`country` = `player_country`
-ON MATCH SET n.`country` = `player_country`
-ON CREATE SET n.`birthdate` = datetime(`timestamp`)
-ON MATCH SET n.`birthdate` = datetime(`timestamp`)
-ON CREATE SET n.`value` = toFloat(`fee`)
-ON MATCH SET n.`value` = toFloat(`fee`)
+MERGE (src:`Player` {`name`: `player_name`})
+ON CREATE SET src.`age` = toInteger(`player_age`)
+ON MATCH SET src.`age` = toInteger(`player_age`)
+ON CREATE SET src.`country` = `player_country`
+ON MATCH SET src.`country` = `player_country`
+ON CREATE SET src.`birthdate` = datetime(`timestamp`)
+ON MATCH SET src.`birthdate` = datetime(`timestamp`)
+ON CREATE SET src.`value` = toFloat(`fee`)
+ON MATCH SET src.`value` = toFloat(`fee`)
 """
-            )
+            compare_queries(neo4jhandle.queries[0], reference_query)
 
     def test_insert_nodes_by_batch(self):
         df_iterator = self._create_dataframe_iterator()
         with MockNeo4jHandle() as neo4jhandle:
             neo4jhandle.insert_nodes_by_batch(df_iterator, self.dataset_schema, self.params)
-
             assert len(neo4jhandle.queries) == len(df_iterator)
-            assert (
-                neo4jhandle.queries[1]
-                == """
+            reference_query = """
 WITH $data AS dataset
 UNWIND dataset AS rows
-MERGE (n:`Player` {`name`: rows.`player_name`})
-ON CREATE SET n.`age` = toInteger(rows.`player_age`)
-ON MATCH SET n.`age` = toInteger(rows.`player_age`)
-ON CREATE SET n.`country` = rows.`player_country`
-ON MATCH SET n.`country` = rows.`player_country`
-ON CREATE SET n.`birthdate` = datetime(rows.`timestamp`)
-ON MATCH SET n.`birthdate` = datetime(rows.`timestamp`)
-ON CREATE SET n.`value` = toFloat(rows.`fee`)
-ON MATCH SET n.`value` = toFloat(rows.`fee`)
+MERGE (src:`Player` {`name`: rows.`player_name`})
+ON CREATE SET src.`age` = toInteger(rows.`player_age`)
+ON MATCH SET src.`age` = toInteger(rows.`player_age`)
+ON CREATE SET src.`country` = rows.`player_country`
+ON MATCH SET src.`country` = rows.`player_country`
+ON CREATE SET src.`birthdate` = datetime(rows.`timestamp`)
+ON MATCH SET src.`birthdate` = datetime(rows.`timestamp`)
+ON CREATE SET src.`value` = toFloat(rows.`fee`)
+ON MATCH SET src.`value` = toFloat(rows.`fee`)
 """
-            )
+            compare_queries(neo4jhandle.queries[1], reference_query)
 
     def _create_dataframe_iterator(self):
         df = pd.DataFrame(

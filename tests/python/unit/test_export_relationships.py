@@ -1,8 +1,7 @@
 from dku_neo4j.neo4j_handle import RelationshipsExportParams
-from mocking import MockNeo4jHandle, MockImportFileHandler
+from mocking import MockNeo4jHandle, MockImportFileHandler, compare_queries
 import pandas as pd
-
-# import pytest
+import copy
 
 
 class TestRelationshipsExport:
@@ -65,17 +64,20 @@ class TestRelationshipsExport:
     def test_add_unique_constraint_on_relationship_nodes(self):
         with MockNeo4jHandle() as neo4jhandle:
             neo4jhandle.add_unique_constraint_on_relationship_nodes(self.params)
-            assert neo4jhandle.queries[1] == "CREATE CONSTRAINT IF NOT EXISTS ON (n:`Club`) ASSERT n.`name` IS UNIQUE"
+            reference_query = """
+CREATE CONSTRAINT IF NOT EXISTS ON (n:`Club`)
+ASSERT n.`name` IS UNIQUE
+"""
+            compare_queries(neo4jhandle.queries[1], reference_query)
 
     def test_delete_nodes(self):
         with MockNeo4jHandle() as neo4jhandle:
             neo4jhandle.delete_nodes(self.params.target_node_label, batch_size=500)
-            assert (
-                neo4jhandle.queries[0]
-                == """
-CALL apoc.periodic.iterate("MATCH (n:`Club`) return n", "DETACH DELETE n", {batchSize:500}) yield batches, total RETURN batches, total
+            reference_query = """
+CALL apoc.periodic.iterate("MATCH (n:`Club`) return n", "DETACH DELETE n", {batchSize:500})
+YIELD batches, total RETURN batches, total
 """
-            )
+            compare_queries(neo4jhandle.queries[0], reference_query)
 
     def test_load_relationships_from_csv(self):
         file_handler = MockImportFileHandler()
@@ -84,9 +86,7 @@ CALL apoc.periodic.iterate("MATCH (n:`Club`) return n", "DETACH DELETE n", {batc
             print(f"self.params.used_columns: {self.params.used_columns}")
             neo4jhandle.load_relationships_from_csv(df_iterator, self.dataset_schema, self.params, file_handler)
             print(f"neo4jhandle.queries[0]:\n{neo4jhandle.queries[0]}")
-            assert (
-                neo4jhandle.queries[0]
-                == """
+            reference_query = """
 USING PERIODIC COMMIT 500
 LOAD CSV FROM 'file:///dss_neo4j_export_temp_file_001.csv.gz' AS line FIELDTERMINATOR ','
 WITH line[0] AS `club_country`, line[1] AS `club_name`, line[2] AS `fee`, line[3] AS `player_age`, line[4] AS `player_name`, line[5] AS `timestamp`
@@ -105,7 +105,7 @@ ON MATCH SET rel.`player_age` = toInteger(`player_age`)
 ON CREATE SET rel.weight = 1
 ON MATCH SET rel.weight = rel.weight + 1
 """
-            )
+            compare_queries(neo4jhandle.queries[0], reference_query)
 
     def test_insert_relationships_by_batch(self):
         df_iterator = self._create_dataframe_iterator()
@@ -113,9 +113,8 @@ ON MATCH SET rel.weight = rel.weight + 1
             neo4jhandle.insert_relationships_by_batch(df_iterator, self.dataset_schema, self.params)
             print(f"neo4jhandle.queries[1]: {neo4jhandle.queries[1]}")
             assert len(neo4jhandle.queries) == len(df_iterator)
-            assert (
-                neo4jhandle.queries[1]
-                == """
+
+            reference_query = """
 WITH $data AS dataset
 UNWIND dataset AS rows
 MERGE (src:`Player` {`name`: rows.`player_name`})
@@ -133,7 +132,90 @@ ON MATCH SET rel.`player_age` = toInteger(rows.`player_age`)
 ON CREATE SET rel.weight = 1
 ON MATCH SET rel.weight = rel.weight + 1
 """
-            )
+            compare_queries(neo4jhandle.queries[1], reference_query)
+
+    def test_insert_relationships_by_batch_skip_row_if_not_both_nodes(self):
+        df_iterator = self._create_dataframe_iterator()
+        with MockNeo4jHandle() as neo4jhandle:
+            params_temp = copy.copy(self.params)
+            params_temp.skip_row_if_not_source = True
+            params_temp.skip_row_if_not_target = True
+            neo4jhandle.insert_relationships_by_batch(df_iterator, self.dataset_schema, params_temp)
+            print(f"neo4jhandle.queries[1]: {neo4jhandle.queries[1]}")
+            assert len(neo4jhandle.queries) == len(df_iterator)
+            reference_query = """
+WITH $data AS dataset
+UNWIND dataset AS rows
+MATCH (src:`Player` {`name`: rows.`player_name`})
+MATCH (tgt:`Club` {`name`: rows.`club_name`})
+
+SET tgt.`country` = rows.`club_country`
+MERGE (src)-[rel:`TRANSFER_TO`]->(tgt)
+ON CREATE SET rel.`transfer_date` = datetime(rows.`timestamp`)
+ON MATCH SET rel.`transfer_date` = datetime(rows.`timestamp`)
+ON CREATE SET rel.`transfer_fee` = toFloat(rows.`fee`)
+ON MATCH SET rel.`transfer_fee` = toFloat(rows.`fee`)
+ON CREATE SET rel.`player_age` = toInteger(rows.`player_age`)
+ON MATCH SET rel.`player_age` = toInteger(rows.`player_age`)
+ON CREATE SET rel.weight = 1
+ON MATCH SET rel.weight = rel.weight + 1
+"""
+            compare_queries(neo4jhandle.queries[1], reference_query)
+
+    def test_insert_relationships_by_batch_skip_row_if_not_source_nodes(self):
+        df_iterator = self._create_dataframe_iterator()
+        with MockNeo4jHandle() as neo4jhandle:
+            params_temp = copy.copy(self.params)
+            params_temp.skip_row_if_not_source = True
+            neo4jhandle.insert_relationships_by_batch(df_iterator, self.dataset_schema, params_temp)
+            print(f"neo4jhandle.queries[1]: {neo4jhandle.queries[1]}")
+            assert len(neo4jhandle.queries) == len(df_iterator)
+            reference_query = """
+WITH $data AS dataset
+UNWIND dataset AS rows
+MATCH (src:`Player` {`name`: rows.`player_name`})
+
+MERGE (tgt:`Club` {`name`: rows.`club_name`})
+ON CREATE SET tgt.`country` = rows.`club_country`
+ON MATCH SET tgt.`country` = rows.`club_country`
+MERGE (src)-[rel:`TRANSFER_TO`]->(tgt)
+ON CREATE SET rel.`transfer_date` = datetime(rows.`timestamp`)
+ON MATCH SET rel.`transfer_date` = datetime(rows.`timestamp`)
+ON CREATE SET rel.`transfer_fee` = toFloat(rows.`fee`)
+ON MATCH SET rel.`transfer_fee` = toFloat(rows.`fee`)
+ON CREATE SET rel.`player_age` = toInteger(rows.`player_age`)
+ON MATCH SET rel.`player_age` = toInteger(rows.`player_age`)
+ON CREATE SET rel.weight = 1
+ON MATCH SET rel.weight = rel.weight + 1
+"""
+            compare_queries(neo4jhandle.queries[1], reference_query)
+
+    def test_insert_relationships_by_batch_skip_row_if_not_target_nodes(self):
+        df_iterator = self._create_dataframe_iterator()
+        with MockNeo4jHandle() as neo4jhandle:
+            params_temp = copy.copy(self.params)
+            params_temp.skip_row_if_not_target = True
+            neo4jhandle.insert_relationships_by_batch(df_iterator, self.dataset_schema, params_temp)
+            print(f"neo4jhandle.queries[1]: {neo4jhandle.queries[1]}")
+            assert len(neo4jhandle.queries) == len(df_iterator)
+            reference_query = """
+WITH $data AS dataset
+UNWIND dataset AS rows
+MATCH (tgt:`Club` {`name`: rows.`club_name`})
+SET tgt.`country` = rows.`club_country`
+MERGE (src:`Player` {`name`: rows.`player_name`})
+
+MERGE (src)-[rel:`TRANSFER_TO`]->(tgt)
+ON CREATE SET rel.`transfer_date` = datetime(rows.`timestamp`)
+ON MATCH SET rel.`transfer_date` = datetime(rows.`timestamp`)
+ON CREATE SET rel.`transfer_fee` = toFloat(rows.`fee`)
+ON MATCH SET rel.`transfer_fee` = toFloat(rows.`fee`)
+ON CREATE SET rel.`player_age` = toInteger(rows.`player_age`)
+ON MATCH SET rel.`player_age` = toInteger(rows.`player_age`)
+ON CREATE SET rel.weight = 1
+ON MATCH SET rel.weight = rel.weight + 1
+"""
+            compare_queries(neo4jhandle.queries[1], reference_query)
 
     def _create_dataframe_iterator(self):
         df = pd.DataFrame(
