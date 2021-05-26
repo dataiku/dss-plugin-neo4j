@@ -25,3 +25,7 @@ class MockImportFileHandler:
 
     def delete(self, path):
         pass
+
+
+def compare_queries(query_1, query_2):
+    assert query_1.strip() == query_2.strip()
