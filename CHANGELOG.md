@@ -2,7 +2,7 @@
 
 ## [Version 1.3.1](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.3.1) - Bugfix release - 2021-11
 
-- Allow missing values in int columns (instead of converting to float)
+- Allow missing values in int columns (instead of raising a specific error message)
 
 ## [Version 1.3.0](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.3.0) - Feature improvements release - 2021-04
 
