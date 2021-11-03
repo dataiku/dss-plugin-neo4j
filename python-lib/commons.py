@@ -1,5 +1,6 @@
 import os
 import logging
+import numpy as np
 import dataiku
 from dataiku.customrecipe import get_plugin_config, get_input_names_for_role, get_output_names_for_role
 from dku_neo4j.neo4j_handle import Neo4jHandle
@@ -104,10 +105,27 @@ def custom_error_for_empty_integer(error, columns):
 
 
 def create_dataframe_iterator(dataset, batch_size=10000, columns=None):
-    dataframe_iterator = dataset.iter_dataframes(
-        chunksize=batch_size, columns=columns, parse_dates=False, infer_with_pandas=False
+    (names, dtypes, parse_date_columns) = dataiku.Dataset.get_dataframe_schema_st(
+        dataset.read_schema(),
+        columns=columns,
+        parse_dates=False,
+        infer_with_pandas=False,
     )
+    cast_dtypes = cast_int_to_numpy_object(dtypes)
+    dataframe_iterator = dataset.iter_dataframes_forced_types(
+        names, cast_dtypes, parse_date_columns, chunksize=batch_size
+    )
+
     df = next_with_custom_error(dataframe_iterator, custom_error_for_empty_integer, columns)
     while df is not None:
         yield df
         df = next_with_custom_error(dataframe_iterator, custom_error_for_empty_integer, columns)
+
+
+def cast_int_to_numpy_object(dtypes):
+    """Cast numpy int into numpy object to not fail on missing values when retrieving dataframe without infer_with_pandas """
+    cast_dtypes = dtypes.copy()
+    for key, value in cast_dtypes.items():
+        if value in [np.int32, np.int64]:
+            cast_dtypes[key] = np.object_
+    return cast_dtypes
