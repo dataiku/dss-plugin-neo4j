@@ -1,4 +1,5 @@
 import logging
+import neo4j
 from numpy.lib.utils import source
 import pandas as pd
 from neo4j import GraphDatabase
@@ -21,10 +22,11 @@ class Neo4jHandle(object):
     TARGET_IDENTIFIER = "tgt"
     RELATIONSHIP_IDENTIFIER = "rel"
 
-    def __init__(self, uri, username, password):
+    def __init__(self, uri, username, password, database):
         self.uri = uri
         self.username = username
         self.password = password
+        self.database = database if database else neo4j.DEFAULT_DATABASE
 
     def __enter__(self):
         try:
@@ -53,7 +55,7 @@ class Neo4jHandle(object):
             data (list of dict, optional): Data used in an unwind query. Defaults to None.
             log_results (bool, optional): Log statistics about the query execution. Defaults to False.
         """
-        with self.driver.session() as session:
+        with self.driver.session(database=self.database) as session:
             if data:
                 results = session.write_transaction(self.unwind_transaction, query=query, data=data)
             else:

@@ -35,7 +35,7 @@ if export_params.load_from_csv:
     file_handler = ImportFileHandler(output_folder)
     params.set_periodic_commit(export_params.batch_size)
 
-with Neo4jHandle(export_params.uri, export_params.username, export_params.password) as neo4jhandle:
+with Neo4jHandle(export_params.uri, export_params.username, export_params.password, export_params.database) as neo4jhandle:
     neo4jhandle.check()
 
     neo4jhandle.add_unique_constraint_on_nodes(params)

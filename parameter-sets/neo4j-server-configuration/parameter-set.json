@@ -10,8 +10,15 @@
     "params": [
         {
             "name": "neo4j_uri",
-            "label": "URI of the Neo4j database",
+            "label": "URI of the Neo4j server",
             "description": "Starting with neo4j:// or neo4j+s://",
+            "type": "STRING",
+            "mandatory": true
+        },
+        {
+            "name": "neo4j_database",
+            "label": "Neo4j database",
+            "description": "Name of the target neo4j database. Use default database if empty.",
             "type": "STRING",
             "mandatory": true
         },

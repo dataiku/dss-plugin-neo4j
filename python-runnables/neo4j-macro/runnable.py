@@ -23,11 +23,12 @@ class MyRunnable(Runnable):
         uri = self.neo4j_server_configuration.get("neo4j_uri")
         username = self.neo4j_server_configuration.get("neo4j_username")
         password = self.neo4j_server_configuration.get("neo4j_password")
+        database = self.neo4j_server_configuration.get("neo4j_database", neo4j.DEFAULT_DATABASE)
 
         queries_statistics, queries_data = [], []
         try:
             with GraphDatabase.driver(uri, auth=(username, password)) as driver:
-                with driver.session() as session:
+                with driver.session(database=database) as session:
                     with session.begin_transaction() as tx:
                         for query in queries:
                             try:

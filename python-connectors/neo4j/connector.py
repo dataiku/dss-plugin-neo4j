@@ -22,7 +22,7 @@ class MyConnector(Connector):
         with Neo4jHandle(
             settings.get("neo4j_uri"), settings.get("neo4j_username"), settings.get("neo4j_password")
         ) as neo4jhandle:
-            with neo4jhandle.driver.session(default_access_mode=neo4j.READ_ACCESS) as session:
+            with neo4jhandle.driver.session(default_access_mode=neo4j.READ_ACCESS, database=settings.get("neo4j_database", neo4j.DEFAULT_DATABASE)) as session:
 
                 if self.config["select_nodes_or_relationships"] == "select_nodes":
                     if self.config.get("selected_node", None):

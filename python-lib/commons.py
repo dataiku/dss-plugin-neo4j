@@ -48,6 +48,7 @@ class GeneralExportParams:
         self.uri = neo4j_server_configuration.get("neo4j_uri")
         self.username = neo4j_server_configuration.get("neo4j_username")
         self.password = neo4j_server_configuration.get("neo4j_password")
+        self.database = neo4j_server_configuration.get("neo4j_database")
 
     def check(self):
         if not isinstance(self.batch_size, int) or self.batch_size < 1:
