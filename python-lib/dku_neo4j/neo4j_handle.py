@@ -22,7 +22,7 @@ class Neo4jHandle(object):
     TARGET_IDENTIFIER = "tgt"
     RELATIONSHIP_IDENTIFIER = "rel"
 
-    def __init__(self, uri, username, password, database):
+    def __init__(self, uri, username, password, database=None):
         self.uri = uri
         self.username = username
         self.password = password
