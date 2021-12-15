@@ -1,5 +1,9 @@
 # Changelog
 
+## [Version 1.3.2](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.3.2) - New feature release - 2021-12
+
+- Support connection to multiple databases
+
 ## [Version 1.3.1](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.3.1) - Bugfix release - 2021-11
 
 - Allow missing values in int columns (instead of raising a specific error message)
