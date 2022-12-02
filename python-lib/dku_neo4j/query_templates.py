@@ -33,8 +33,8 @@ DELETE_NODES = """
 MATCH (n:`{nodes_label}`) DETACH DELETE n"""
 
 CREATE_CONSTRAINT_IF_NOT_EXIST = """
-CREATE CONSTRAINT IF NOT EXISTS ON (n:`{label}`)
-ASSERT n.`{property_key}` IS UNIQUE"""
+CREATE CONSTRAINT IF NOT EXISTS FOR (n:`{label}`)
+REQUIRE n.`{property_key}` IS UNIQUE"""
 
 
 def create_export_relationship_suffix_query(
