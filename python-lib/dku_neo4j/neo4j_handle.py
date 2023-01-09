@@ -1,6 +1,6 @@
 import logging
+from distutils.version import LooseVersion
 import neo4j
-from numpy.lib.utils import source
 import pandas as pd
 from neo4j import GraphDatabase
 from dku_neo4j.query_templates import (
@@ -10,7 +10,8 @@ from dku_neo4j.query_templates import (
     DELETE_NODES,
     SOURCE_MERGE_STATEMENT,
     PROPERTIES_STATEMENT,
-    CREATE_CONSTRAINT_IF_NOT_EXIST,
+    CREATE_CONSTRAINT_IF_NOT_EXIST_43_AND_LOWER,
+    CREATE_CONSTRAINT_IF_NOT_EXIST_44_AND_HIGHER,
     create_export_relationship_suffix_query,
 )
 
@@ -140,8 +141,19 @@ class Neo4jHandle(object):
     def add_unique_constraint_on_nodes(self, params):
         self._add_unique_constraint_if_not_exist(params.nodes_label, params.node_lookup_key)
 
+    def _get_database_version(self):
+        query = "CALL dbms.components() YIELD versions UNWIND versions as version RETURN version"
+        with self.driver.session(database=self.database) as session:
+            version = session.run(query).single()["version"]
+        logging.info(f"Neo4j plugin - Database version: {version}")
+        return version
+
     def _add_unique_constraint_if_not_exist(self, label, property_key):
-        query = CREATE_CONSTRAINT_IF_NOT_EXIST.format(label=label, property_key=property_key)
+        database_version = self._get_database_version()
+        if LooseVersion(database_version) >= LooseVersion("4.4"):
+            query = CREATE_CONSTRAINT_IF_NOT_EXIST_44_AND_HIGHER.format(label=label, property_key=property_key)
+        else:
+            query = CREATE_CONSTRAINT_IF_NOT_EXIST_43_AND_LOWER.format(label=label, property_key=property_key)
         logging.info(f"Neo4j plugin - Creating uniqueness constraint on {label}.{property_key}")
         self.run(query, log_results=True)
 

@@ -15,6 +15,9 @@ class MockNeo4jHandle(Neo4jHandle):
     def run(self, query, data=None, log_results=False):
         self.queries.append(query)
 
+    def _get_database_version(self):
+        return "4.2.1"
+
 
 class MockImportFileHandler:
     def __init__(self):
