@@ -2,7 +2,11 @@ import os
 import logging
 import numpy as np
 import dataiku
-from dataiku.customrecipe import get_plugin_config, get_input_names_for_role, get_output_names_for_role
+from dataiku.customrecipe import (
+    get_plugin_config,
+    get_input_names_for_role,
+    get_output_names_for_role,
+)
 from dku_neo4j.neo4j_handle import Neo4jHandle
 import gzip
 
@@ -57,7 +61,7 @@ class GeneralExportParams:
 
 
 class ImportFileHandler:
-    """Class to write and delete dataframe as csv file into a dataiku.Folder """
+    """Class to write and delete dataframe as csv file into a dataiku.Folder"""
 
     def __init__(self, folder):
         self.folder = folder
@@ -84,7 +88,7 @@ class EmptyIntegerError(ValueError):
 
 
 def next_with_custom_error(iterator, custom_error, *args):
-    """Get next element of iterator and call a custom function when failing """
+    """Get next element of iterator and call a custom function when failing"""
     try:
         return next(iterator, None)
     except Exception as error:
@@ -93,11 +97,13 @@ def next_with_custom_error(iterator, custom_error, *args):
 
 
 def custom_error_for_empty_integer(error, columns):
-    """Custom error message if an integer column has empty values """
+    """Custom error message if an integer column has empty values"""
     try:
         error_string = str(error)
         if "Integer column has NA values in column " in error_string:
-            column_index = int(error_string.strip("Integer column has NA values in column "))
+            column_index = int(
+                error_string.strip("Integer column has NA values in column ")
+            )
             raise EmptyIntegerError(
                 f"Column '{columns[column_index]}' of type integer has empty values. Remove these empty values or change the type (to string or double for example)."
             )
@@ -105,7 +111,9 @@ def custom_error_for_empty_integer(error, columns):
         raise ValueError(empty_integer_error)
 
 
-def create_dataframe_iterator(dataset, batch_size=10000, columns=None):
+def create_dataframe_iterator(
+    dataset, batch_size=10000, columns=None, na_values=None, keep_default_na=True
+):
     (names, dtypes, parse_date_columns) = dataiku.Dataset.get_dataframe_schema_st(
         dataset.read_schema(),
         columns=columns,
@@ -114,17 +122,26 @@ def create_dataframe_iterator(dataset, batch_size=10000, columns=None):
     )
     cast_dtypes = cast_int_to_numpy_object(dtypes)
     dataframe_iterator = dataset.iter_dataframes_forced_types(
-        names, cast_dtypes, parse_date_columns, chunksize=batch_size
+        names,
+        cast_dtypes,
+        parse_date_columns,
+        chunksize=batch_size,
+        na_values=na_values,
+        keep_default_na=keep_default_na,
     )
 
-    df = next_with_custom_error(dataframe_iterator, custom_error_for_empty_integer, columns)
+    df = next_with_custom_error(
+        dataframe_iterator, custom_error_for_empty_integer, columns
+    )
     while df is not None:
         yield df
-        df = next_with_custom_error(dataframe_iterator, custom_error_for_empty_integer, columns)
+        df = next_with_custom_error(
+            dataframe_iterator, custom_error_for_empty_integer, columns
+        )
 
 
 def cast_int_to_numpy_object(dtypes):
-    """Cast numpy int into numpy object to not fail on missing values when retrieving dataframe without infer_with_pandas """
+    """Cast numpy int into numpy object to not fail on missing values when retrieving dataframe without infer_with_pandas"""
     cast_dtypes = dtypes.copy()
     for key, value in cast_dtypes.items():
         if value in [np.int32, np.int64]:

@@ -27,26 +27,51 @@ params = NodesExportParams(
     expert_mode=recipe_config.get("expert_mode", False),
     clear_before_run=recipe_config.get("clear_before_run", False),
     columns_list=input_dataset_schema,
+    na_values=recipe_config.get("na_values"),
+    keep_default_na=recipe_config.get("keep_default_na", True),
 )
 
 params.check(input_dataset_schema)
+
+if len(params.na_values) == 0:
+    params.na_values = None
+
 
 if export_params.load_from_csv:
     file_handler = ImportFileHandler(output_folder)
     params.set_periodic_commit(export_params.batch_size)
 
-with Neo4jHandle(export_params.uri, export_params.username, export_params.password, export_params.database) as neo4jhandle:
+with Neo4jHandle(
+    export_params.uri,
+    export_params.username,
+    export_params.password,
+    export_params.database,
+) as neo4jhandle:
     neo4jhandle.check()
 
     neo4jhandle.add_unique_constraint_on_nodes(params)
 
     if params.clear_before_run:
-        neo4jhandle.delete_nodes(params.nodes_label, batch_size=export_params.batch_size)
+        neo4jhandle.delete_nodes(
+            params.nodes_label, batch_size=export_params.batch_size
+        )
 
-    batch_size = export_params.csv_size if export_params.load_from_csv else export_params.batch_size
-    df_iterator = create_dataframe_iterator(input_dataset, batch_size=batch_size, columns=params.used_columns)
+    batch_size = (
+        export_params.csv_size
+        if export_params.load_from_csv
+        else export_params.batch_size
+    )
+    df_iterator = create_dataframe_iterator(
+        input_dataset,
+        batch_size=batch_size,
+        columns=params.used_columns,
+        na_value=params.na_values,
+        keep_default_na=params.keep_default_na,
+    )
 
     if export_params.load_from_csv:
-        neo4jhandle.load_nodes_from_csv(df_iterator, input_dataset_schema, params, file_handler)
+        neo4jhandle.load_nodes_from_csv(
+            df_iterator, input_dataset_schema, params, file_handler
+        )
     else:
         neo4jhandle.insert_nodes_by_batch(df_iterator, input_dataset_schema, params)
