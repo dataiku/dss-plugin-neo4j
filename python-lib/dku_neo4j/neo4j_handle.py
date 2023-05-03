@@ -31,9 +31,13 @@ class Neo4jHandle(object):
 
     def __enter__(self):
         try:
-            self.driver = GraphDatabase.driver(self.uri, auth=(self.username, self.password))
+            self.driver = GraphDatabase.driver(
+                self.uri, auth=(self.username, self.password)
+            )
         except Exception as e:
-            raise Exception(f"Failed to connect to the Neo4j server. Please check your preset credentials and URI.")
+            raise Exception(
+                f"Failed to connect to the Neo4j server. Please check your preset credentials and URI."
+            )
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
@@ -58,7 +62,9 @@ class Neo4jHandle(object):
         """
         with self.driver.session(database=self.database) as session:
             if data:
-                results = session.write_transaction(self.unwind_transaction, query=query, data=data)
+                results = session.write_transaction(
+                    self.unwind_transaction, query=query, data=data
+                )
             else:
                 results = session.run(query)
         if log_results:
@@ -69,14 +75,18 @@ class Neo4jHandle(object):
         return results
 
     def delete_nodes(self, nodes_label, batch_size=1000):
-        query = BATCH_DELETE_NODES.format(nodes_label=nodes_label, batch_size=batch_size)
+        query = BATCH_DELETE_NODES.format(
+            nodes_label=nodes_label, batch_size=batch_size
+        )
         logging.info(f"Neo4j plugin - Deleting nodes by batch: {query}")
         try:
             self.run(query, log_results=True)
         except Exception as e:
             if e.code == "Neo.ClientError.Procedure.ProcedureNotFound":
                 query = DELETE_NODES.format(nodes_label=nodes_label)
-                logging.info(f"Neo4j plugin - APOC procedure not found, deleting nodes with: {query}")
+                logging.info(
+                    f"Neo4j plugin - APOC procedure not found, deleting nodes with: {query}"
+                )
                 self.run(query, log_results=True)
 
     def load_nodes_from_csv(self, df_iterator, columns_list, params, file_handler):
@@ -85,10 +95,15 @@ class Neo4jHandle(object):
             columns_list, params.node_lookup_key, params.node_id_column
         )
         properties = self._properties(
-            columns_list, params.node_properties, self.SOURCE_IDENTIFIER, params.property_names_map
+            columns_list,
+            params.node_properties,
+            self.SOURCE_IDENTIFIER,
+            params.property_names_map,
         )
         for index, df in enumerate(df_iterator):
-            self._check_no_empty_primary_key(df, mandatory_columns=[params.node_id_column])
+            self._check_no_empty_primary_key(
+                df, mandatory_columns=[params.node_id_column]
+            )
             local_path = f"dss_neo4j_export_temp_file_{index+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
 
@@ -98,14 +113,17 @@ class Neo4jHandle(object):
                 definition=definition,
             )
             query += SOURCE_MERGE_STATEMENT.format(
-                node_label=params.nodes_label, node_primary_key_statement=node_primary_key_statement
+                node_label=params.nodes_label,
+                node_primary_key_statement=node_primary_key_statement,
             )
             query += PROPERTIES_STATEMENT.format(properties=properties)
 
             if index == 0:
                 logging.info(f"Neo4j plugin - Importing nodes into Neo4j: {query}")
             else:
-                logging.info(f"Neo4j plugin - Same query using file: {import_file_path}")
+                logging.info(
+                    f"Neo4j plugin - Same query using file: {import_file_path}"
+                )
             self.run(query, log_results=True)
             file_handler.delete(local_path)
 
@@ -114,7 +132,11 @@ class Neo4jHandle(object):
             columns_list, params.node_lookup_key, params.node_id_column, unwind=True
         )
         properties = self._properties(
-            columns_list, params.node_properties, self.SOURCE_IDENTIFIER, params.property_names_map, unwind=True
+            columns_list,
+            params.node_properties,
+            self.SOURCE_IDENTIFIER,
+            params.property_names_map,
+            unwind=True,
         )
 
         query = UNWIND_PREFIX.format(
@@ -122,7 +144,8 @@ class Neo4jHandle(object):
             rows=self.ROWS,
         )
         query += SOURCE_MERGE_STATEMENT.format(
-            node_label=params.nodes_label, node_primary_key_statement=node_primary_key_statement
+            node_label=params.nodes_label,
+            node_primary_key_statement=node_primary_key_statement,
         )
         query += PROPERTIES_STATEMENT.format(properties=properties)
 
@@ -135,11 +158,17 @@ class Neo4jHandle(object):
             logging.info(f"Neo4j plugin - Processed rows: {rows_processed}")
 
     def add_unique_constraint_on_relationship_nodes(self, params):
-        self._add_unique_constraint_if_not_exist(params.source_node_label, params.source_node_lookup_key)
-        self._add_unique_constraint_if_not_exist(params.target_node_label, params.target_node_lookup_key)
+        self._add_unique_constraint_if_not_exist(
+            params.source_node_label, params.source_node_lookup_key
+        )
+        self._add_unique_constraint_if_not_exist(
+            params.target_node_label, params.target_node_lookup_key
+        )
 
     def add_unique_constraint_on_nodes(self, params):
-        self._add_unique_constraint_if_not_exist(params.nodes_label, params.node_lookup_key)
+        self._add_unique_constraint_if_not_exist(
+            params.nodes_label, params.node_lookup_key
+        )
 
     def _get_database_version(self):
         query = "CALL dbms.components() YIELD versions UNWIND versions as version RETURN version"
@@ -151,13 +180,21 @@ class Neo4jHandle(object):
     def _add_unique_constraint_if_not_exist(self, label, property_key):
         database_version = self._get_database_version()
         if LooseVersion(database_version) >= LooseVersion("4.4"):
-            query = CREATE_CONSTRAINT_IF_NOT_EXIST_44_AND_HIGHER.format(label=label, property_key=property_key)
+            query = CREATE_CONSTRAINT_IF_NOT_EXIST_44_AND_HIGHER.format(
+                label=label, property_key=property_key
+            )
         else:
-            query = CREATE_CONSTRAINT_IF_NOT_EXIST_43_AND_LOWER.format(label=label, property_key=property_key)
-        logging.info(f"Neo4j plugin - Creating uniqueness constraint on {label}.{property_key}")
+            query = CREATE_CONSTRAINT_IF_NOT_EXIST_43_AND_LOWER.format(
+                label=label, property_key=property_key
+            )
+        logging.info(
+            f"Neo4j plugin - Creating uniqueness constraint on {label}.{property_key}"
+        )
         self.run(query, log_results=True)
 
-    def load_relationships_from_csv(self, df_iterator, columns_list, params, file_handler):
+    def load_relationships_from_csv(
+        self, df_iterator, columns_list, params, file_handler
+    ):
         definition = self._schema(params.used_columns)
         source_node_primary_key_statement = self._primary_key_statement(
             columns_list, params.source_node_lookup_key, params.source_node_id_column
@@ -169,7 +206,9 @@ class Neo4jHandle(object):
         relationship_primary_key_statement = ""
         if params.relationship_id_column:
             relationship_primary_key_statement = self._primary_key_statement(
-                columns_list, params.relationship_lookup_key, params.relationship_id_column
+                columns_list,
+                params.relationship_lookup_key,
+                params.relationship_id_column,
             )
 
         node_incremented_property = "count" if params.node_count_property else None
@@ -199,7 +238,11 @@ class Neo4jHandle(object):
         )
         for i, df in enumerate(df_iterator):
             self._check_no_empty_primary_key(
-                df, mandatory_columns=[params.source_node_id_column, params.target_node_id_column]
+                df,
+                mandatory_columns=[
+                    params.source_node_id_column,
+                    params.target_node_id_column,
+                ],
             )
             local_path = f"dss_neo4j_export_temp_file_{i+1:03}.csv.gz"
             import_file_path = file_handler.write(df, local_path)
@@ -224,9 +267,13 @@ class Neo4jHandle(object):
             )
 
             if i == 0:
-                logging.info(f"Neo4j plugin - Importing relationships and nodes into Neo4j: {query}")
+                logging.info(
+                    f"Neo4j plugin - Importing relationships and nodes into Neo4j: {query}"
+                )
             else:
-                logging.info(f"Neo4j plugin - Same query using file: {import_file_path}")
+                logging.info(
+                    f"Neo4j plugin - Same query using file: {import_file_path}"
+                )
             self.run(query, log_results=True)
             file_handler.delete(local_path)
 
@@ -234,17 +281,26 @@ class Neo4jHandle(object):
         node_incremented_property = "count" if params.node_count_property else None
         edge_incremented_property = "weight" if params.edge_weight_property else None
         source_node_primary_key_statement = self._primary_key_statement(
-            columns_list, params.source_node_lookup_key, params.source_node_id_column, unwind=True
+            columns_list,
+            params.source_node_lookup_key,
+            params.source_node_id_column,
+            unwind=True,
         )
         target_node_primary_key_statement = self._primary_key_statement(
-            columns_list, params.target_node_lookup_key, params.target_node_id_column, unwind=True
+            columns_list,
+            params.target_node_lookup_key,
+            params.target_node_id_column,
+            unwind=True,
         )
 
         relationship_primary_key_statement = ""
         mandatory_columns = [params.source_node_id_column, params.target_node_id_column]
         if params.relationship_id_column:
             relationship_primary_key_statement = self._primary_key_statement(
-                columns_list, params.relationship_lookup_key, params.relationship_id_column, unwind=True
+                columns_list,
+                params.relationship_lookup_key,
+                params.relationship_id_column,
+                unwind=True,
             )
             mandatory_columns.append(params.relationship_id_column)
 
@@ -302,7 +358,12 @@ class Neo4jHandle(object):
             logging.info(f"Neo4j plugin - Processed rows: {rows_processed}")
 
     def _schema(self, columns_list):
-        return ", ".join([f"line[{index}] AS `{column}`" for index, column in enumerate(columns_list)])
+        return ", ".join(
+            [
+                f"line[{index}] AS `{column}`"
+                for index, column in enumerate(columns_list)
+            ]
+        )
 
     def _properties(
         self,
@@ -333,20 +394,31 @@ class Neo4jHandle(object):
             )
             properties_strings.append(property_string)
         if incremented_property and not skip_row_if_not_exist:
-            incremented_property_statement = f"ON CREATE SET {identifier}.{incremented_property} = 1"
-            incremented_property_statement += (
-                f"\nON MATCH SET {identifier}.{incremented_property} = {identifier}.{incremented_property} + 1"
+            incremented_property_statement = (
+                f"ON CREATE SET {identifier}.{incremented_property} = 1"
             )
+            incremented_property_statement += f"\nON MATCH SET {identifier}.{incremented_property} = {identifier}.{incremented_property} + 1"
             properties_strings.append(incremented_property_statement)
         return "\n".join(properties_strings)
 
-    def _primary_key_statement(self, all_columns_list, lookup_key, id_column, unwind=False):
+    def _primary_key_statement(
+        self, all_columns_list, lookup_key, id_column, unwind=False
+    ):
         """Create a merge statement in the form of '{lookup_key: id_column}'"""
-        id_column_type = next((column["type"] for column in all_columns_list if column["name"] == id_column), None)
+        id_column_type = next(
+            (
+                column["type"]
+                for column in all_columns_list
+                if column["name"] == id_column
+            ),
+            None,
+        )
         typed_value = self._cast_property_type(id_column, id_column_type, unwind)
         return f" {{`{lookup_key}`: {typed_value}}}"
 
-    def _property(self, colname, prop, coltype, identifier, unwind=False, match_statement=False):
+    def _property(
+        self, colname, prop, coltype, identifier, unwind=False, match_statement=False
+    ):
         typedValue = self._cast_property_type(colname, coltype, unwind)
         set_statement = f"{identifier}.`{prop}` = {typedValue}"
         if match_statement:
@@ -379,10 +451,15 @@ class Neo4jHandle(object):
 
     def _check_no_empty_primary_key(self, df, mandatory_columns=None):
         if df[mandatory_columns].isnull().any().any():
-            raise ValueError(f"The primary key columns {mandatory_columns} cannot have missing values.")
+            raise ValueError(
+                f"The primary key columns {mandatory_columns} cannot have missing values."
+            )
 
     def _remove_nan_values_from_records(self, data):
-        return [{key: value for key, value in row.items() if not pd.isnull(value)} for row in data]
+        return [
+            {key: value for key, value in row.items() if not pd.isnull(value)}
+            for row in data
+        ]
 
 
 class ExportParams(object):
@@ -405,12 +482,16 @@ class NodesExportParams(ExportParams):
         expert_mode=False,
         clear_before_run=False,
         columns_list=None,
+        na_values=None,
+        keep_default_na=True,
     ):
         self.nodes_label = nodes_label
         self.node_id_column = node_id_column
         self.properties_mode = properties_mode
         self.node_properties = node_properties or []
-        self.property_names_map = property_names_map or {} if property_names_mapping else {}
+        self.property_names_map = (
+            property_names_map or {} if property_names_mapping else {}
+        )
 
         self.clear_before_run = clear_before_run if expert_mode else False
 
@@ -418,7 +499,11 @@ class NodesExportParams(ExportParams):
             if node_id_column in node_properties:
                 self.node_properties.remove(node_id_column)
         else:
-            self.node_properties = [column["name"] for column in columns_list if column["name"] != self.node_id_column]
+            self.node_properties = [
+                column["name"]
+                for column in columns_list
+                if column["name"] != self.node_id_column
+            ]
 
         if node_id_column in self.property_names_map:
             self.node_lookup_key = self.property_names_map[node_id_column]
@@ -426,6 +511,9 @@ class NodesExportParams(ExportParams):
             self.node_lookup_key = node_id_column
 
         self.used_columns = [self.node_id_column] + self.node_properties
+
+        self.na_values = na_values
+        self.keep_default_na = keep_default_na
 
     def check(self, column_list):
         existing_colnames = [column["name"] for column in column_list]
@@ -465,8 +553,9 @@ class RelationshipsExportParams(ExportParams):
         edge_weight_property=False,
         skip_row_if_not_source=False,
         skip_row_if_not_target=False,
+        na_values=None,
+        keep_default_na=True,
     ):
-
         self.source_node_label = source_node_label
         self.source_node_id_column = source_node_id_column
         self.source_node_properties = source_node_properties or []
@@ -476,7 +565,9 @@ class RelationshipsExportParams(ExportParams):
         self.relationships_verb = relationships_verb
         self.relationship_id_column = relationship_id_column
         self.relationship_properties = relationship_properties
-        self.property_names_map = property_names_map or {} if property_names_mapping else {}
+        self.property_names_map = (
+            property_names_map or {} if property_names_mapping else {}
+        )
 
         self.clear_before_run = clear_before_run if expert_mode else False
         self.node_count_property = node_count_property if expert_mode else False
@@ -518,6 +609,9 @@ class RelationshipsExportParams(ExportParams):
         if self.relationship_id_column:
             self.used_columns.append(self.relationship_id_column)
 
+        self.na_values = na_values
+        self.keep_default_na = keep_default_na
+
     def check(self, column_list):
         existing_colnames = [column["name"] for column in column_list]
         if not self.source_node_label:
@@ -532,18 +626,29 @@ class RelationshipsExportParams(ExportParams):
             raise ValueError("Relationships type not specified")
         check_backtick(self.relationships_verb, "Relationships type")
 
-        if not self.source_node_id_column or self.source_node_id_column not in existing_colnames:
+        if (
+            not self.source_node_id_column
+            or self.source_node_id_column not in existing_colnames
+        ):
             raise ValueError(
                 f"Source nodes primary key '{self.source_node_id_column}' is invalid. It is mandatory and must be a valid column"
             )
 
-        if not self.target_node_id_column or self.target_node_id_column not in existing_colnames:
+        if (
+            not self.target_node_id_column
+            or self.target_node_id_column not in existing_colnames
+        ):
             raise ValueError(
                 f"Target nodes primary key '{self.target_node_id_column}' is invalid. It is mandatory and must be a valid column"
             )
 
-        if self.relationship_id_column and self.relationship_id_column not in existing_colnames:
-            raise ValueError(f"Relationship primary key '{self.relationship_id_column}' is not a valid column")
+        if (
+            self.relationship_id_column
+            and self.relationship_id_column not in existing_colnames
+        ):
+            raise ValueError(
+                f"Relationship primary key '{self.relationship_id_column}' is not a valid column"
+            )
 
         for colname in self.source_node_properties:
             if colname not in existing_colnames:
@@ -559,18 +664,24 @@ class RelationshipsExportParams(ExportParams):
 
 
 def check_property_names_map(property_names_map, used_columns):
-    """Check that all key -> values in the DSS column -> Neo4j name mapping are valid """
+    """Check that all key -> values in the DSS column -> Neo4j name mapping are valid"""
     if property_names_map:
         for dss_column, neo4j_property in property_names_map.items():
             if dss_column not in used_columns:
-                raise ValueError(f"'{dss_column}' is not a valid DSS column name for changing names in Neo4j.")
+                raise ValueError(
+                    f"'{dss_column}' is not a valid DSS column name for changing names in Neo4j."
+                )
 
             if not neo4j_property:
-                raise ValueError(f"Neo4j property for DSS column '{dss_column}' is not specified.")
+                raise ValueError(
+                    f"Neo4j property for DSS column '{dss_column}' is not specified."
+                )
             check_backtick(neo4j_property, "Neo4j property name")
 
 
 def check_backtick(value, label):
-    """Raise an error if the value contain any backtick """
+    """Raise an error if the value contain any backtick"""
     if "`" in value:
-        raise ValueError(f"{label} '{value}' cannot contain backticks (`). Please remove any backtick.")
+        raise ValueError(
+            f"{label} '{value}' cannot contain backticks (`). Please remove any backtick."
+        )

@@ -30,6 +30,8 @@ class TestRelationshipsExport:
             "source_node_properties": [],
             "target_node_properties": ["club_name", "club_country"],
             "relationship_properties": ["timestamp", "fee", "player_age"],
+            "na_values": [],
+            "keep_default_na": False,
         }
 
         self.dataset_schema = [
@@ -57,6 +59,8 @@ class TestRelationshipsExport:
             clear_before_run=self.recipe_config.get("clear_before_run", False),
             node_count_property=self.recipe_config.get("node_count_property", False),
             edge_weight_property=self.recipe_config.get("edge_weight_property", False),
+            na_values=self.recipe_config.get("na_values"),
+            keep_default_na=self.recipe_config.get("keep_default_na", True),
         )
         self.params.check(self.dataset_schema)
         self.params.set_periodic_commit(500)
@@ -84,7 +88,9 @@ YIELD batches, total RETURN batches, total
         df_iterator = self._create_dataframe_iterator()
         with MockNeo4jHandle() as neo4jhandle:
             print(f"self.params.used_columns: {self.params.used_columns}")
-            neo4jhandle.load_relationships_from_csv(df_iterator, self.dataset_schema, self.params, file_handler)
+            neo4jhandle.load_relationships_from_csv(
+                df_iterator, self.dataset_schema, self.params, file_handler
+            )
             print(f"neo4jhandle.queries[0]:\n{neo4jhandle.queries[0]}")
             reference_query = """
 USING PERIODIC COMMIT 500
@@ -110,7 +116,9 @@ ON MATCH SET rel.weight = rel.weight + 1
     def test_insert_relationships_by_batch(self):
         df_iterator = self._create_dataframe_iterator()
         with MockNeo4jHandle() as neo4jhandle:
-            neo4jhandle.insert_relationships_by_batch(df_iterator, self.dataset_schema, self.params)
+            neo4jhandle.insert_relationships_by_batch(
+                df_iterator, self.dataset_schema, self.params
+            )
             print(f"neo4jhandle.queries[1]: {neo4jhandle.queries[1]}")
             assert len(neo4jhandle.queries) == len(df_iterator)
 
@@ -140,7 +148,9 @@ ON MATCH SET rel.weight = rel.weight + 1
             params_temp = copy.copy(self.params)
             params_temp.skip_row_if_not_source = True
             params_temp.skip_row_if_not_target = True
-            neo4jhandle.insert_relationships_by_batch(df_iterator, self.dataset_schema, params_temp)
+            neo4jhandle.insert_relationships_by_batch(
+                df_iterator, self.dataset_schema, params_temp
+            )
             print(f"neo4jhandle.queries[1]: {neo4jhandle.queries[1]}")
             assert len(neo4jhandle.queries) == len(df_iterator)
             reference_query = """
@@ -167,7 +177,9 @@ ON MATCH SET rel.weight = rel.weight + 1
         with MockNeo4jHandle() as neo4jhandle:
             params_temp = copy.copy(self.params)
             params_temp.skip_row_if_not_source = True
-            neo4jhandle.insert_relationships_by_batch(df_iterator, self.dataset_schema, params_temp)
+            neo4jhandle.insert_relationships_by_batch(
+                df_iterator, self.dataset_schema, params_temp
+            )
             print(f"neo4jhandle.queries[1]: {neo4jhandle.queries[1]}")
             assert len(neo4jhandle.queries) == len(df_iterator)
             reference_query = """
@@ -195,7 +207,9 @@ ON MATCH SET rel.weight = rel.weight + 1
         with MockNeo4jHandle() as neo4jhandle:
             params_temp = copy.copy(self.params)
             params_temp.skip_row_if_not_target = True
-            neo4jhandle.insert_relationships_by_batch(df_iterator, self.dataset_schema, params_temp)
+            neo4jhandle.insert_relationships_by_batch(
+                df_iterator, self.dataset_schema, params_temp
+            )
             print(f"neo4jhandle.queries[1]: {neo4jhandle.queries[1]}")
             assert len(neo4jhandle.queries) == len(df_iterator)
             reference_query = """

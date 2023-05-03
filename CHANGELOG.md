@@ -1,5 +1,9 @@
 # Changelog
 
+## [Version 1.4.1](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.4.1) - Bugfix release - 2023-05
+
+- Added Expert Params Custom Null Value and Add default Strings to override the default behavior of pandas.read_table and read_csv
+
 ## [Version 1.4.0](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.4.0) - New feature release - 2022-12
 
 - Support neo4j 4.4 and higher (4.2 and 4.3 not supported anymore)
