@@ -42,9 +42,6 @@ params = RelationshipsExportParams(
 
 params.check(input_dataset_schema)
 
-if len(params.na_values) == 0:
-    params.na_values = None
-
 if export_params.load_from_csv:
     file_handler = ImportFileHandler(output_folder)
     params.set_periodic_commit(export_params.batch_size)

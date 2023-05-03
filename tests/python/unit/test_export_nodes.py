@@ -21,6 +21,8 @@ class TestNodesExport:
             "node_properties": ["player_age", "player_country", "timestamp", "fee"],
             "nodes_label": "Player",
             "node_id_column": "player_name",
+            "na_values": [],
+            "keep_default_na": False,
         }
 
         self.dataset_schema = [
@@ -40,6 +42,8 @@ class TestNodesExport:
             property_names_map=self.recipe_config.get("property_names_map"),
             clear_before_run=self.recipe_config.get("clear_before_run", False),
             columns_list=self.dataset_schema,
+            na_values=self.recipe_config.get("na_values"),
+            keep_default_na=self.recipe_config.get("keep_default_na", True),
         )
         self.params.check(self.dataset_schema)
         self.params.set_periodic_commit(500)
@@ -66,7 +70,9 @@ YIELD batches, total RETURN batches, total
         file_handler = MockImportFileHandler()
         df_iterator = self._create_dataframe_iterator()
         with MockNeo4jHandle() as neo4jhandle:
-            neo4jhandle.load_nodes_from_csv(df_iterator, self.dataset_schema, self.params, file_handler)
+            neo4jhandle.load_nodes_from_csv(
+                df_iterator, self.dataset_schema, self.params, file_handler
+            )
             reference_query = """
 USING PERIODIC COMMIT 500
 LOAD CSV FROM 'file:///dss_neo4j_export_temp_file_001.csv.gz' AS line FIELDTERMINATOR ','
@@ -86,7 +92,9 @@ ON MATCH SET src.`value` = toFloat(`fee`)
     def test_insert_nodes_by_batch(self):
         df_iterator = self._create_dataframe_iterator()
         with MockNeo4jHandle() as neo4jhandle:
-            neo4jhandle.insert_nodes_by_batch(df_iterator, self.dataset_schema, self.params)
+            neo4jhandle.insert_nodes_by_batch(
+                df_iterator, self.dataset_schema, self.params
+            )
             assert len(neo4jhandle.queries) == len(df_iterator)
             reference_query = """
 WITH $data AS dataset
