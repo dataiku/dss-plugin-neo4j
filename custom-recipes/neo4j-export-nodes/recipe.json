@@ -150,7 +150,7 @@
             "visibilityCondition": "model.expert_mode"
         },
         {
-            "label": "Handling NULL Values",
+            "label": "Handling NaN Values",
             "type": "SEPARATOR",
             "visibilityCondition": "model.expert_mode"
         },
