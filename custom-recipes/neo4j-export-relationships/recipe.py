@@ -73,7 +73,7 @@ with Neo4jHandle(
         input_dataset,
         batch_size=batch_size,
         columns=params.used_columns,
-        na_value=params.na_values,
+        na_values=params.na_values,
         keep_default_na=params.keep_default_na,
     )
 
