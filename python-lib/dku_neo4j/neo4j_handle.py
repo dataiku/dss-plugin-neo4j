@@ -524,8 +524,8 @@ class RelationshipsExportParams(ExportParams):
         if self.relationship_id_column:
             self.used_columns.append(self.relationship_id_column)
 
-        self.na_values = na_values
-        self.keep_default_na = keep_default_na
+        self.na_values = na_values if expert_mode else None
+        self.keep_default_na = keep_default_na if expert_mode else True
 
     def check(self, column_list):
         existing_colnames = [column["name"] for column in column_list]
