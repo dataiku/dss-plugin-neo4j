@@ -152,6 +152,7 @@
         {
             "label": "Handling NaN Values",
             "type": "SEPARATOR",
+            "description": "More detailed documentation: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_table.html",
             "visibilityCondition": "model.expert_mode"
         },
         {
