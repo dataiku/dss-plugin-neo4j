@@ -156,7 +156,7 @@
         },
         {
             "name": "na_values",
-            "label": "Custom NULL Values",
+            "label": "Additional NaN values",
             "type": "STRINGS",
             "description": "Additional strings to recognize as NaN values prior to the export to Neo4j",
             "defaultValue": "",
