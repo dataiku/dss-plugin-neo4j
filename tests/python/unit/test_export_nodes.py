@@ -70,9 +70,7 @@ YIELD batches, total RETURN batches, total
         file_handler = MockImportFileHandler()
         df_iterator = self._create_dataframe_iterator()
         with MockNeo4jHandle() as neo4jhandle:
-            neo4jhandle.load_nodes_from_csv(
-                df_iterator, self.dataset_schema, self.params, file_handler
-            )
+            neo4jhandle.load_nodes_from_csv(df_iterator, self.dataset_schema, self.params, file_handler)
             reference_query = """
 USING PERIODIC COMMIT 500
 LOAD CSV FROM 'file:///dss_neo4j_export_temp_file_001.csv.gz' AS line FIELDTERMINATOR ','
@@ -92,9 +90,7 @@ ON MATCH SET src.`value` = toFloat(`fee`)
     def test_insert_nodes_by_batch(self):
         df_iterator = self._create_dataframe_iterator()
         with MockNeo4jHandle() as neo4jhandle:
-            neo4jhandle.insert_nodes_by_batch(
-                df_iterator, self.dataset_schema, self.params
-            )
+            neo4jhandle.insert_nodes_by_batch(df_iterator, self.dataset_schema, self.params)
             assert len(neo4jhandle.queries) == len(df_iterator)
             reference_query = """
 WITH $data AS dataset

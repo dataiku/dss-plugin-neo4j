@@ -33,31 +33,19 @@ params = NodesExportParams(
 
 params.check(input_dataset_schema)
 
-
 if export_params.load_from_csv:
     file_handler = ImportFileHandler(output_folder)
     params.set_periodic_commit(export_params.batch_size)
 
-with Neo4jHandle(
-    export_params.uri,
-    export_params.username,
-    export_params.password,
-    export_params.database,
-) as neo4jhandle:
+with Neo4jHandle(export_params.uri, export_params.username, export_params.password, export_params.database) as neo4jhandle:
     neo4jhandle.check()
 
     neo4jhandle.add_unique_constraint_on_nodes(params)
 
     if params.clear_before_run:
-        neo4jhandle.delete_nodes(
-            params.nodes_label, batch_size=export_params.batch_size
-        )
+        neo4jhandle.delete_nodes(params.nodes_label, batch_size=export_params.batch_size)
 
-    batch_size = (
-        export_params.csv_size
-        if export_params.load_from_csv
-        else export_params.batch_size
-    )
+    batch_size = export_params.csv_size if export_params.load_from_csv else export_params.batch_size
     df_iterator = create_dataframe_iterator(
         input_dataset,
         batch_size=batch_size,
@@ -67,8 +55,6 @@ with Neo4jHandle(
     )
 
     if export_params.load_from_csv:
-        neo4jhandle.load_nodes_from_csv(
-            df_iterator, input_dataset_schema, params, file_handler
-        )
+        neo4jhandle.load_nodes_from_csv(df_iterator, input_dataset_schema, params, file_handler)
     else:
         neo4jhandle.insert_nodes_by_batch(df_iterator, input_dataset_schema, params)
