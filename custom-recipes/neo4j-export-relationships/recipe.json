@@ -230,23 +230,24 @@
             "visibilityCondition": "model.expert_mode"
         },
         {
-            "label": "Handling NULL Values",
+            "label": "Handling NaN Values",
             "type": "SEPARATOR",
+            "description": "More detailed documentation: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_table.html",
             "visibilityCondition": "model.expert_mode"
         },
         {
             "name": "na_values",
-            "label": "Custom NULL Values",
+            "label": "Additional NaN values",
             "type": "STRINGS",
-            "description": "Specify custom string values to be interpreted as NULL prior to the export to Neo4j. No values supplied results in no NULL values, thus empty cells will be replaced with the string 'null'",
+            "description": "Additional strings to recognize as NaN values prior to the export to Neo4j",
             "defaultValue": "",
             "visibilityCondition": "model.expert_mode"
         },
         {
             "name": "keep_default_na",
-            "label": "Add default strings",
+            "label": "Include default NaN values",
             "type": "BOOLEAN",
-            "description": "In addition to specified custom values, use the standard pre-defined strings found at https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_table.html",
+            "description": "Whether or not to include the default pandas NaN values when parsing the data",
             "defaultValue": true,
             "visibilityCondition": "model.expert_mode"
         }
