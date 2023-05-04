@@ -164,7 +164,7 @@
         },
         {
             "name": "keep_default_na",
-            "label": "Add default strings",
+            "label": "Include default NaN values",
             "type": "BOOLEAN",
             "description": "In addition to specified custom values, use the standard pre-defined strings found at https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_table.html",
             "defaultValue": true,
