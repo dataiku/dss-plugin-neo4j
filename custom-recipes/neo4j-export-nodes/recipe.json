@@ -158,7 +158,7 @@
             "name": "na_values",
             "label": "Custom NULL Values",
             "type": "STRINGS",
-            "description": "Specify custom string values to be interpreted as NULL prior to the export to Neo4j. No values supplied results in no NULL values, thus empty cells will be replaced with the string 'null'",
+            "description": "Additional strings to recognize as NaN values prior to the export to Neo4j",
             "defaultValue": "",
             "visibilityCondition": "model.expert_mode"
         },
