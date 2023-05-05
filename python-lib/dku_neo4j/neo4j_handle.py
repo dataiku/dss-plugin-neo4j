@@ -405,6 +405,8 @@ class NodesExportParams(ExportParams):
         expert_mode=False,
         clear_before_run=False,
         columns_list=None,
+        na_values=None,
+        keep_default_na=True,
     ):
         self.nodes_label = nodes_label
         self.node_id_column = node_id_column
@@ -426,6 +428,9 @@ class NodesExportParams(ExportParams):
             self.node_lookup_key = node_id_column
 
         self.used_columns = [self.node_id_column] + self.node_properties
+
+        self.na_values = na_values
+        self.keep_default_na = keep_default_na
 
     def check(self, column_list):
         existing_colnames = [column["name"] for column in column_list]
@@ -465,8 +470,9 @@ class RelationshipsExportParams(ExportParams):
         edge_weight_property=False,
         skip_row_if_not_source=False,
         skip_row_if_not_target=False,
+        na_values=None,
+        keep_default_na=True,
     ):
-
         self.source_node_label = source_node_label
         self.source_node_id_column = source_node_id_column
         self.source_node_properties = source_node_properties or []
@@ -517,6 +523,9 @@ class RelationshipsExportParams(ExportParams):
         )
         if self.relationship_id_column:
             self.used_columns.append(self.relationship_id_column)
+
+        self.na_values = na_values if expert_mode else None
+        self.keep_default_na = keep_default_na if expert_mode else True
 
     def check(self, column_list):
         existing_colnames = [column["name"] for column in column_list]

@@ -57,7 +57,7 @@ class GeneralExportParams:
 
 
 class ImportFileHandler:
-    """Class to write and delete dataframe as csv file into a dataiku.Folder """
+    """Class to write and delete dataframe as csv file into a dataiku.Folder"""
 
     def __init__(self, folder):
         self.folder = folder
@@ -105,7 +105,9 @@ def custom_error_for_empty_integer(error, columns):
         raise ValueError(empty_integer_error)
 
 
-def create_dataframe_iterator(dataset, batch_size=10000, columns=None):
+def create_dataframe_iterator(
+    dataset, batch_size=10000, columns=None, na_values=None, keep_default_na=True
+):
     (names, dtypes, parse_date_columns) = dataiku.Dataset.get_dataframe_schema_st(
         dataset.read_schema(),
         columns=columns,
@@ -114,10 +116,16 @@ def create_dataframe_iterator(dataset, batch_size=10000, columns=None):
     )
     cast_dtypes = cast_int_to_numpy_object(dtypes)
     dataframe_iterator = dataset.iter_dataframes_forced_types(
-        names, cast_dtypes, parse_date_columns, chunksize=batch_size
+        names,
+        cast_dtypes,
+        parse_date_columns,
+        chunksize=batch_size,
+        na_values=na_values,
+        keep_default_na=keep_default_na,
     )
 
-    df = next_with_custom_error(dataframe_iterator, custom_error_for_empty_integer, columns)
+    df = next_with_custom_error(dataframe_iterator, custom_error_for_empty_integer, columns
+    )
     while df is not None:
         yield df
         df = next_with_custom_error(dataframe_iterator, custom_error_for_empty_integer, columns)

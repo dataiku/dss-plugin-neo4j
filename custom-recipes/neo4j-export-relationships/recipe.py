@@ -36,6 +36,8 @@ params = RelationshipsExportParams(
     edge_weight_property=recipe_config.get("edge_weight_property"),
     skip_row_if_not_source=recipe_config.get("skip_row_if_not_source"),
     skip_row_if_not_target=recipe_config.get("skip_row_if_not_target"),
+    na_values=recipe_config.get("na_values"),
+    keep_default_na=recipe_config.get("keep_default_na", True),
 )
 
 params.check(input_dataset_schema)
@@ -54,7 +56,13 @@ with Neo4jHandle(export_params.uri, export_params.username, export_params.passwo
         neo4jhandle.delete_nodes(params.target_node_label, batch_size=export_params.batch_size)
 
     batch_size = export_params.csv_size if export_params.load_from_csv else export_params.batch_size
-    df_iterator = create_dataframe_iterator(input_dataset, batch_size=batch_size, columns=params.used_columns)
+    df_iterator = create_dataframe_iterator(
+        input_dataset,
+        batch_size=batch_size, 
+        columns=params.used_columns,
+        na_values=params.na_values,
+        keep_default_na=params.keep_default_na,
+    )
 
     if export_params.load_from_csv:
         neo4jhandle.load_relationships_from_csv(df_iterator, input_dataset_schema, params, file_handler)

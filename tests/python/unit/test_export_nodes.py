@@ -21,6 +21,8 @@ class TestNodesExport:
             "node_properties": ["player_age", "player_country", "timestamp", "fee"],
             "nodes_label": "Player",
             "node_id_column": "player_name",
+            "na_values": [],
+            "keep_default_na": False,
         }
 
         self.dataset_schema = [
@@ -40,6 +42,8 @@ class TestNodesExport:
             property_names_map=self.recipe_config.get("property_names_map"),
             clear_before_run=self.recipe_config.get("clear_before_run", False),
             columns_list=self.dataset_schema,
+            na_values=self.recipe_config.get("na_values"),
+            keep_default_na=self.recipe_config.get("keep_default_na", True),
         )
         self.params.check(self.dataset_schema)
         self.params.set_periodic_commit(500)

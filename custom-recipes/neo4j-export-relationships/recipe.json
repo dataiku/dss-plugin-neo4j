@@ -228,6 +228,28 @@
             "description": "If selected, export row only if the target node exists in Neo4j.",
             "defaultValue": false,
             "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "label": "Handling NaN Values",
+            "type": "SEPARATOR",
+            "description": "More detailed documentation: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_table.html",
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "name": "na_values",
+            "label": "Additional NaN values",
+            "type": "STRINGS",
+            "description": "Additional strings to recognize as NaN values prior to the export to Neo4j",
+            "defaultValue": "",
+            "visibilityCondition": "model.expert_mode"
+        },
+        {
+            "name": "keep_default_na",
+            "label": "Include default NaN values",
+            "type": "BOOLEAN",
+            "description": "Whether or not to include the default pandas NaN values when parsing the data",
+            "defaultValue": true,
+            "visibilityCondition": "model.expert_mode"
         }
     ]
 }

@@ -30,6 +30,8 @@ class TestRelationshipsExport:
             "source_node_properties": [],
             "target_node_properties": ["club_name", "club_country"],
             "relationship_properties": ["timestamp", "fee", "player_age"],
+            "na_values": [],
+            "keep_default_na": False,
         }
 
         self.dataset_schema = [
@@ -57,6 +59,8 @@ class TestRelationshipsExport:
             clear_before_run=self.recipe_config.get("clear_before_run", False),
             node_count_property=self.recipe_config.get("node_count_property", False),
             edge_weight_property=self.recipe_config.get("edge_weight_property", False),
+            na_values=self.recipe_config.get("na_values"),
+            keep_default_na=self.recipe_config.get("keep_default_na", True),
         )
         self.params.check(self.dataset_schema)
         self.params.set_periodic_commit(500)
