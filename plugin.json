@@ -1,6 +1,6 @@
 {
     "id": "neo4j",
-    "version": "1.4.1",
+    "version": "1.5.0",
     "meta": {
         "label": "Neo4j",
         "description": "Interact with the Neo4j graph database",

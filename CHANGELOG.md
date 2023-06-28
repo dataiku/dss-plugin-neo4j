@@ -1,5 +1,9 @@
 # Changelog
 
+## [Version 1.5.0](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.5.0) - New feature releas - 2023-06
+
+- Add python 3.7, 3.8, 3.9, 3.10, 3.11 support
+
 ## [Version 1.4.1](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.4.1) - Bugfix release - 2023-05
 
 - Specify whether or not to include the default pandas NaN values and use additional strings to recognize as NaN values when exporting data to Neo4j
