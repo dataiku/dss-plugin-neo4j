@@ -1,6 +1,6 @@
 # Changelog
 
-## [Version 1.5.0](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.5.0) - New feature releas - 2023-06
+## [Version 1.5.0](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.5.0) - New feature release - 2023-06
 
 - Add python 3.7, 3.8, 3.9, 3.10, 3.11 support
 
