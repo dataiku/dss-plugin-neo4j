@@ -1,9 +1,10 @@
 # Changelog
 
-## Version 1.6.0 - Enhancement release - 2026-10-12
+## Version 1.6.0 - Enhancement release - 2026-10-26
 
 - Added supported Python versions: 3.12, 3.13, 3.14
 - Makefile cleanup: release_info.json lines removed
+- Added category
 
 ## [Version 1.5.0](https://github.com/dataiku/dss-plugin-neo4j/tree/v1.5.0) - New feature release - 2023-06
 
