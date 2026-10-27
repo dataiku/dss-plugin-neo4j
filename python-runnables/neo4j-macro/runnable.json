@@ -5,7 +5,7 @@
         "icon": "icon-neo4j icon-link"
     },
     "impersonate": false,
-    "permissions": [],
+    "permissions": ["WRITE_CONF"],
     "resultType": "HTML",
     "resultLabel": "Cypher query results",
     "macroRoles": [],
